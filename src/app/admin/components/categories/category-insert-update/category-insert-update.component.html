@@ -22,7 +22,29 @@
       ></p-message>
     </div>
 
-    <div fxLayout="row" style="margin-top: 10px">
+    <div>
+      <p-floatlabel variant="on">
+        <input
+          id="category-code"
+          pInputText
+          class="full-width"
+          formControlName="Code"
+          type="text"
+          autocomplete="off"
+        />
+        <label for="category-code">Category Code</label>
+      </p-floatlabel>
+
+      <p-message
+        *ngIf="categoryForm.get('Code')?.invalid"
+        severity="error"
+        size="small"
+        variant="simple"
+        text="Please enter a valid category code"
+      ></p-message>
+    </div>
+
+    <!-- <div fxLayout="row" style="margin-top: 10px">
       <div fxFlex="13">Status</div>
       <div fxFlex="15">
         <p-toggleswitch formControlName="Status" />
@@ -30,7 +52,7 @@
       <div fxFlex="20" style="font-weight: 700">
         {{ categoryForm.get('Status')?.value ? 'Active' : 'Inactive' }}
       </div>
-    </div>
+    </div> -->
 
     <!-- <p-fileupload
       accept="image/*"
@@ -43,7 +65,7 @@
       </ng-template>
     </p-fileupload> -->
 
-    <div>
+    <!-- <div>
       <p-fileupload
         accept="image/*"
         mode="advanced"
@@ -56,7 +78,7 @@
           <div>Drag and drop files to here to upload.</div>
         </ng-template>
       </p-fileupload>
-    </div>
+    </div> -->
   </form>
 
   <ng-template #footer>

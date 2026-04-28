@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  protected readonly title = signal('online-FDS');
+  protected readonly title = signal('academic-submission-system');
 }

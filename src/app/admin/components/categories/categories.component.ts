@@ -20,7 +20,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   dataSource = new MatTableDataSource<Category>([]);
 
-  displayedColumns = ['Name', 'Status', 'Image', 'Action'];
+  displayedColumns = ['Name', 'Code', 'Action'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -32,18 +32,17 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getCategories();
+    console.log('Categories fetched:', this.categories);
   }
 
   getCategories(): void {
-    this.categories = [];
-
     this.categoriesService
       .getCategories()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: AppQuery<Category[]>) => {
-          this.categories = res?.data ?? [];
-          this.manageMeter();
+          this.categories = res?.data;
+          // this.manageMeter();
           this.dataSource.data = this.categories;
           this.dataSource.paginator = this.paginator;
 
@@ -53,6 +52,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
           console.error('Error fetching categories:', error);
         },
       });
+    console.log('Categories after fetch call:', this.categories);
   }
 
   AddCategory(): void {
@@ -92,14 +92,14 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     });
   }
 
-  private manageMeter() {
-    const active = this.categories.filter((item) => item.Status).length;
-    const inActive = this.categories.filter((item) => !item.Status).length;
-    this.meters = [
-      { label: 'Active', value: active, color: 'green' },
-      { label: 'Inactive', value: inActive, color: 'red' },
-    ];
-  }
+  // private manageMeter() {
+  //   const active = this.categories.filter((item) => item.Status).length;
+  //   const inActive = this.categories.filter((item) => !item.Status).length;
+  //   this.meters = [
+  //     { label: 'Active', value: active, color: 'green' },
+  //     { label: 'Inactive', value: inActive, color: 'red' },
+  //   ];
+  // }
 
   ngOnDestroy(): void {
     this.destroy$.complete();

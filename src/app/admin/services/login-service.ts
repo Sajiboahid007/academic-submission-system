@@ -17,7 +17,7 @@ export class LoginService {
 
   getLoginForm(): FormGroup {
     const loginForm = this.fb.group({
-      Email: ['', [Validators.required, Validators.email]],
+      StudentId: ['', [Validators.required]],
       Password: ['', [Validators.required]],
     });
 

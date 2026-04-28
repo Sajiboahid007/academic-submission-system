@@ -68,21 +68,26 @@
       <td mat-cell *matCellDef="let category">{{ category.Name }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="Status">
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let category">{{ category.Code }}</td>
+    </ng-container>
+
+    <!-- <ng-container matColumnDef="Status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let category">
         <p-badge *ngIf="category.Status" value="Active" severity="success" />
         <p-badge *ngIf="!category.Status" value="Inactive" severity="danger" />
       </td>
-    </ng-container>
+    </ng-container> -->
 
-    <ng-container matColumnDef="Image">
+    <!-- <ng-container matColumnDef="Image">
       <th mat-header-cell *matHeaderCellDef>Image</th>
 
       <td mat-cell *matCellDef="let category">
         <img [src]="category.ImageUrl" alt="Category Image" class="image" />
       </td>
-    </ng-container>
+    </ng-container> -->
 
     <ng-container matColumnDef="Action">
       <th mat-header-cell *matHeaderCellDef>Actions</th>

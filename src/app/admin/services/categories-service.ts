@@ -25,7 +25,7 @@ export class CategoriesService {
     return this.http.post<AppQuery<Category>>(`${this.baseUrl}/api/categories/create`, category);
   }
 
-  upodate(category: Category): Observable<AppQuery<Category>> {
+  update(category: Category): Observable<AppQuery<Category>> {
     return this.http.put<AppQuery<Category>>(
       `${this.baseUrl}/api/categories/update/${category.Id}`,
       category,

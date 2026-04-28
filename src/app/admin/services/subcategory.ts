@@ -12,6 +12,6 @@ export class Subcategory {
   baseUrl = AcademicSubmissionConfig.BaseUrl;
 
   public getSubcategories(): Observable<AppQuery<Subcategory[]>> {
-    return this.http.get<AppQuery<Subcategory[]>>(`${this.baseUrl}/api/sub-categories/get`);
+    return this.http.get<AppQuery<Subcategory[]>>(`${this.baseUrl}/api/subcategories/get`);
   }
 }

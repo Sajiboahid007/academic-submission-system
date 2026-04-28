@@ -9,17 +9,20 @@
 
     <div [formGroup]="loginForm" class="login-form">
       <div class="field-group">
-        <label for="email">Email</label>
+        <label for="StudentId">Student ID</label>
         <input
-          id="email"
+          id="StudentId"
           pInputText
           class="full-width"
-          formControlName="Email"
-          type="email"
-          placeholder="Enter your email"
+          formControlName="StudentId"
+          type="text"
+          placeholder="Enter your Student ID"
         />
-        <small class="field-error" *ngIf="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched">
-          Please enter a valid email
+        <small
+          class="field-error"
+          *ngIf="loginForm.get('StudentId')?.invalid && loginForm.get('StudentId')?.touched"
+        >
+          Please enter a valid Student ID
         </small>
       </div>
 
