@@ -1,0 +1,80 @@
+<p-card header="{{ !isEditMode ? 'Add Category' : 'Edit Category' }}">
+  <form [formGroup]="categoryForm">
+    <div>
+      <p-floatlabel variant="on">
+        <input
+          id="category-name"
+          pInputText
+          class="full-width"
+          formControlName="Name"
+          type="text"
+          autocomplete="off"
+        />
+        <label for="category-name">Category Name</label>
+      </p-floatlabel>
+
+      <p-message
+        *ngIf="categoryForm.get('Name')?.invalid"
+        severity="error"
+        size="small"
+        variant="simple"
+        text="Please enter a valid category name"
+      ></p-message>
+    </div>
+
+    <div fxLayout="row" style="margin-top: 10px">
+      <div fxFlex="13">Status</div>
+      <div fxFlex="15">
+        <p-toggleswitch formControlName="Status" />
+      </div>
+      <div fxFlex="20" style="font-weight: 700">
+        {{ categoryForm.get('Status')?.value ? 'Active' : 'Inactive' }}
+      </div>
+    </div>
+
+    <!-- <p-fileupload
+      accept="image/*"
+      maxFileSize="1000000"
+      mode="advanced"
+      (onSelect)="onUpload($event)"
+    >
+      <ng-template #empty>
+        <div>Drag and drop files to here to upload.</div>
+      </ng-template>
+    </p-fileupload> -->
+
+    <div>
+      <p-fileupload
+        accept="image/*"
+        mode="advanced"
+        [auto]="true"
+        [customUpload]="true"
+        (onSelect)="onUpload($event)"
+      >
+        <ng-template #empty>
+          <div></div>
+          <div>Drag and drop files to here to upload.</div>
+        </ng-template>
+      </p-fileupload>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        class="w-full"
+        [outlined]="true"
+        styleClass="w-full"
+        (onClick)="onCancel()"
+      />
+      <p-button
+        label="{{ isEditMode ? 'Update' : 'Save' }}"
+        class="w-full"
+        styleClass="w-full"
+        (onClick)="onSave()"
+      />
+    </div>
+  </ng-template>
+</p-card>

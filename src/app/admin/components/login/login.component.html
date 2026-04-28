@@ -1,0 +1,54 @@
+<div class="login-container" *ngIf="loginForm">
+  <p-card class="login-card">
+    <ng-template pTemplate="header">
+      <div class="login-card-header">
+        <h2>Login</h2>
+        <p>Enter your credentials</p>
+      </div>
+    </ng-template>
+
+    <div [formGroup]="loginForm" class="login-form">
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          pInputText
+          class="full-width"
+          formControlName="Email"
+          type="email"
+          placeholder="Enter your email"
+        />
+        <small class="field-error" *ngIf="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched">
+          Please enter a valid email
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          pInputText
+          class="full-width"
+          formControlName="Password"
+          type="password"
+          placeholder="Enter your password"
+        />
+        <small
+          class="field-error"
+          *ngIf="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched"
+        >
+          Password is required
+        </small>
+      </div>
+    </div>
+
+    <div class="login-actions">
+      <p-button label="Cancel" severity="secondary" [outlined]="true"></p-button>
+      <p-button
+        [label]="loginInProgress ? 'Logging in...' : 'Login'"
+        [disabled]="loginInProgress"
+        (onClick)="onLogin()"
+      ></p-button>
+    </div>
+  </p-card>
+</div>

@@ -1,0 +1,43 @@
+<p-card header="{{ !isEditMode ? 'Add Category' : 'Edit Category' }}">
+  <form [formGroup]="subcategoryForm">
+    <div>
+      <p-floatlabel variant="on">
+        <input
+          id="subcategory-name"
+          pInputText
+          class="full-width"
+          formControlName="Name"
+          type="text"
+          autocomplete="off"
+        />
+        <label for="subcategory-name">Subcategory Name</label>
+      </p-floatlabel>
+
+      <p-message
+        *ngIf="subcategoryForm.get('Name')?.invalid"
+        severity="error"
+        size="small"
+        variant="simple"
+        text="Please enter a valid subcategory name"
+      ></p-message>
+    </div>
+    <div fxLayout="row" style="margin-top: 10px">
+      <div fxFlex="13">Status</div>
+      <div fxFlex="15">
+        <p-toggleswitch formControlName="Status" />
+      </div>
+      <div fxFlex="20" style="font-weight: 700">
+        {{ subcategoryForm.get('Status')?.value ? 'Active' : 'Inactive' }}
+      </div>
+    </div>
+    <div>
+      <!-- <p-dropdown
+        [options]=""
+        [(ngModel)]="selectedCity"
+        [checkmark]="true"
+        optionLabel="name"
+        placeholder="Select a City"
+      /> -->
+    </div>
+  </form>
+</p-card>

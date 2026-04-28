@@ -1,0 +1,31 @@
+.card-header {
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+mat-card-content {
+  table {
+    width: 100%;
+  }
+
+  mat-paginator {
+    background: transparent;
+  }
+}
+
+.image {
+  margin: 8px;
+  height: 75px;
+}
