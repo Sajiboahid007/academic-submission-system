@@ -18,15 +18,19 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { SelectModule } from 'primeng/select';
 // import { TableModule } from 'primeng/table';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+
+
 const primeNgModules = [
   DividerModule,
   BadgeModule,
   MeterGroupModule,
   FileUploadModule,
   ToggleSwitchModule,
+  SelectModule
 ];
 
 @NgModule({

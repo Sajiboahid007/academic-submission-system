@@ -256,3 +256,83 @@ table {
   justify-content: center;
   gap: 0.75rem;
 }
+
+/* Global Modal Form Styles */
+.modal-form-container {
+  padding: 16px;
+}
+
+.modal-header-section {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+
+  .header-icon {
+    font-size: 24px;
+    color: #1976d2;
+  }
+
+  .header-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.modal-footer-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  .btn-cancel {
+    width: 120px;
+  }
+
+  .btn-save {
+    width: 160px;
+  }
+}
+
+.field-label {
+  font-weight: 600;
+  color: #444;
+
+  .required-asterisk {
+    color: red;
+  }
+}
+
+.float-label-wrapper {
+  width: 100%;
+  display: block;
+}
+
+.dropdown-icon {
+  color: #666;
+}
+
+.status-container {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+
+  .status-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+  }
+
+  .status-text {
+    font-weight: 600;
+
+    &.active {
+      color: #2e7d32;
+    }
+    &.inactive {
+      color: #757575;
+    }
+  }
+}

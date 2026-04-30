@@ -7,12 +7,12 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { CategoryInsertUpdateComponent } from './components/categories/category-insert-update/category-insert-update.component';
-import { SubcategoryComponent } from './components/subcategory/subcategory.component';
-import { SubcategoryInsertUpdateComponent } from './components/subcategory/subcategory-insert-update/subcategory-insert-update.component';
+import { SubcategoryListComponent } from './components/subcategory-list/subcategory-list.component';
+import { InsertOrUpdateSubcategoryComponent } from './components/subcategory-list/insert-or-update-subcategory/insert-or-update-subcategory.component';
 
 @NgModule({
-  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryComponent, SubcategoryInsertUpdateComponent],
+  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
-  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryComponent, SubcategoryInsertUpdateComponent],
+  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent],
 })
-export class AdminModule {}
+export class AdminModule { }
