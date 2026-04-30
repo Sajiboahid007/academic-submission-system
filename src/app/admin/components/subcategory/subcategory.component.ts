@@ -5,8 +5,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
 import { Category } from '../../../fds-config/entity-models/categories';
 import { CategoriesService } from '../../services/categories-service';
-import { Subcategory } from '../../services/subcategory';
+import { SubcategoryService } from '../../services/subcategory-service';
 import { SubcategoryInsertUpdateComponent } from './subcategory-insert-update/subcategory-insert-update.component';
+import { SubCategory } from '../../../fds-config/entity-models/subcategory';
+import { AppQuery } from '../../../shared/app-query';
 
 @Component({
   selector: 'subcategory',
@@ -16,20 +18,20 @@ import { SubcategoryInsertUpdateComponent } from './subcategory-insert-update/su
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubcategoryComponent implements OnInit, OnDestroy {
-  subcategory: Subcategory[] = [];
+  subcategory: SubCategory[] = [];
   categories: Category[] = [];
   destroy$: Subject<void> = new Subject<void>();
-  dataSource = new MatTableDataSource<Category>([]);
+  dataSource = new MatTableDataSource<SubCategory>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  displayedColumns = ['CategoryName', 'SubCategoryName', 'Status', 'Action'];
+  displayedColumns = ['CategoryName', 'SubCategoryName', 'Code', 'Action'];
 
   constructor(
-    private readonly subcategoryService: Subcategory,
+    private readonly subcategoryService: SubcategoryService,
     private readonly categoryService: CategoriesService,
     private readonly dialog: MatDialog,
-  ) {}
+  ) { }
 
   AddSubcategory() {
     const dialogRef = this.dialog.open(SubcategoryInsertUpdateComponent, {
@@ -40,11 +42,34 @@ export class SubcategoryComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.getCategories();
+        this.getSubcategories();
       }
     });
   }
 
-  onEditSubcategory(Id: number) {}
+  onEditSubcategory(Id: number) {
+    this.subcategoryService.getSubcategoryById(Id).subscribe({
+      next: (res: AppQuery<SubCategory>) => {
+        const subcategory = res?.data;
+
+        const dialogRef = this.dialog.open(SubcategoryInsertUpdateComponent, {
+          width: '500px',
+          autoFocus: true,
+          data: subcategory,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.getCategories();
+            this.getSubcategories();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error fetching subcategory:', error);
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.getSubcategories();

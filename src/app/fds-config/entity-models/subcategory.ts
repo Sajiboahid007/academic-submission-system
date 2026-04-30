@@ -1,12 +1,11 @@
-export interface Subcategory {
+export interface SubCategory {
   Id: number;
-  CategoriesId: number;
   Name: string;
-  Status: boolean;
-  CreatedDate: Date;
-  UpdatedDate: Date;
-  CreatedBy: string;
-  UpdatedBy: string;
+  Code?: string | null;
   IsMarkToDelete: boolean;
-  ImageUrl: string;
+  CategoryId: number;
+  CreatedAt?: Date | null;
+  UpdatedAt?: Date | null;
+  CreatedBy: string;
+  UpdatedBy?: string | null;
 }

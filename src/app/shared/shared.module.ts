@@ -70,4 +70,4 @@ const primeNgModules = [
     ...primeNgModules,
   ],
 })
-export class SharedModule {}
+export class SharedModule { }
