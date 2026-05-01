@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Category } from '../../../../fds-config/entity-models/categories';
 import { CategoriesService } from '../../../services/categories-service';
 import { SubcategoryService } from '../../../services/subcategory-service';
+import { ToastService } from '../../../../shared/services/toast.service';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
 
 @Component({
@@ -30,7 +31,8 @@ export class InsertOrUpdateSubcategoryComponent implements OnInit {
   constructor(
     private readonly categoriesService: CategoriesService,
     private readonly subcategoryService: SubcategoryService,
-    private readonly cd: ChangeDetectorRef
+    private readonly cd: ChangeDetectorRef,
+    private readonly toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -97,9 +99,11 @@ export class InsertOrUpdateSubcategoryComponent implements OnInit {
     const subCategory = this.subcategoryForm.getRawValue() as SubCategory;
     this.subcategoryService.addSubcategory(subCategory).subscribe({
       next: (res: any) => {
+        this.toastService.success('Subcategory created successfully');
         this.closeDialog.emit();
       },
       error: (error: any) => {
+        this.toastService.error('Error creating subcategory');
         console.error('Error saving subcategory:', error);
       }
     });
@@ -112,9 +116,11 @@ export class InsertOrUpdateSubcategoryComponent implements OnInit {
 
     this.subcategoryService.updateSubcategory(subCategory).subscribe({
       next: (res: any) => {
+        this.toastService.success('Subcategory updated successfully');
         this.closeDialog.emit();
       },
       error: (error: any) => {
+        this.toastService.error('Error updating subcategory');
         console.error('Error updating subcategory:', error);
       }
     });
