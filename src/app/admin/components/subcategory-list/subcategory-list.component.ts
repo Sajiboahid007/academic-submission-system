@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
   standalone: false,
   templateUrl: './subcategory-list.component.html',
   styleUrl: './subcategory-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SubcategoryListComponent implements OnInit {
   @ViewChild('subCategoryModal') subCategoryModal!: TemplateRef<any>;

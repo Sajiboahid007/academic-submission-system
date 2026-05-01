@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { AcademicSubmissionConfig } from '../../fds-config/constant/academic-submission-config';
 import { AppQuery } from '../../shared/app-query';
 import { SubCategory } from '../../fds-config/entity-models/subcategory';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubcategoryService {
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient, private readonly fb: FormBuilder) { }
   baseUrl = AcademicSubmissionConfig.BaseUrl;
 
   public getSubcategories(): Observable<AppQuery<SubCategory[]>> {
@@ -36,5 +37,14 @@ export class SubcategoryService {
 
   public deleteSubcategory(id: number): Observable<AppQuery<boolean>> {
     return this.http.delete<AppQuery<boolean>>(`${this.baseUrl}/api/subcategories/delete/${id}`);
+  }
+
+  public createSubCategoryForm() {
+    return this.fb.group({
+      CategoryId: [null, Validators.required],
+      Name: ['', Validators.required],
+      Code: ['', Validators.required],
+      Status: [true]
+    });
   }
 }

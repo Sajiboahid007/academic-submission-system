@@ -1,13 +1,15 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Category } from '../../../../fds-config/entity-models/categories';
 import { CategoriesService } from '../../../services/categories-service';
+import { SubcategoryService } from '../../../services/subcategory-service';
 
 @Component({
   selector: 'app-insert-or-update-subcategory',
   standalone: false,
   templateUrl: './insert-or-update-subcategory.component.html',
-  styleUrl: './insert-or-update-subcategory.component.scss'
+  styleUrl: './insert-or-update-subcategory.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InsertOrUpdateSubcategoryComponent implements OnInit {
   @Output() closeDialog = new EventEmitter<void>();
@@ -15,8 +17,8 @@ export class InsertOrUpdateSubcategoryComponent implements OnInit {
   categories: Category[] = [];
 
   constructor(
-    private fb: FormBuilder,
-    private categoriesService: CategoriesService
+    private readonly categoriesService: CategoriesService,
+    private readonly subcategoryService: SubcategoryService
   ) { }
 
   ngOnInit(): void {
@@ -25,12 +27,9 @@ export class InsertOrUpdateSubcategoryComponent implements OnInit {
   }
 
   initForm(): void {
-    this.subcategoryForm = this.fb.group({
-      CategoryId: [null, Validators.required],
-      Name: ['', Validators.required],
-      Code: ['', Validators.required],
-      Status: [true]
-    });
+    this.subcategoryForm = this.subcategoryService.createSubCategoryForm();
+    this.subcategoryForm.markAllAsTouched();
+    this.subcategoryForm.updateValueAndValidity();
   }
 
   getCategories(): void {
