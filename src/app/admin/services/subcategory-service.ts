@@ -39,12 +39,13 @@ export class SubcategoryService {
     return this.http.delete<AppQuery<boolean>>(`${this.baseUrl}/api/subcategories/delete/${id}`);
   }
 
-  public createSubCategoryForm() {
+  public createSubCategoryForm(subCategory?: SubCategory) {
     return this.fb.group({
-      CategoryId: [null, Validators.required],
-      Name: ['', Validators.required],
-      Code: ['', Validators.required],
-      Status: [true]
+      Id: [subCategory?.Id ?? 0],
+      CategoryId: [subCategory?.CategoryId ?? null, Validators.required],
+      Name: [subCategory?.Name ?? '', Validators.required],
+      Code: [subCategory?.Code ?? '', Validators.required],
+      Status: [subCategory?.Status ?? false]
     });
   }
 }

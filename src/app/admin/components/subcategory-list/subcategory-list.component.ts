@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subject, takeUntil } from 'rxjs';
+import { SubCategory } from '../../../fds-config/entity-models/subcategory';
+import { AppQuery } from '../../../shared/app-query';
+import { SubcategoryService } from '../../services/subcategory-service';
 
 @Component({
   selector: 'app-subcategory-list',
@@ -8,28 +14,73 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './subcategory-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SubcategoryListComponent implements OnInit {
+export class SubcategoryListComponent implements OnInit, OnDestroy {
   @ViewChild('subCategoryModal') subCategoryModal!: TemplateRef<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   private dialogRef!: MatDialogRef<any>;
 
-  constructor(private dialog: MatDialog) { }
+  destroy$: Subject<void> = new Subject<void>();
+  subcategories: SubCategory[] = [];
+  dataSource = new MatTableDataSource<SubCategory>([]);
+  displayedColumns = ['Name', 'Code', 'Action'];
+
+  subCategoryEditId: number = 0;
+
+  constructor(
+    private dialog: MatDialog,
+    private readonly subcategoryService: SubcategoryService,
+    private readonly cd: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-
+    this.getSubcategories();
   }
 
-  openAddModal(): void {
+  getSubcategories(): void {
+    this.subcategoryService
+      .getSubcategories()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: AppQuery<SubCategory[]>) => {
+          this.subcategories = res?.data || [];
+          this.dataSource.data = this.subcategories;
+          this.dataSource.paginator = this.paginator;
+          this.cd.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error fetching subcategories:', error);
+        },
+      });
+  }
+
+  openAddModal(isEdit: boolean = false): void {
+    if (!isEdit) {
+      this.subCategoryEditId = 0;
+    }
     this.dialogRef = this.dialog.open(this.subCategoryModal, {
       width: '600px',
       disableClose: false,
-      autoFocus: false
+      autoFocus: false,
+      data: { id: this.subCategoryEditId }
     });
   }
 
   closeModal(): void {
     if (this.dialogRef) {
       this.dialogRef.close();
+      this.getSubcategories();
     }
+  }
+
+  onEditSubcategory(id: number): void {
+    this.subCategoryEditId = id;
+    this.cd.detectChanges();
+    this.openAddModal(true);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.complete();
+    this.destroy$.next();
   }
 }
 
