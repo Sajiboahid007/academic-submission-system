@@ -1,3 +1,61 @@
+<div
+  fxLayout="row"
+  fxLayoutAlign="space-between center"
+  style="
+    margin-bottom: 16px;
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+  "
+>
+  <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Category List</h2>
+  <button
+    pButton
+    type="button"
+    label="Add"
+    icon="pi pi-plus"
+    class="p-button-rounded p-button-success"
+    (click)="AddCategory()"
+  ></button>
+</div>
+
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z0" style="width: 100%">
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let categories">{{ categories.Name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef>Code</th>
+      <td mat-cell *matCellDef="let categories">{{ categories.Code }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let categories">
+        <button
+          pButton
+          icon="pi pi-pencil"
+          class="p-button-success btn-save"
+          (click)="onEditCategory(categories.Id)"
+        ></button>
+        <button pButton icon="pi pi-trash" class="p-button-danger btn-save"></button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20, 50]"
+    [pageSize]="5"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
+<!-- 
 <p-card header="Categories">
   <div fxLayout="row" fxLayoutAlign="space-between center">
     <div fxFlex="15">
@@ -6,10 +64,10 @@
     <div fxFlex="10" fxLayoutAlign="end center">
       <p-button severity="primary" type="button" (click)="AddCategory()"> Add </p-button>
     </div>
-  </div>
+  </div> -->
 
-  <p-divider />
-  <!-- 
+<!-- <p-divider /> -->
+<!-- 
   <p-table
     [value]="categories"
     [paginator]="true"
@@ -62,7 +120,7 @@
     </ng-template>
   </p-table> -->
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+<!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
     <ng-container matColumnDef="Name">
       <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let category">{{ category.Name }}</td>
@@ -71,9 +129,9 @@
     <ng-container matColumnDef="Code">
       <th mat-header-cell *matHeaderCellDef>Code</th>
       <td mat-cell *matCellDef="let category">{{ category.Code }}</td>
-    </ng-container>
+    </ng-container> -->
 
-    <!-- <ng-container matColumnDef="Status">
+<!-- <ng-container matColumnDef="Status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let category">
         <p-badge *ngIf="category.Status" value="Active" severity="success" />
@@ -81,7 +139,7 @@
       </td>
     </ng-container> -->
 
-    <!-- <ng-container matColumnDef="Image">
+<!-- <ng-container matColumnDef="Image">
       <th mat-header-cell *matHeaderCellDef>Image</th>
 
       <td mat-cell *matCellDef="let category">
@@ -89,7 +147,7 @@
       </td>
     </ng-container> -->
 
-    <ng-container matColumnDef="Action">
+<!-- <ng-container matColumnDef="Action">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let category">
         <button
@@ -115,4 +173,4 @@
     [pageSize]="5"
     showFirstLastButtons
   ></mat-paginator>
-</p-card>
+</p-card> -->

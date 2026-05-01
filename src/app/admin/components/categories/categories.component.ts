@@ -1,5 +1,12 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
@@ -14,11 +21,15 @@ import { CategoryInsertUpdateComponent } from './category-insert-update/category
   styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent implements OnInit, OnDestroy {
+  @ViewChild('CategoryModal') CategoryModal!: TemplateRef<any>;
   destroy$: Subject<void> = new Subject<void>();
   categories: Category[] = [];
   meters: any[] = [];
 
+  CategoryEditId: number = 0;
+
   dataSource = new MatTableDataSource<Category>([]);
+  private dialogReF!: MatDialogRef<any>;
 
   displayedColumns = ['Name', 'Code', 'Action'];
 
@@ -54,6 +65,18 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       });
     console.log('Categories after fetch call:', this.categories);
   }
+
+  // openAddModal(isEdit: boolean = false): void {
+  //   if (!isEdit) {
+  //     this.CategoryEditId = 0;
+  //   }
+  //   this.dialogReF = this.dialog.open(this.CategoryModal, {
+  //     width: '600px',
+  //     disableClose: false,
+  //     autoFocus: false,
+  //     data: { id: this.CategoryEditId },
+  //   });
+  // }
 
   AddCategory(): void {
     const dialogRef = this.dialog.open(CategoryInsertUpdateComponent, {
