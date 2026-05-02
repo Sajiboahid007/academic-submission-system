@@ -6,6 +6,8 @@ import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-
 import { LocalStorageService } from '../../services/local-storage.service';
 import { LoginService } from '../../services/login-service';
 
+export type AuthMode = 'login' | 'register';
+
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -13,8 +15,15 @@ import { LoginService } from '../../services/login-service';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
+  authMode: AuthMode = 'login';
   loginForm!: FormGroup;
+  registerForm!: FormGroup;
   loginInProgress = false;
+  registerInProgress = false;
+  loginError: string | null = null;
+  registerError: string | null = null;
+  /** Shown on the Sign in tab after a successful registration */
+  loginBannerSuccess: string | null = null;
 
   constructor(
     private readonly loginService: LoginService,
@@ -22,17 +31,37 @@ export class LoginComponent implements OnInit {
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
   ) {}
+
   ngOnInit(): void {
     this.loginForm = this.loginService.getLoginForm();
+    this.registerForm = this.loginService.getRegisterForm();
   }
 
-  public onLogin1() {
-    this.localStorageService.setItem(AcademicSubmissionConfig.JwtTokenKey, '1234567890');
-    this.localStorageService.setItem(AcademicSubmissionConfig.RefreshTokenKey, '1234567890');
-    this.router.navigate(['dashboard']);
+  setMode(mode: AuthMode): void {
+    this.authMode = mode;
+    this.loginError = null;
+    this.registerError = null;
+    if (mode === 'register') {
+      this.loginBannerSuccess = null;
+    }
+    this.cdr.detectChanges();
   }
 
-  public onLogin(): void {
+  onCancel(): void {
+    if (this.authMode === 'login') {
+      this.loginForm.reset();
+      this.loginError = null;
+      this.loginBannerSuccess = null;
+    } else {
+      this.registerForm.reset();
+      this.registerError = null;
+    }
+    this.cdr.detectChanges();
+  }
+
+  onLogin(): void {
+    this.loginError = null;
+    this.loginBannerSuccess = null;
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       this.cdr.detectChanges();
@@ -60,8 +89,47 @@ export class LoginComponent implements OnInit {
           );
           this.router.navigate(['dashboard']);
         },
-        error: (error) => {
-          console.log(error);
+        error: (err) => {
+          this.loginError =
+            err?.error?.message ?? err?.message ?? 'Sign in failed. Check your Student ID and password.';
+        },
+      });
+  }
+
+  onRegister(): void {
+    this.registerError = null;
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.registerInProgress = true;
+    this.cdr.detectChanges();
+
+    const raw = this.registerForm.getRawValue();
+    const payload = { StudentId: raw.StudentId, Password: raw.Password };
+
+    this.loginService
+      .register(payload)
+      .pipe(
+        finalize(() => {
+          this.registerInProgress = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.loginForm.patchValue({ StudentId: raw.StudentId });
+          this.registerForm.reset();
+          this.authMode = 'login';
+          this.loginBannerSuccess = 'Account created. You can sign in now.';
+          this.registerError = null;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.registerError =
+            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different Student ID.';
         },
       });
   }

@@ -15,6 +15,7 @@ import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -23,54 +24,44 @@ import { SelectModule } from 'primeng/select';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
+const materialNgModule = [
+  MatButtonModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatPaginatorModule,
+  MatTableModule,
+];
 
 const primeNgModules = [
-  DividerModule,
   BadgeModule,
-  MeterGroupModule,
+  ButtonModule,
+  CardModule,
+  DividerModule,
   FileUploadModule,
+  FloatLabelModule,
+  InputTextModule,
+  MessageModule,
+  MeterGroupModule,
+  PasswordModule,
+  SelectModule,
+  SelectButtonModule,
   ToggleSwitchModule,
-  SelectModule
 ];
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    CardModule,
-    FloatLabelModule,
-    InputTextModule,
-    MessageModule,
-    ButtonModule,
-    SelectButtonModule,
-    ToggleSwitchModule,
     FlexLayoutModule,
+    ...materialNgModule,
     ...primeNgModules,
   ],
   exports: [
     ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatPaginatorModule,
-    CardModule,
-    FloatLabelModule,
-    InputTextModule,
-    MessageModule,
-    ButtonModule,
-    SelectButtonModule,
-    ToggleSwitchModule,
     FlexLayoutModule,
+    ...materialNgModule,
     ...primeNgModules,
   ],
 })

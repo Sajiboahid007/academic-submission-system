@@ -1,57 +1,219 @@
-<div class="login-container" *ngIf="loginForm">
-  <p-card class="login-card">
-    <ng-template pTemplate="header">
-      <div class="login-card-header">
-        <h2>Login</h2>
-        <p>Enter your credentials</p>
+<div class="auth-shell">
+  <div class="auth-shell-bg" aria-hidden="true"></div>
+  <div class="auth-grid">
+    <aside class="auth-hero">
+      <div class="auth-hero-inner">
+        <span class="auth-badge">Admin portal</span>
+        <h1 class="auth-hero-title">Project & Thesis Approval System</h1>
+        <p class="auth-hero-lead">
+          Manage categories, submissions, and academic workflows from one secure place.
+        </p>
+        <ul class="auth-hero-list">
+          <li>Role-aware access</li>
+          <li>Structured submissions</li>
+          <li>Built for academic teams</li>
+        </ul>
       </div>
-    </ng-template>
+      <div class="auth-hero-glow" aria-hidden="true"></div>
+    </aside>
 
-    <div [formGroup]="loginForm" class="login-form">
-      <div class="field-group">
-        <label for="StudentId">Student ID</label>
-        <input
-          id="StudentId"
-          pInputText
-          class="full-width"
-          formControlName="StudentId"
-          type="text"
-          placeholder="Enter your Student ID"
-        />
-        <small
-          class="field-error"
-          *ngIf="loginForm.get('StudentId')?.invalid && loginForm.get('StudentId')?.touched"
-        >
-          Please enter a valid Student ID
-        </small>
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-tabs" role="tablist" aria-label="Authentication">
+          <button
+            type="button"
+            role="tab"
+            class="auth-tab"
+            [class.auth-tab-active]="authMode === 'login'"
+            [attr.aria-selected]="authMode === 'login'"
+            (click)="setMode('login')"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="auth-tab"
+            [class.auth-tab-active]="authMode === 'register'"
+            [attr.aria-selected]="authMode === 'register'"
+            (click)="setMode('register')"
+          >
+            Create account
+          </button>
+        </div>
+
+        <ng-container *ngIf="authMode === 'login' && loginForm">
+          <p-message *ngIf="loginError" severity="error" [text]="loginError" styleClass="auth-alert" />
+          <p-message
+            *ngIf="loginBannerSuccess"
+            severity="success"
+            [text]="loginBannerSuccess"
+            styleClass="auth-alert"
+          />
+          <div class="auth-panel-head">
+            <h2>Welcome back</h2>
+            <p>Use your student credentials to continue.</p>
+          </div>
+
+          <div [formGroup]="loginForm" class="auth-form">
+            <div class="field-group">
+              <label for="login-StudentId">Student ID</label>
+              <input
+                id="login-StudentId"
+                pInputText
+                class="auth-input"
+                formControlName="StudentId"
+                type="text"
+                autocomplete="username"
+                placeholder="e.g. STU-2024-001"
+              />
+              <small
+                class="field-error"
+                *ngIf="loginForm.get('StudentId')?.invalid && loginForm.get('StudentId')?.touched"
+              >
+                Student ID is required
+              </small>
+            </div>
+
+            <div class="field-group">
+              <label for="login-password">Password</label>
+              <p-password
+                id="login-password"
+                formControlName="Password"
+                [toggleMask]="true"
+                [feedback]="false"
+                placeholder="Enter your password"
+                styleClass="auth-password"
+                inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }"
+                autocomplete="current-password"
+              />
+              <small
+                class="field-error"
+                *ngIf="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched"
+              >
+                Password is required
+              </small>
+            </div>
+          </div>
+
+          <div class="auth-actions">
+            <p-button
+              label="Clear"
+              severity="secondary"
+              [outlined]="true"
+              type="button"
+              (onClick)="onCancel()"
+            />
+            <p-button
+              [label]="loginInProgress ? 'Signing in…' : 'Sign in'"
+              [disabled]="loginInProgress"
+              type="button"
+              (onClick)="onLogin()"
+            />
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="authMode === 'register' && registerForm">
+          <p-message *ngIf="registerError" severity="error" [text]="registerError" styleClass="auth-alert" />
+          <div class="auth-panel-head">
+            <h2>Create your account</h2>
+            <p>Choose a Student ID and a strong password to get started.</p>
+          </div>
+
+          <div [formGroup]="registerForm" class="auth-form">
+            <div class="field-group">
+              <label for="reg-StudentId">Student ID</label>
+              <input
+                id="reg-StudentId"
+                pInputText
+                class="auth-input"
+                formControlName="StudentId"
+                type="text"
+                autocomplete="username"
+                placeholder="Pick a unique Student ID"
+              />
+              <small
+                class="field-error"
+                *ngIf="registerForm.get('StudentId')?.invalid && registerForm.get('StudentId')?.touched"
+              >
+                Student ID is required
+              </small>
+            </div>
+
+            <div class="field-group">
+              <label for="reg-password">Password</label>
+              <p-password
+                id="reg-password"
+                formControlName="Password"
+                [toggleMask]="true"
+                [feedback]="true"
+                placeholder="At least 8 characters"
+                styleClass="auth-password"
+                inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }"
+                autocomplete="new-password"
+              />
+              <small
+                class="field-error"
+                *ngIf="registerForm.get('Password')?.errors?.['required'] && registerForm.get('Password')?.touched"
+              >
+                Password is required
+              </small>
+              <small
+                class="field-error"
+                *ngIf="registerForm.get('Password')?.errors?.['minlength'] && registerForm.get('Password')?.touched"
+              >
+                Use at least 8 characters
+              </small>
+            </div>
+
+            <div class="field-group">
+              <label for="reg-confirm">Confirm password</label>
+              <p-password
+                id="reg-confirm"
+                formControlName="ConfirmPassword"
+                [toggleMask]="true"
+                [feedback]="false"
+                placeholder="Re-enter password"
+                styleClass="auth-password"
+                inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }"
+                autocomplete="new-password"
+              />
+              <small
+                class="field-error"
+                *ngIf="
+                  registerForm.get('ConfirmPassword')?.invalid &&
+                  registerForm.get('ConfirmPassword')?.touched
+                "
+              >
+                Please confirm your password
+              </small>
+              <small class="field-error" *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched">
+                Passwords do not match
+              </small>
+            </div>
+          </div>
+
+          <div class="auth-actions">
+            <p-button
+              label="Clear"
+              severity="secondary"
+              [outlined]="true"
+              type="button"
+              (onClick)="onCancel()"
+            />
+            <p-button
+              [label]="registerInProgress ? 'Creating account…' : 'Create account'"
+              [disabled]="registerInProgress"
+              type="button"
+              (onClick)="onRegister()"
+            />
+          </div>
+        </ng-container>
       </div>
-
-      <div class="field-group">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          pInputText
-          class="full-width"
-          formControlName="Password"
-          type="password"
-          placeholder="Enter your password"
-        />
-        <small
-          class="field-error"
-          *ngIf="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched"
-        >
-          Password is required
-        </small>
-      </div>
-    </div>
-
-    <div class="login-actions">
-      <p-button label="Cancel" severity="secondary" [outlined]="true"></p-button>
-      <p-button
-        [label]="loginInProgress ? 'Logging in...' : 'Login'"
-        [disabled]="loginInProgress"
-        (onClick)="onLogin()"
-      ></p-button>
-    </div>
-  </p-card>
+      <p class="auth-footnote">Protected access · For authorized staff and students only</p>
+    </main>
+  </div>
 </div>

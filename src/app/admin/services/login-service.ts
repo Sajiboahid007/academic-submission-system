@@ -1,8 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AcademicSubmissionConfig } from '../../fds-config/constant/academic-submission-config';
+
+const passwordsMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  const password = group.get('Password')?.value;
+  const confirm = group.get('ConfirmPassword')?.value;
+  if (confirm == null || confirm === '') {
+    return null;
+  }
+  return password === confirm ? null : { passwordMismatch: true };
+};
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +32,29 @@ export class LoginService {
   ) {}
 
   getLoginForm(): FormGroup {
-    const loginForm = this.fb.group({
+    return this.fb.group({
       StudentId: ['', [Validators.required]],
       Password: ['', [Validators.required]],
     });
+  }
 
-    return loginForm;
+  getRegisterForm(): FormGroup {
+    return this.fb.group(
+      {
+        StudentId: ['', [Validators.required]],
+        Password: ['', [Validators.required, Validators.minLength(8)]],
+        ConfirmPassword: ['', [Validators.required]],
+      },
+      { validators: passwordsMatchValidator },
+    );
   }
 
   login(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/login`, data);
+  }
+
+  register(data: { StudentId: string; Password: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/register`, data);
   }
 
   refreshToken(refreshToken: string): Observable<any> {
