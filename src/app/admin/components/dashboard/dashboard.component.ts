@@ -33,13 +33,13 @@ export class DashboardComponent implements OnInit {
     {
       label: 'Category',
       route: '/dashboard/categories',
-      icon: '',
+      icon: '📚',
       description: 'Manage Categories',
     },
     {
       label: 'Subcategory',
       route: '/dashboard/subcategory',
-      icon: '',
+      icon: '◽',
       description: 'Manage Sub Categories',
     },
   ];

@@ -237,6 +237,34 @@
     color: #cbd5e1;
   }
 }
+.field-group-userId {
+  width: 50%;
+  flex-direction: row;
+
+  label {
+    font-weight: 600;
+    color: #cbd5e1;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.field-flex {
+  display: flex;
+  gap: 1.4rem;
+}
+
+.field-group-name {
+  width: 50%;
+  flex-direction: row;
+
+  label {
+    font-weight: 600;
+    color: #cbd5e1;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
 
 .field-error {
   color: #fca5a5;

@@ -91,7 +91,9 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           this.loginError =
-            err?.error?.message ?? err?.message ?? 'Sign in failed. Check your Student ID and password.';
+            err?.error?.message ??
+            err?.message ??
+            'Sign in failed. Check your Student ID and password.';
         },
       });
   }
@@ -108,7 +110,12 @@ export class LoginComponent implements OnInit {
     this.cdr.detectChanges();
 
     const raw = this.registerForm.getRawValue();
-    const payload = { StudentId: raw.StudentId, Password: raw.Password };
+    const payload = {
+      StudentId: raw.StudentId,
+      Name: raw.Name,
+      Email: raw.Email,
+      Password: raw.Password,
+    };
 
     this.loginService
       .register(payload)
@@ -129,7 +136,7 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           this.registerError =
-            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different Student ID.';
+            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different User ID.';
         },
       });
   }

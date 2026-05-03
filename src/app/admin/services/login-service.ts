@@ -42,6 +42,8 @@ export class LoginService {
     return this.fb.group(
       {
         StudentId: ['', [Validators.required]],
+        Name: ['', [Validators.required]],
+        Email: ['', [Validators.required, Validators.email]],
         Password: ['', [Validators.required, Validators.minLength(8)]],
         ConfirmPassword: ['', [Validators.required]],
       },
@@ -53,7 +55,7 @@ export class LoginService {
     return this.http.post(`${this.baseUrl}/api/login`, data);
   }
 
-  register(data: { StudentId: string; Password: string }): Observable<any> {
+  register(data: { StudentId: any; Name: string; Email: string; Password: any }): Observable<any> {
     return this.http.post(`${this.baseUrl}/api/register`, data);
   }
 

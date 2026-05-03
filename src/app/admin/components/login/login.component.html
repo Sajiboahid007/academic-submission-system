@@ -43,7 +43,12 @@
         </div>
 
         <ng-container *ngIf="authMode === 'login' && loginForm">
-          <p-message *ngIf="loginError" severity="error" [text]="loginError" styleClass="auth-alert" />
+          <p-message
+            *ngIf="loginError"
+            severity="error"
+            [text]="loginError"
+            styleClass="auth-alert"
+          />
           <p-message
             *ngIf="loginBannerSuccess"
             severity="success"
@@ -52,12 +57,12 @@
           />
           <div class="auth-panel-head">
             <h2>Welcome back</h2>
-            <p>Use your student credentials to continue.</p>
+            <p>Use your credentials information to continue.</p>
           </div>
 
           <div [formGroup]="loginForm" class="auth-form">
             <div class="field-group">
-              <label for="login-StudentId">Student ID</label>
+              <label for="login-StudentId">User ID</label>
               <input
                 id="login-StudentId"
                 pInputText
@@ -71,7 +76,7 @@
                 class="field-error"
                 *ngIf="loginForm.get('StudentId')?.invalid && loginForm.get('StudentId')?.touched"
               >
-                Student ID is required
+                User ID is required
               </small>
             </div>
 
@@ -115,29 +120,84 @@
         </ng-container>
 
         <ng-container *ngIf="authMode === 'register' && registerForm">
-          <p-message *ngIf="registerError" severity="error" [text]="registerError" styleClass="auth-alert" />
+          <p-message
+            *ngIf="registerError"
+            severity="error"
+            [text]="registerError"
+            styleClass="auth-alert"
+          />
           <div class="auth-panel-head">
             <h2>Create your account</h2>
-            <p>Choose a Student ID and a strong password to get started.</p>
+            <p>Choose a User ID and a strong password to get started.</p>
           </div>
 
           <div [formGroup]="registerForm" class="auth-form">
+            <div class="field-flex">
+              <div class="field-group-userId">
+                <label for="reg-StudentId">User ID</label>
+                <input
+                  id="reg-StudentId"
+                  pInputText
+                  class="auth-input"
+                  formControlName="StudentId"
+                  type="text"
+                  autocomplete="username"
+                  placeholder="Unique user ID"
+                />
+                <small
+                  class="field-error"
+                  *ngIf="
+                    registerForm.get('StudentId')?.invalid && registerForm.get('StudentId')?.touched
+                  "
+                >
+                  User ID is required
+                </small>
+              </div>
+
+              <div class="field-group-name">
+                <label for="reg-Name">Name</label>
+                <input
+                  id="reg-Name"
+                  pInputText
+                  class="auth-input"
+                  formControlName="Name"
+                  type="text"
+                  autocomplete="username"
+                  placeholder="Your name.."
+                />
+                <small
+                  class="field-error"
+                  *ngIf="registerForm.get('Name')?.invalid && registerForm.get('Name')?.touched"
+                >
+                  Name is required
+                </small>
+              </div>
+            </div>
+
             <div class="field-group">
-              <label for="reg-StudentId">Student ID</label>
+              <label for="reg-Email">Email</label>
               <input
-                id="reg-StudentId"
+                id="reg-Email"
                 pInputText
                 class="auth-input"
-                formControlName="StudentId"
+                formControlName="Email"
                 type="text"
                 autocomplete="username"
-                placeholder="Pick a unique Student ID"
+                placeholder="Enter your email..."
               />
               <small
                 class="field-error"
-                *ngIf="registerForm.get('StudentId')?.invalid && registerForm.get('StudentId')?.touched"
+                *ngIf="registerForm.get('Email')?.invalid && registerForm.get('Email')?.touched"
               >
-                Student ID is required
+                Email is required
+              </small>
+              <small
+                class="field-error"
+                *ngIf="
+                  registerForm.get('Email')?.errors?.['email'] && registerForm.get('Email')?.touched
+                "
+              >
+                Please enter a valid email address
               </small>
             </div>
 
@@ -156,13 +216,19 @@
               />
               <small
                 class="field-error"
-                *ngIf="registerForm.get('Password')?.errors?.['required'] && registerForm.get('Password')?.touched"
+                *ngIf="
+                  registerForm.get('Password')?.errors?.['required'] &&
+                  registerForm.get('Password')?.touched
+                "
               >
                 Password is required
               </small>
               <small
                 class="field-error"
-                *ngIf="registerForm.get('Password')?.errors?.['minlength'] && registerForm.get('Password')?.touched"
+                *ngIf="
+                  registerForm.get('Password')?.errors?.['minlength'] &&
+                  registerForm.get('Password')?.touched
+                "
               >
                 Use at least 8 characters
               </small>
@@ -190,7 +256,10 @@
               >
                 Please confirm your password
               </small>
-              <small class="field-error" *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched">
+              <small
+                class="field-error"
+                *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched"
+              >
                 Passwords do not match
               </small>
             </div>
