@@ -12,10 +12,11 @@ import { InsertOrUpdateSubcategoryComponent } from './components/subcategory-lis
 import { UserListComponent } from './components/user-list/user-list.component';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { BatchListComponent } from './components/batch-list/batch-list.component';
+import { InsertUpdateDepartmentComponent } from './components/department-list/insert-update-department/insert-update-department.component';
 
 @NgModule({
-  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent],
+  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent, InsertUpdateDepartmentComponent],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
-  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent],
+  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent, InsertUpdateDepartmentComponent],
 })
 export class AdminModule { }

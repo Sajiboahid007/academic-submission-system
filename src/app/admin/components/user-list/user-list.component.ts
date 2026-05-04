@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { Users } from '../../services/users';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { Users } from '../../../fds-config/entity-models/user';
+import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-user-list',
@@ -16,7 +17,7 @@ export class UserListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private readonly usersService: Users) {}
+  constructor(private readonly usersService: UserInfoService) {}
 
   ngOnInit(): void {
     this.getUsers();

@@ -4,6 +4,8 @@ import { DepartmentService } from '../../services/department-service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { AppQuery } from '../../../shared/app-query';
+import { InsertUpdateDepartmentComponent } from './insert-update-department/insert-update-department.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-department-list',
@@ -19,7 +21,10 @@ export class DepartmentListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns = ['Name', 'Code', 'Action'];
 
-  constructor(private readonly departmentService: DepartmentService) {}
+  constructor(
+    private readonly departmentService: DepartmentService,
+    private readonly dialog: MatDialog,
+  ) {}
   ngOnInit(): void {
     this.getDepartments();
   }
@@ -36,9 +41,40 @@ export class DepartmentListComponent implements OnInit {
       },
     });
   }
-  AddDepartment() {}
+  AddDepartment() {
+    const dialogRef = this.dialog.open(InsertUpdateDepartmentComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: null,
+    });
+
+    dialogRef.afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.getDepartments();
+      }
+    });
+  }
 
   onDeleteDepartment(department: Department) {}
 
-  onEditDepartment(department: Department) {}
+  onEditDepartment(id: number) {
+    this.departmentService.getDepartmentById(id).subscribe({
+      next: (response: AppQuery<Department>) => {
+        const dialogRef = this.dialog.open(InsertUpdateDepartmentComponent, {
+          width: '500px',
+          autoFocus: true,
+          data: response.data,
+        });
+
+        dialogRef.afterClosed().subscribe((res: any) => {
+          if (res) {
+            this.getDepartments();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching department:', error);
+      },
+    });
+  }
 }

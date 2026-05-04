@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/cor
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { UserInfoService } from '../../services/user-info-service';
+import { Users } from '../../../fds-config/entity-models/user';
 
 @Component({
   selector: 'dashboard',
@@ -13,8 +14,10 @@ import { UserInfoService } from '../../services/user-info-service';
 export class DashboardComponent implements OnInit {
   userName: string = '';
   userRole: string = '';
+  users: Users[] = [];
 
   ngOnInit(): void {
+    this.getUsers();
     const userInfo = this.userInfoService.getUserInfo();
     if (!userInfo) {
       return;
@@ -76,6 +79,14 @@ export class DashboardComponent implements OnInit {
 
     // const userInfo = this.userInfoService.getUserInfo();
     // console.log(userInfo);
+  }
+
+  getUsers() {
+    this.userInfoService.getUsers().subscribe({
+      next: (response) => {
+        this.users = response.data;
+      },
+    });
   }
 
   toggleSidebar(): void {
