@@ -43,7 +43,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getCategories();
-    console.log('Categories fetched:', this.categories);
   }
 
   getCategories(): void {
@@ -63,7 +62,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
           console.error('Error fetching categories:', error);
         },
       });
-    console.log('Categories after fetch call:', this.categories);
   }
 
   // openAddModal(isEdit: boolean = false): void {

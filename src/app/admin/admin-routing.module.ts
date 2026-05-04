@@ -4,6 +4,8 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LoginComponent } from './components/login/login.component';
 import { SubcategoryListComponent } from './components/subcategory-list/subcategory-list.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { DepartmentListComponent } from './components/department-list/department-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,7 +23,15 @@ const routes: Routes = [
       },
       {
         path: 'subcategory',
-        component: SubcategoryListComponent
+        component: SubcategoryListComponent,
+      },
+      {
+        path: 'user',
+        component: UserListComponent,
+      },
+      {
+        path: 'department',
+        component: DepartmentListComponent,
       },
     ],
   },
@@ -31,4 +41,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminRoutingModule { }
+export class AdminRoutingModule {}

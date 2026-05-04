@@ -42,6 +42,18 @@ export class DashboardComponent implements OnInit {
       icon: '◽',
       description: 'Manage Sub Categories',
     },
+    {
+      label: 'User',
+      route: '/dashboard/user',
+      icon: '👤',
+      description: 'Manage Users',
+    },
+    {
+      label: 'Department',
+      route: '/dashboard/department',
+      icon: '🏢',
+      description: 'Manage Departments',
+    },
   ];
 
   constructor(

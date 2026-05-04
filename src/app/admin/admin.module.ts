@@ -9,10 +9,12 @@ import { LoginComponent } from './components/login/login.component';
 import { CategoryInsertUpdateComponent } from './components/categories/category-insert-update/category-insert-update.component';
 import { SubcategoryListComponent } from './components/subcategory-list/subcategory-list.component';
 import { InsertOrUpdateSubcategoryComponent } from './components/subcategory-list/insert-or-update-subcategory/insert-or-update-subcategory.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { DepartmentListComponent } from './components/department-list/department-list.component';
 
 @NgModule({
-  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent],
+  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
-  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent],
+  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent],
 })
 export class AdminModule { }
