@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SubcategoryListComponent } from './components/subcategory-list/subcategory-list.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
+import { BatchListComponent } from './components/batch-list/batch-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -32,6 +33,10 @@ const routes: Routes = [
       {
         path: 'department',
         component: DepartmentListComponent,
+      },
+      {
+        path: 'batch',
+        component: BatchListComponent,
       },
     ],
   },

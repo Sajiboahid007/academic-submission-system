@@ -21,8 +21,8 @@ export class DashboardComponent implements OnInit {
     }
 
     console.log('userInfo', userInfo);
-    this.userName = userInfo?.name || '';
-    this.userRole = userInfo?.role || '';
+    this.userName = userInfo?.Name || '';
+    this.userRole = userInfo?.Role || '';
   }
 
   isSidebarOpen = signal(true);
@@ -53,6 +53,12 @@ export class DashboardComponent implements OnInit {
       route: '/dashboard/department',
       icon: '🏢',
       description: 'Manage Departments',
+    },
+    {
+      label: 'Batch',
+      route: '/dashboard/batch',
+      icon: '📦',
+      description: 'Manage Batches',
     },
   ];
 
