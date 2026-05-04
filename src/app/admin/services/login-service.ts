@@ -33,7 +33,7 @@ export class LoginService {
 
   getLoginForm(): FormGroup {
     return this.fb.group({
-      StudentId: ['', [Validators.required]],
+      Email: ['', [Validators.required]],
       Password: ['', [Validators.required]],
     });
   }

@@ -62,21 +62,21 @@
 
           <div [formGroup]="loginForm" class="auth-form">
             <div class="field-group">
-              <label for="login-StudentId">User ID</label>
+              <label for="login-Email">Email</label>
               <input
-                id="login-StudentId"
+                id="login-Email"
                 pInputText
                 class="auth-input"
-                formControlName="StudentId"
-                type="text"
+                formControlName="Email"
+                type="email"
                 autocomplete="username"
-                placeholder="e.g. STU-2024-001"
+                placeholder="e.g. user@example.com"
               />
               <small
                 class="field-error"
-                *ngIf="loginForm.get('StudentId')?.invalid && loginForm.get('StudentId')?.touched"
+                *ngIf="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched"
               >
-                User ID is required
+                Email is required
               </small>
             </div>
 

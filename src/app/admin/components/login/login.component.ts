@@ -91,9 +91,7 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           this.loginError =
-            err?.error?.message ??
-            err?.message ??
-            'Sign in failed. Check your Student ID and password.';
+            err?.error?.message ?? err?.message ?? 'Sign in failed. Check your Email and password.';
         },
       });
   }
@@ -127,7 +125,7 @@ export class LoginComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.loginForm.patchValue({ StudentId: raw.StudentId });
+          this.loginForm.patchValue({ Email: raw.Email });
           this.registerForm.reset();
           this.authMode = 'login';
           this.loginBannerSuccess = 'Account created. You can sign in now.';
@@ -136,7 +134,7 @@ export class LoginComponent implements OnInit {
         },
         error: (err) => {
           this.registerError =
-            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different User ID.';
+            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different Email.';
         },
       });
   }
