@@ -35,4 +35,8 @@ export class DepartmentService {
       department,
     );
   }
+
+  deleteDepartment(id: number): Observable<AppQuery<void>> {
+    return this.http.put<AppQuery<void>>(`${this.baseUrl}/api/departments/delete/${id}`, null);
+  }
 }

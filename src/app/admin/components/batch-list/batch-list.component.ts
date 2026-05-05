@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { BatchService } from '../../services/batch-service';
 import { InsertUpdateBatchesComponent } from './insert-update-batches/insert-update-batches.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AppQuery } from '../../../shared/app-query';
 
 @Component({
   selector: 'app-batch-list',
@@ -58,5 +59,26 @@ export class BatchListComponent implements OnInit {
   }
 
   onDeleteBatch(batch: Batches) {}
-  onEditBatch(batch: Batches) {}
+  onEditBatch(id: number) {
+    this.batchService.getBatchById(id).subscribe({
+      next: (res: AppQuery<Batches>) => {
+        const batchToUpdate = res?.data;
+
+        const dialogRef = this.dialog.open(InsertUpdateBatchesComponent, {
+          width: '500px',
+          autoFocus: true,
+          data: batchToUpdate,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.getBatches();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error fetching batch:', error);
+      },
+    });
+  }
 }

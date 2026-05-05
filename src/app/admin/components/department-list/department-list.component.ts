@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AppQuery } from '../../../shared/app-query';
 import { InsertUpdateDepartmentComponent } from './insert-update-department/insert-update-department.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-department-list',
@@ -24,6 +25,7 @@ export class DepartmentListComponent implements OnInit {
   constructor(
     private readonly departmentService: DepartmentService,
     private readonly dialog: MatDialog,
+    private readonly toastService: ToastService,
   ) {}
   ngOnInit(): void {
     this.getDepartments();
@@ -55,7 +57,18 @@ export class DepartmentListComponent implements OnInit {
     });
   }
 
-  onDeleteDepartment(department: Department) {}
+  onDeleteDepartment(id: number) {
+    console.log('Delete department with ID:', id);
+    this.departmentService.deleteDepartment(id).subscribe({
+      next: () => {
+        this.toastService.success('Department deleted successfully');
+        this.getDepartments();
+      },
+      error: (error) => {
+        console.error('Error deleting department:', error);
+      },
+    });
+  }
 
   onEditDepartment(id: number) {
     this.departmentService.getDepartmentById(id).subscribe({

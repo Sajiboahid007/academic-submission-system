@@ -49,6 +49,12 @@ export class InsertUpdateBatchesComponent implements OnInit {
     this.departmentService.getDepartments().subscribe({
       next: (response) => {
         this.department = response.data;
+
+        if (this.data) {
+          this.batchForm.patchValue({
+            DepartmentId: this.data.DepartmentId,
+          });
+        }
       },
       error: (error) => {
         console.error('Error fetching departments:', error);
@@ -63,6 +69,7 @@ export class InsertUpdateBatchesComponent implements OnInit {
   onSave() {
     if (this.batchForm.invalid) return;
     if (this.isEditMode) {
+      this.updateBatch();
     } else {
       this.saveBatch();
     }
@@ -76,6 +83,19 @@ export class InsertUpdateBatchesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error saving batch:', error);
+      },
+    });
+  }
+
+  updateBatch() {
+    const batchData: Batches = this.batchForm.getRawValue();
+    batchData.Id = this.batchId;
+    this.batchService.updateBatch(batchData).subscribe({
+      next: (response) => {
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error('Error updating batch:', error);
       },
     });
   }

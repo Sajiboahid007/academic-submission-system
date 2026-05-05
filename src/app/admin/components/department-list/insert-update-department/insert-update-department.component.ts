@@ -4,6 +4,7 @@ import { Department } from '../../../../fds-config/entity-models/department';
 import { MatTableDataSource } from '@angular/material/table';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DepartmentService } from '../../../services/department-service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-insert-update-department',
@@ -22,6 +23,7 @@ export class InsertUpdateDepartmentComponent implements OnInit {
     private readonly dialogRef: MatDialogRef<InsertUpdateDepartmentComponent>,
     private readonly departmentService: DepartmentService,
     @Inject(MAT_DIALOG_DATA) public data: Department | null,
+    private readonly toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -40,7 +42,7 @@ export class InsertUpdateDepartmentComponent implements OnInit {
   onSave() {
     if (this.departmentForm.invalid) return;
     if (this.isEditMode) {
-      // this.updateDepartment();
+      this.updateDepartment();
     } else {
       this.saveDepartment();
     }
@@ -52,9 +54,26 @@ export class InsertUpdateDepartmentComponent implements OnInit {
   saveDepartment() {
     const depData: Department = this.departmentForm.getRawValue();
     this.departmentService.addDepartment(depData).subscribe({
-      next: () => this.dialogRef.close(true),
+      next: () => {
+        this.dialogRef.close(true);
+        this.toastService.success('Department created successfully');
+      },
+
       error: (error) => {
         console.error('Error saving department:', error);
+      },
+    });
+  }
+  updateDepartment() {
+    const depData: Department = this.departmentForm.getRawValue();
+    depData.Id = this.departmentId;
+    this.departmentService.updateDepartment(depData).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+        this.toastService.success('Department updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating department:', error);
       },
     });
   }
