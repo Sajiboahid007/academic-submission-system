@@ -16,4 +16,23 @@ export class BatchService {
   getBatches(): Observable<AppQuery<Batches[]>> {
     return this.http.get<AppQuery<Batches[]>>(`${this.baseUrl}/api/batches/get`);
   }
+
+  getBatchById(id: number): Observable<AppQuery<Batches>> {
+    return this.http.get<AppQuery<Batches>>(`${this.baseUrl}/api/batches/get/${id}`);
+  }
+
+  addBatch(batch: Batches): Observable<AppQuery<Batches>> {
+    return this.http.post<AppQuery<Batches>>(`${this.baseUrl}/api/batches/create`, batch);
+  }
+
+  updateBatch(batch: Batches): Observable<AppQuery<Batches>> {
+    return this.http.put<AppQuery<Batches>>(
+      `${this.baseUrl}/api/batches/update/${batch.Id}`,
+      batch,
+    );
+  }
+
+  deleteBatch(id: number): Observable<AppQuery<void>> {
+    return this.http.delete<AppQuery<void>>(`${this.baseUrl}/api/batches/delete/${id}`);
+  }
 }

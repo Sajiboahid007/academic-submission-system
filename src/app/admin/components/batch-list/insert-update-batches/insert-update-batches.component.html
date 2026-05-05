@@ -1,0 +1,137 @@
+<div class="modal-form-container">
+  <!-- Header Section -->
+  <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+      <div fxLayout="column">
+        <h2 class="header-title">Batch</h2>
+      </div>
+    </div>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-times"
+      class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onCancel()"
+    ></button>
+  </div>
+
+  <form [formGroup]="batchForm">
+    <div fxLayout="column" fxLayoutGap="24px">
+      <!-- Category Dropdown -->
+      <div fxLayout="column" fxLayoutGap="8px">
+        <p-floatlabel variant="on" class="float-label-wrapper">
+          <p-select
+            id="DepartmentId"
+            formControlName="DepartmentId"
+            [options]="department"
+            optionLabel="Name"
+            optionValue="Id"
+            [filter]="true"
+            filterBy="Name"
+            [showClear]="true"
+            styleClass="full-width"
+          >
+          </p-select>
+          <label for="DepartmentId" class="field-label"
+            >Select Department <span class="required-asterisk">*</span></label
+          >
+        </p-floatlabel>
+        <p-message
+          severity="error"
+          size="small"
+          variant="simple"
+          text="Department is required."
+          *ngIf="batchForm.get('DepartmentId')?.invalid && batchForm.get('DepartmentId')?.touched"
+        >
+        </p-message>
+      </div>
+
+      <div fxLayout="row" fxLayoutGap="24px">
+        <!-- SubCategoryName -->
+        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <input
+              pInputText
+              id="batchName"
+              formControlName="Name"
+              autocomplete="off"
+              class="full-width"
+            />
+            <label for="batchName" class="field-label"
+              >Batch Name <span class="required-asterisk">*</span></label
+            >
+          </p-floatlabel>
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            text="Name is required."
+            *ngIf="batchForm.get('Name')?.invalid && batchForm.get('Name')?.touched"
+          >
+          </p-message>
+        </div>
+
+        <!-- Code -->
+        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <input
+              pInputText
+              id="year"
+              formControlName="Year"
+              autocomplete="off"
+              class="full-width"
+            />
+            <label for="year" class="field-label"
+              >Batch Year <span class="required-asterisk">*</span></label
+            >
+          </p-floatlabel>
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            text="Year is required."
+            *ngIf="batchForm.get('Year')?.invalid && batchForm.get('Year')?.touched"
+          >
+          </p-message>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div fxLayout="row" fxLayoutAlign="space-between center" class="status-container">
+        <div fxLayout="column" fxLayoutGap="4px">
+          <label for="status" class="status-title">Active Status</label>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px">
+          <span
+            class="status-text"
+            [ngClass]="batchForm.get('Status')?.value ? 'active' : 'inactive'"
+          >
+            {{ batchForm.get('Status')?.value ? 'Active' : 'Inactive' }}
+          </span>
+          <p-toggleswitch id="status" formControlName="Status"></p-toggleswitch>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Actions -->
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-danger btn-cancel"
+      (click)="onCancel()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save Details"
+      icon="pi pi-check"
+      class="p-button-success btn-save"
+      [disabled]="batchForm.invalid"
+      (click)="onSave()"
+    ></button>
+  </div>
+</div>

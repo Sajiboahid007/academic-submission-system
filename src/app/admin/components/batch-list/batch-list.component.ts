@@ -3,6 +3,8 @@ import { Batches } from '../../../fds-config/entity-models/batch';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { BatchService } from '../../services/batch-service';
+import { InsertUpdateBatchesComponent } from './insert-update-batches/insert-update-batches.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-batch-list',
@@ -16,10 +18,14 @@ export class BatchListComponent implements OnInit {
 
   dataSource = new MatTableDataSource<Batches>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  private dialogRef!: MatDialogRef<any>;
 
   displayedColumns = ['Name', 'Year', 'Department', 'Action'];
 
-  constructor(private readonly batchService: BatchService) {}
+  constructor(
+    private readonly batchService: BatchService,
+    private readonly dialog: MatDialog,
+  ) {}
   ngOnInit(): void {
     this.getBatches();
   }
@@ -37,7 +43,19 @@ export class BatchListComponent implements OnInit {
     });
   }
 
-  AddBatch() {}
+  AddBatch() {
+    const dialogRef = this.dialog.open(InsertUpdateBatchesComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: null,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getBatches();
+      }
+    });
+  }
 
   onDeleteBatch(batch: Batches) {}
   onEditBatch(batch: Batches) {}

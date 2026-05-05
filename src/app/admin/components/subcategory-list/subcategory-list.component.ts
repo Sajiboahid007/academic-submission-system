@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,7 +20,7 @@ import { SubcategoryService } from '../../services/subcategory-service';
   standalone: false,
   templateUrl: './subcategory-list.component.html',
   styleUrl: './subcategory-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubcategoryListComponent implements OnInit, OnDestroy {
   @ViewChild('subCategoryModal') subCategoryModal!: TemplateRef<any>;
@@ -22,15 +30,15 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
   destroy$: Subject<void> = new Subject<void>();
   subcategories: SubCategory[] = [];
   dataSource = new MatTableDataSource<SubCategory>([]);
-  displayedColumns = ['Name', 'Code', 'Action'];
+  displayedColumns = ['CategoryName', 'SubCategoryName', 'Code', 'Action'];
 
   subCategoryEditId: number = 0;
 
   constructor(
     private dialog: MatDialog,
     private readonly subcategoryService: SubcategoryService,
-    private readonly cd: ChangeDetectorRef
-  ) { }
+    private readonly cd: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     this.getSubcategories();
@@ -61,7 +69,7 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
       width: '600px',
       disableClose: false,
       autoFocus: false,
-      data: { id: this.subCategoryEditId }
+      data: { id: this.subCategoryEditId },
     });
   }
 
@@ -83,4 +91,3 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 }
-
