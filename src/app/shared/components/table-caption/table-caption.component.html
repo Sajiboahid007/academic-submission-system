@@ -1,0 +1,17 @@
+<div class="caption-bar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+  <!-- center export -->
+  <div class="center-actions" *ngIf="isCsvExportRequired">
+    <button pButton label="CSV" size="small" icon="pi pi-download" (click)="table.exportCSV()"></button>
+  </div>
+
+  <!-- right search -->
+  <div class="right-search">
+    <p-iconfield iconPosition="left">
+      <p-inputicon>
+        <i class="pi pi-search"></i>
+      </p-inputicon>
+
+      <input pInputText type="text" (input)="onSearch($event)" placeholder="Search keyword" />
+    </p-iconfield>
+  </div>
+</div>

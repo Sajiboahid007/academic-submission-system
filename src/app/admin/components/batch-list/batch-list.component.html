@@ -16,24 +16,7 @@
     [paginator]="true" [globalFilterFields]="['Name', 'Year', 'Department.Name']">
     <!-- CAPTION -->
     <ng-template pTemplate="caption">
-      <div class="caption-bar">
-        <!-- center export -->
-        <div class="center-actions">
-          <button pButton label="CSV" size="small" icon="pi pi-download" (click)="dt2.exportCSV()"></button>
-        </div>
-
-        <!-- right search -->
-        <div class="right-search">
-          <p-iconfield iconPosition="left">
-            <p-inputicon>
-              <i class="pi pi-search"></i>
-            </p-inputicon>
-
-            <input pInputText type="text" (input)="dt2.filterGlobal($event.target.value, 'contains')"
-              placeholder="Search keyword" />
-          </p-iconfield>
-        </div>
-      </div>
+      <app-table-caption [table]="dt2"></app-table-caption>
     </ng-template>
 
     <!-- HEADER -->

@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -30,24 +31,21 @@ export class DashboardComponent implements OnInit {
   @ViewChild('userMenuWrap', { read: ElementRef }) userMenuWrap?: ElementRef<HTMLElement>;
   @ViewChild('notificationWrap', { read: ElementRef }) notificationWrap?: ElementRef<HTMLElement>;
 
-  userName: string = '';
-  userRole: string = '';
-  users: Users[] = [];
   userMenuOpen = signal(false);
   notificationsOpen = signal(false);
   notifications = signal<NotificationItem[]>([]);
 
+
+  userInfo: Users | null = null;
+
   ngOnInit(): void {
-    this.getUsers();
     this.loadNotifications();
     const userInfo = this.userInfoService.getUserInfo();
     if (!userInfo) {
       return;
     }
 
-    console.log('userInfo', userInfo);
-    this.userName = userInfo?.Name || '';
-    this.userRole = userInfo?.Role || '';
+    this.getUserById(userInfo.userId);
   }
 
   isSidebarOpen = signal(true);
@@ -92,6 +90,7 @@ export class DashboardComponent implements OnInit {
     private readonly userInfoService: UserInfoService,
     private readonly localStorage: LocalStorageService,
     private readonly notificationService: NotificationService,
+    private readonly cdr: ChangeDetectorRef,
   ) {
     // Track current route for active state
     this.router.events
@@ -100,15 +99,14 @@ export class DashboardComponent implements OnInit {
         this.currentRoute.set(event.url);
       });
     this.currentRoute.set(this.router.url);
-
-    // const userInfo = this.userInfoService.getUserInfo();
-    // console.log(userInfo);
   }
 
-  getUsers() {
-    this.userInfoService.getUsers().subscribe({
+  getUserById(userId: number) {
+    this.userInfoService.getUsersById(userId).subscribe({
       next: (response) => {
-        this.users = response.data;
+        console.debug('user info', response.data);
+        this.userInfo = response.data;
+        this.cdr.markForCheck();
       },
     });
   }

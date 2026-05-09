@@ -14,17 +14,9 @@
 <div class="card">
   <p-table [value]="subcategories" #dt2 dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50, 100]"
     [paginator]="true" [globalFilterFields]="['CategoryName', 'Name', 'Code']">
-    <ng-template #caption>
-      <div class="flex justify-content-end">
-        <p-iconfield iconPosition="left">
-          <p-inputicon>
-            <i class="pi pi-search"></i>
-          </p-inputicon>
-
-          <input pInputText type="text" (input)="dt2.filterGlobal($event.target.value, 'contains')"
-            placeholder="Search keyword" />
-        </p-iconfield>
-      </div>
+    <!-- CAPTION -->
+    <ng-template pTemplate="caption">
+      <app-table-caption [table]="dt2"></app-table-caption>
     </ng-template>
 
     <ng-template #header>

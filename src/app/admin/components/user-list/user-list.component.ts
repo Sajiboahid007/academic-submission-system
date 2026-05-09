@@ -31,7 +31,7 @@ export class UserListComponent implements OnInit {
     private readonly usersService: UserInfoService,
     private dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   public ngOnInit(): void {
     this.getUsers();
@@ -66,7 +66,7 @@ export class UserListComponent implements OnInit {
 
   onEditUser(id: number): void {
     this.usersService.getUsersById(id).subscribe({
-      next: (res: AppQuery<Users[]>) => {
+      next: (res: AppQuery<Users>) => {
         const users = res?.data;
 
         const dialogRef = this.dialog.open(InsertUpdateUserComponent, {
@@ -87,5 +87,5 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onDeleteUser(user: Users) {}
+  onDeleteUser(user: Users) { }
 }
