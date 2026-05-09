@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   Inject,
   OnInit,
   Output,
@@ -13,6 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Department } from '../../../../fds-config/entity-models/department';
 import { DepartmentService } from '../../../services/department-service';
 import { Password } from 'primeng/password';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-insert-update-user',
@@ -36,7 +36,8 @@ export class InsertUpdateUserComponent implements OnInit {
     private readonly dialogRef: MatDialogRef<InsertUpdateUserComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Users | null,
     private readonly departmentService: DepartmentService,
-  ) {}
+    private readonly toastService: ToastService,
+  ) { }
   ngOnInit(): void {
     this.userForm = new FormGroup({
       Name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -44,7 +45,7 @@ export class InsertUpdateUserComponent implements OnInit {
       StudentId: new FormControl('', [Validators.required]),
       DepartmentId: new FormControl('', [Validators.required]),
       Password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      RoleId: new FormControl('', [Validators.required]),
+      // RoleId: new FormControl('', [Validators.required]),
     });
     if (this.data) {
       this.isEditMode = true;
@@ -78,5 +79,41 @@ export class InsertUpdateUserComponent implements OnInit {
   onCancel() {
     this.dialogRef.close();
   }
-  onSave() {}
+  onSave() {
+    if (this.userForm.invalid) {
+      return;
+    }
+
+    if (this.isEditMode) {
+      this.updateUser();
+    } else {
+      this.saveUser();
+    }
+  }
+
+  saveUser(): void {
+    const users = this.userForm.getRawValue() as Users;
+    this.usersService.addUserAdmin(users).subscribe({
+      next: (res: any) => {
+        this.toastService.success('User created successfully');
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error('Error creating user:', error);
+      },
+    });
+  }
+
+  updateUser(): void {
+    this.usersService.updateUser(this.userForm.getRawValue()).subscribe({
+      next: (res: any) => {
+        this.toastService.success('User updated successfully');
+        this.dialogRef.close();
+      },
+      error: (error) => {
+        console.error('Error updating user:', error);
+      },
+    });
+  }
+
 }

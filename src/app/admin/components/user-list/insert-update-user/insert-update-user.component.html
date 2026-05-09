@@ -6,40 +6,25 @@
         <h2 class="header-title">Users</h2>
       </div>
     </div>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-times"
-      class="p-button-rounded p-button-text p-button-secondary"
-      (click)="onCancel()"
-    ></button>
+    <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onCancel()"></button>
   </div>
   <form [formGroup]="userForm">
     <div fxLayout="column" fxLayoutGap="17px">
       <!-- DepartmentId -->
       <div fxLayout="column" fxLayoutGap="6px">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-select
-            id="DepartmentId"
-            formControlName="DepartmentId"
-            [options]="departments"
-            optionLabel="Name"
-            optionValue="Id"
-            [filter]="true"
-            filterBy="Name"
-            [showClear]="true"
-            styleClass="full-width"
-          >
+          <p-select id="DepartmentId" formControlName="DepartmentId" [options]="departments" optionLabel="Name"
+            optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
           </p-select>
-          <label for="DepartmentId" class="field-label"
-            >Select Department <span class="required-asterisk">*</span></label
-          >
+          <label for="DepartmentId" class="field-label">Select Department <span
+              class="required-asterisk">*</span></label>
         </p-floatlabel>
         <p-message severity="error" size="small" variant="simple">
           <span *ngIf="userForm.get('DepartmentId')?.invalid">Department is required.</span>
         </p-message>
       </div>
-      <div fxLayout="column" fxLayoutGap="6px">
+      <!-- <div fxLayout="column" fxLayoutGap="6px">
         <p-floatlabel variant="on" class="float-label-wrapper">
           <p-select
             id="RoleId"
@@ -62,53 +47,28 @@
             >Role is required.</span
           >
         </p-message>
-      </div>
+      </div> -->
 
       <!-- User name -->
 
       <div fxLayout="row" fxLayoutGap="17px">
         <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <input
-              pInputText
-              id="userName"
-              formControlName="Name"
-              autocomplete="off"
-              class="full-width"
-            />
-            <label for="userName" class="field-label"
-              >User Name <span class="required-asterisk">*</span></label
-            >
+            <input pInputText id="userName" formControlName="Name" autocomplete="off" class="full-width" />
+            <label for="userName" class="field-label">User Name <span class="required-asterisk">*</span></label>
           </p-floatlabel>
-          <p-message
-            severity="error"
-            size="small"
-            variant="simple"
-            text="Name is required."
-            *ngIf="userForm.get('Name')?.invalid"
-          >
+          <p-message severity="error" size="small" variant="simple" text="Name is required."
+            *ngIf="userForm.get('Name')?.invalid">
           </p-message>
         </div>
         <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <input
-              pInputText
-              id="StudentId"
-              formControlName="StudentId"
-              autocomplete="off"
-              class="full-width"
-            />
+            <input pInputText id="StudentId" formControlName="StudentId" autocomplete="off" class="full-width" />
             <label for="studentId" class="field-label">
-              Student ID <span class="required-asterisk">*</span></label
-            >
+              Student ID <span class="required-asterisk">*</span></label>
           </p-floatlabel>
-          <p-message
-            severity="error"
-            size="small"
-            variant="simple"
-            text="Student ID is required."
-            *ngIf="userForm.get('StudentId')?.invalid"
-          >
+          <p-message severity="error" size="small" variant="simple" text="Student ID is required."
+            *ngIf="userForm.get('StudentId')?.invalid">
           </p-message>
         </div>
       </div>
@@ -118,42 +78,24 @@
         <!-- Email -->
         <div fxFlex="50" fxLayout="column" fxLayoutGap="6px">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <input
-              pInputText
-              id="Email"
-              formControlName="Email"
-              autocomplete="off"
-              class="full-width"
-              [readonly]="isEditMode"
-            />
+            <input pInputText id="Email" formControlName="Email" autocomplete="off" class="full-width"
+              [readonly]="isEditMode" />
             <label for="email" class="field-label">
               Email <span class="required-asterisk">*</span>
             </label>
           </p-floatlabel>
 
-          <p-message
-            severity="error"
-            size="small"
-            variant="simple"
-            text="Email is required."
-            *ngIf="userForm.get('Email')?.invalid"
-          >
+          <p-message severity="error" size="small" variant="simple" text="Email is required."
+            *ngIf="userForm.get('Email')?.invalid">
           </p-message>
         </div>
 
         <!-- Password -->
         <div fxFlex="50" fxLayout="column" fxLayoutGap="6px">
           <div class="field-group">
-            <p-password
-              id="password"
-              formControlName="Password"
-              [toggleMask]="true"
-              [feedback]="true"
-              placeholder="At least 8 characters"
-              styleClass="auth-password"
-              inputStyleClass="auth-input"
-              autocomplete="new-password"
-            >
+            <p-password id="password" formControlName="Password" [toggleMask]="true" [feedback]="true"
+              placeholder="At least 8 characters" styleClass="auth-password" inputStyleClass="auth-input"
+              autocomplete="new-password" [disabled]="isEditMode">
             </p-password>
 
             <small class="field-error" *ngIf="userForm.get('Password')?.errors?.['minlength']">
@@ -167,22 +109,9 @@
 
   <!-- Actions -->
   <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="20px" class="modal-footer-section">
-    <button
-      pButton
-      type="button"
-      label="Cancel"
-      icon="pi pi-times"
-      class="p-button-danger btn-cancel"
-      (click)="onCancel()"
-    ></button>
-    <button
-      pButton
-      type="button"
-      label="Save Details"
-      icon="pi pi-check"
-      class="p-button-success btn-save"
-      [disabled]="userForm.invalid"
-      (click)="onSave()"
-    ></button>
+    <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+      (click)="onCancel()"></button>
+    <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
+      [disabled]="userForm.invalid" (click)="onSave()"></button>
   </div>
 </div>

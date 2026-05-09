@@ -27,7 +27,18 @@ export class UserInfoService {
   addUser(user: Users): Observable<AppQuery<Users>> {
     return this.http.post<AppQuery<Users>>(`${this.baseUrl}/api/users/create`, user);
   }
+  addUserAdmin(user: Users): Observable<AppQuery<Users>> {
+    return this.http.post<AppQuery<Users>>(`${this.baseUrl}/api/user/create/admin`, user);
+  }
   getUsersById(id: number): Observable<AppQuery<Users>> {
     return this.http.get<AppQuery<Users>>(`${this.baseUrl}/api/users/get/${id}`);
+  }
+
+  updateUser(user: Users): Observable<AppQuery<Users>> {
+    return this.http.put<AppQuery<Users>>(`${this.baseUrl}/api/users/update/${user.Id}`, user);
+  }
+
+  deleteUser(id: number): Observable<AppQuery<Users>> {
+    return this.http.put<AppQuery<Users>>(`${this.baseUrl}/api/users/delete/${id}`, null);
   }
 }

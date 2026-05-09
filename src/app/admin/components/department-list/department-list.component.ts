@@ -13,7 +13,7 @@ import { AppQuery } from '../../../shared/app-query';
 import { InsertUpdateDepartmentComponent } from './insert-update-department/insert-update-department.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../shared/services/toast.service';
-
+import { ConfirmationService } from 'primeng/api';
 @Component({
   selector: 'app-department-list',
   standalone: false,
@@ -29,7 +29,8 @@ export class DepartmentListComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly toastService: ToastService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+    private readonly confirmationService: ConfirmationService,
+  ) { }
   ngOnInit(): void {
     this.getDepartments();
   }
@@ -60,16 +61,22 @@ export class DepartmentListComponent implements OnInit {
   }
 
   onDeleteDepartment(id: number) {
-    console.log('Delete department with ID:', id);
-    this.departmentService.deleteDepartment(id).subscribe({
-      next: () => {
-        this.toastService.success('Department deleted successfully');
-        this.getDepartments();
-      },
-      error: (error) => {
-        console.error('Error deleting department:', error);
-      },
-    });
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete department?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.departmentService.deleteDepartment(id).subscribe({
+          next: () => {
+            this.toastService.success('Department deleted successfully');
+            this.getDepartments();
+          },
+          error: (error) => {
+            console.error('Error deleting department:', error);
+          },
+        });
+      }
+    })
   }
 
   onEditDepartment(id: number) {

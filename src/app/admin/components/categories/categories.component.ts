@@ -14,6 +14,8 @@ import { Category } from '../../../fds-config/entity-models/categories';
 import { AppQuery } from '../../../shared/app-query';
 import { CategoriesService } from '../../services/categories-service';
 import { CategoryInsertUpdateComponent } from './category-insert-update/category-insert-update.component';
+import { ConfirmationService } from 'primeng/api';
+import { ToastService } from '../../../shared/services/toast.service';
 @Component({
   selector: 'categories',
   standalone: false,
@@ -30,7 +32,9 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     private readonly categoriesService: CategoriesService,
     private readonly dialog: MatDialog,
     private readonly cd: ChangeDetectorRef,
-  ) {}
+    private readonly confirmationService: ConfirmationService,
+    private readonly toastService: ToastService,
+  ) { }
 
   ngOnInit(): void {
     this.getCategories();
@@ -78,6 +82,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe((result) => {
           if (result) {
+            this.toastService.success('Category updated successfully!');
             this.getCategories();
           }
         });
@@ -89,16 +94,23 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   }
 
   onDeleteCategory(id: number): void {
-    this.categoriesService.deleteCategory(id).subscribe({
-      next: () => {
-        this.getCategories();
-      },
-      error: (error) => {
-        console.error('Error deleting category:', error);
-      },
-    });
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete category?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.categoriesService.deleteCategory(id).subscribe({
+          next: () => {
+            this.toastService.success('Category deleted successfully!');
+            this.getCategories();
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+          },
+        });
+      }
+    })
   }
-
   ngOnDestroy(): void {
     this.destroy$.complete();
     this.destroy$.next();
