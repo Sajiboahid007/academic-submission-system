@@ -20,12 +20,12 @@ import { MessageModule } from 'primeng/message';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SelectModule } from 'primeng/select';
-// import { TableModule } from 'primeng/table';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { Table, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 const materialNgModule = [
   MatButtonModule,
@@ -54,11 +54,13 @@ const primeNgModules = [
   TableModule,
   IconFieldModule,
   InputIconModule,
+  ConfirmDialogModule
 ];
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
-  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
+  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules]
 })
-export class SharedModule {}
+export class SharedModule { }

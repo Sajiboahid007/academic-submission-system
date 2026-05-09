@@ -1,2 +1,22 @@
 <p-toast position="bottom-right" />
+<p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message let-onAccept="onAccept" let-onReject="onReject">
+        <div class="custom-confirm-dialog">
+            <div class="icon-wrapper">
+                <i class="pi pi-question"></i>
+            </div>
+
+            <h2>{{ message.header }}</h2>
+
+            <p>{{ message.message }}</p>
+
+            <div class="button-group">
+                <p-button label="Yes" severity="success" (onClick)="onAccept()"></p-button>
+                <p-button label="No" severity="danger" (onClick)="onReject()"></p-button>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmDialog>
+
+
 <router-outlet></router-outlet>

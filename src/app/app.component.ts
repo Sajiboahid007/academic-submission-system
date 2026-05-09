@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastModule],
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, ButtonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

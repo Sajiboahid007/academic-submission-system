@@ -35,8 +35,8 @@ export class SubcategoryService {
     );
   }
 
-  public deleteSubcategory(id: number): Observable<AppQuery<boolean>> {
-    return this.http.delete<AppQuery<boolean>>(`${this.baseUrl}/api/subcategories/delete/${id}`);
+  public deleteSubcategory(id: number): Observable<AppQuery<SubCategory>> {
+    return this.http.put<AppQuery<SubCategory>>(`${this.baseUrl}/api/subcategories/delete/${id}`, null);
   }
 
   public createSubCategoryForm(subCategory?: SubCategory) {

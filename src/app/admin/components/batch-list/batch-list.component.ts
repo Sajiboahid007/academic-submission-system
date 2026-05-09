@@ -1,27 +1,26 @@
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { Batches } from '../../../fds-config/entity-models/batch';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
 import { BatchService } from '../../services/batch-service';
 import { InsertUpdateBatchesComponent } from './insert-update-batches/insert-update-batches.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AppQuery } from '../../../shared/app-query';
+import { ConfirmationService } from 'primeng/api';
+import { ToastService } from '../../../shared/services/toast.service';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-batch-list',
   standalone: false,
   templateUrl: './batch-list.component.html',
   styleUrl: './batch-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BatchListComponent implements OnInit {
   batches: Batches[] = [];
+  cols: any[] = [];
 
   private dialogRef!: MatDialogRef<any>;
 
@@ -29,8 +28,17 @@ export class BatchListComponent implements OnInit {
     private readonly batchService: BatchService,
     private readonly dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+    private readonly confirmationService: ConfirmationService,
+    private readonly toastService: ToastService
+  ) { }
   ngOnInit(): void {
+
+    this.cols = [
+      { field: 'Name', header: 'Name' },
+      { field: 'Year', header: 'Year' },
+      { field: 'Department.Name', header: 'Department' },
+    ];
+
     this.getBatches();
   }
 
@@ -61,7 +69,26 @@ export class BatchListComponent implements OnInit {
     });
   }
 
-  onDeleteBatch(batch: Batches) {}
+  onDeleteBatch(id: number) {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete batch?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.batchService.deleteBatch(id).subscribe({
+          next: (res: any) => {
+            this.toastService.success('Batch deleted successfully!');
+            this.getBatches();
+          },
+          error: (error: any) => {
+            console.error('Error deleting batch:', error);
+            this.toastService.error('Failed to delete batch!');
+          },
+        });
+      }
+    });
+  }
+
   onEditBatch(id: number) {
     this.batchService.getBatchById(id).subscribe({
       next: (res: AppQuery<Batches>) => {

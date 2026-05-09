@@ -12,6 +12,7 @@ import { UserInfoService } from '../../../services/user-info-service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Department } from '../../../../fds-config/entity-models/department';
 import { DepartmentService } from '../../../services/department-service';
+import { Password } from 'primeng/password';
 
 @Component({
   selector: 'app-insert-update-user',
@@ -42,6 +43,7 @@ export class InsertUpdateUserComponent implements OnInit {
       Email: new FormControl('', [Validators.required, Validators.email]),
       StudentId: new FormControl('', [Validators.required]),
       DepartmentId: new FormControl('', [Validators.required]),
+      Password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       RoleId: new FormControl('', [Validators.required]),
     });
     if (this.data) {

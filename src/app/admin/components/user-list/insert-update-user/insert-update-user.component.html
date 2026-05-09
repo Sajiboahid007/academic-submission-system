@@ -114,28 +114,53 @@
       </div>
 
       <!-- Email -->
-      <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
-        <p-floatlabel variant="on" class="float-label-wrapper">
-          <input
-            pInputText
-            id="Email"
-            formControlName="Email"
-            autocomplete="off"
-            class="full-width"
-            [readonly]="isEditMode"
-          />
-          <label for="email" class="field-label">
-            Email <span class="required-asterisk">*</span></label
+      <div fxLayout="row" fxLayoutGap="17px">
+        <!-- Email -->
+        <div fxFlex="50" fxLayout="column" fxLayoutGap="6px">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <input
+              pInputText
+              id="Email"
+              formControlName="Email"
+              autocomplete="off"
+              class="full-width"
+              [readonly]="isEditMode"
+            />
+            <label for="email" class="field-label">
+              Email <span class="required-asterisk">*</span>
+            </label>
+          </p-floatlabel>
+
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            text="Email is required."
+            *ngIf="userForm.get('Email')?.invalid"
           >
-        </p-floatlabel>
-        <p-message
-          severity="error"
-          size="small"
-          variant="simple"
-          text="Email is required."
-          *ngIf="userForm.get('Email')?.invalid"
-        >
-        </p-message>
+          </p-message>
+        </div>
+
+        <!-- Password -->
+        <div fxFlex="50" fxLayout="column" fxLayoutGap="6px">
+          <div class="field-group">
+            <p-password
+              id="password"
+              formControlName="Password"
+              [toggleMask]="true"
+              [feedback]="true"
+              placeholder="At least 8 characters"
+              styleClass="auth-password"
+              inputStyleClass="auth-input"
+              autocomplete="new-password"
+            >
+            </p-password>
+
+            <small class="field-error" *ngIf="userForm.get('Password')?.errors?.['minlength']">
+              Use at least 8 characters
+            </small>
+          </div>
+        </div>
       </div>
     </div>
   </form>

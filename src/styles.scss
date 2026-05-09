@@ -336,3 +336,21 @@ table {
     }
   }
 }
+
+/* Global Table Caption Bar Styles */
+.caption-bar {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+
+  .center-actions {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .right-search {
+    margin-left: auto;
+  }
+}
