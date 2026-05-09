@@ -7,6 +7,8 @@ import { SubcategoryListComponent } from './components/subcategory-list/subcateg
 import { UserListComponent } from './components/user-list/user-list.component';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { BatchListComponent } from './components/batch-list/batch-list.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,6 +39,14 @@ const routes: Routes = [
       {
         path: 'batch',
         component: BatchListComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
       },
     ],
   },

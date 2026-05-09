@@ -1,0 +1,23 @@
+<div class="profile-page">
+  <h1 class="page-title">Profile</h1>
+  <p class="page-lead">Information from your signed-in session.</p>
+
+  <div class="profile-card" *ngIf="user">
+    <dl class="profile-dl">
+      <div class="profile-row">
+        <dt>Name</dt>
+        <dd>{{ displayValue('Name') }}</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Role</dt>
+        <dd>{{ displayValue('Role') }}</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Email</dt>
+        <dd>{{ displayValue('Email') }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <p class="profile-empty" *ngIf="!user">Unable to load profile. Try signing in again.</p>
+</div>

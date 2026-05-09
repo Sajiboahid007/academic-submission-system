@@ -1,0 +1,68 @@
+@use '../../theme/variables' as *;
+
+.profile-page {
+  max-width: 560px;
+}
+
+.page-title {
+  margin: 0 0 $spacing-xs;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $neutral-900;
+}
+
+.page-lead {
+  margin: 0 0 $spacing-lg;
+  color: $neutral-500;
+  font-size: 0.9375rem;
+}
+
+.profile-card {
+  background: #fff;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
+}
+
+.profile-dl {
+  margin: 0;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: $spacing-md;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid $neutral-100;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  dt {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $neutral-500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: $neutral-900;
+    word-break: break-word;
+  }
+}
+
+.profile-empty {
+  color: $accent-error;
+  margin: 0;
+}

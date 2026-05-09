@@ -32,29 +32,117 @@
 
       <div class="navbar-right">
         <div class="navbar-actions">
-          <button class="action-btn" type="button" aria-label="Notifications">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+          <div
+            class="notification-wrap"
+            #notificationWrap
+            [class.open]="notificationsOpen()"
+          >
+            <button
+              class="action-btn"
+              type="button"
+              aria-label="Notifications"
+              [attr.aria-expanded]="notificationsOpen()"
+              aria-haspopup="true"
+              aria-controls="notification-panel"
+              (click)="toggleNotifications($event)"
             >
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            <span class="badge">3</span>
-          </button>
-          <div class="user-menu">
-            <div class="user-avatar">
-              <span class="user-name">{{ userName }}</span>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="badge" *ngIf="notifications().length > 0">{{ notifications().length }}</span>
+            </button>
+            <div
+              class="notification-panel"
+              id="notification-panel"
+              *ngIf="notificationsOpen()"
+              role="region"
+              aria-label="Notifications"
+            >
+              <div class="notification-panel-header">
+                <span class="notification-panel-title">Notifications</span>
+              </div>
+              <ul class="notification-list">
+                <li *ngIf="notifications().length === 0" class="notification-empty">
+                  No notifications yet.
+                </li>
+                <li *ngFor="let n of notifications()" class="notification-item">
+                  <div class="notification-item-top">
+                    <span class="notification-title">{{ n.title }}</span>
+                    <span
+                      class="notification-status"
+                      [ngClass]="'notification-status--' + n.status"
+                    >
+                      {{ statusLabel(n.status) }}
+                    </span>
+                  </div>
+                  <p class="notification-message">{{ n.message }}</p>
+                  <time class="notification-time" [attr.datetime]="n.at.toISOString()">{{
+                    n.at | date : 'medium'
+                  }}</time>
+                </li>
+              </ul>
             </div>
-            <div class="user-info">
-              <span class="user-name">{{ userName }}</span>
-              <span class="user-role">{{ userRole }}</span>
+          </div>
+          <div class="user-menu-wrap" #userMenuWrap [class.open]="userMenuOpen()">
+            <button
+              type="button"
+              class="user-menu-trigger"
+              (click)="toggleUserMenu($event)"
+              [attr.aria-expanded]="userMenuOpen()"
+              aria-haspopup="true"
+              aria-controls="user-account-menu"
+            >
+              <div class="user-avatar" aria-hidden="true">
+                <span class="user-initials">{{ ((userName || '?') | slice : 0 : 1) | uppercase }}</span>
+              </div>
+              <div class="user-info">
+                <span class="user-name">{{ userName }}</span>
+                <span class="user-role">{{ userRole }}</span>
+              </div>
+              <svg
+                class="user-menu-chevron"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              class="user-dropdown"
+              id="user-account-menu"
+              *ngIf="userMenuOpen()"
+              role="menu"
+            >
+              <button type="button" class="user-dropdown-item" role="menuitem" (click)="goProfile()">
+                Profile
+              </button>
+              <button
+                type="button"
+                class="user-dropdown-item"
+                role="menuitem"
+                (click)="goChangePassword()"
+              >
+                Change password
+              </button>
+              <button type="button" class="user-dropdown-item danger" role="menuitem" (click)="logout()">
+                Log out
+              </button>
             </div>
           </div>
         </div>

@@ -35,7 +35,7 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
   subCategoryEditId: number = 0;
 
   constructor(
-    private dialog: MatDialog,
+    private readonly dialog: MatDialog,
     private readonly subcategoryService: SubcategoryService,
     private readonly cd: ChangeDetectorRef,
   ) {}
@@ -67,6 +67,7 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
     }
     this.dialogRef = this.dialog.open(this.subCategoryModal, {
       width: '600px',
+      height: 'fit-content',
       disableClose: false,
       autoFocus: false,
       data: { id: this.subCategoryEditId },
