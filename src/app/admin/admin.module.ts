@@ -16,10 +16,41 @@ import { InsertUpdateDepartmentComponent } from './components/department-list/in
 import { InsertUpdateBatchesComponent } from './components/batch-list/insert-update-batches/insert-update-batches.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { InsertUpdateUserComponent } from './components/user-list/insert-update-user/insert-update-user.component';
 
 @NgModule({
-  declarations: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent, InsertUpdateDepartmentComponent, InsertUpdateBatchesComponent, ProfileComponent, ChangePasswordComponent],
+  declarations: [
+    LoginComponent,
+    DashboardComponent,
+    CategoriesComponent,
+    CategoryInsertUpdateComponent,
+    SubcategoryListComponent,
+    InsertOrUpdateSubcategoryComponent,
+    UserListComponent,
+    DepartmentListComponent,
+    BatchListComponent,
+    InsertUpdateDepartmentComponent,
+    InsertUpdateBatchesComponent,
+    ProfileComponent,
+    ChangePasswordComponent,
+    InsertUpdateUserComponent,
+  ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
-  exports: [LoginComponent, DashboardComponent, CategoriesComponent, CategoryInsertUpdateComponent, SubcategoryListComponent, InsertOrUpdateSubcategoryComponent, UserListComponent, DepartmentListComponent, BatchListComponent, InsertUpdateDepartmentComponent, InsertUpdateBatchesComponent, ProfileComponent, ChangePasswordComponent],
+  exports: [
+    LoginComponent,
+    DashboardComponent,
+    CategoriesComponent,
+    CategoryInsertUpdateComponent,
+    SubcategoryListComponent,
+    InsertOrUpdateSubcategoryComponent,
+    UserListComponent,
+    DepartmentListComponent,
+    BatchListComponent,
+    InsertUpdateDepartmentComponent,
+    InsertUpdateBatchesComponent,
+    ProfileComponent,
+    ChangePasswordComponent,
+    InsertUpdateUserComponent,
+  ],
 })
-export class AdminModule { }
+export class AdminModule {}

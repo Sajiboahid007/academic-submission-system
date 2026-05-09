@@ -1,0 +1,91 @@
+<div class="modal-form-container">
+  <!-- Header Section -->
+  <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+      <div fxLayout="column">
+        <h2 class="header-title">Users</h2>
+      </div>
+    </div>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-times"
+      class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onCancel()"
+    ></button>
+  </div>
+  <form [formGroup]="userForm">
+    <div fxLayout="column" fxLayoutGap="24px">
+      <div fxLayout="row" fxLayoutGap="24px">
+        <!-- CategoryName -->
+        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <input
+              pInputText
+              id="categoryName"
+              formControlName="Name"
+              autocomplete="off"
+              class="full-width"
+            />
+            <label for="categoryName" class="field-label"
+              >User Name <span class="required-asterisk">*</span></label
+            >
+          </p-floatlabel>
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            text="Name is required."
+            *ngIf="userForm.get('Name')?.invalid && userForm.get('Name')?.touched"
+          >
+          </p-message>
+        </div>
+
+        <!-- Code -->
+        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <input
+              pInputText
+              id="code"
+              formControlName="Code"
+              autocomplete="off"
+              class="full-width"
+            />
+            <label for="code" class="field-label">
+              Code <span class="required-asterisk">*</span></label
+            >
+          </p-floatlabel>
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            text="Code is required."
+            *ngIf="userForm.get('Code')?.invalid && userForm.get('Code')?.touched"
+          >
+          </p-message>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Actions -->
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+    <button
+      pButton
+      type="button"
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-danger btn-cancel"
+      (click)="onCancel()"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Save Details"
+      icon="pi pi-check"
+      class="p-button-success btn-save"
+      [disabled]="userForm.invalid"
+      (click)="onSave()"
+    ></button>
+  </div>
+</div>

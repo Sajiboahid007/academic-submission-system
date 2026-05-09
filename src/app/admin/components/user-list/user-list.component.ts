@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Users } from '../../../fds-config/entity-models/user';
 import { UserInfoService } from '../../services/user-info-service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { InsertUpdateUserComponent } from './insert-update-user/insert-update-user.component';
 
 @Component({
   selector: 'app-user-list',
@@ -16,8 +18,15 @@ export class UserListComponent implements OnInit {
   dataSource = new MatTableDataSource<Users>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  private dialogRef!: MatDialogRef<any>;
+  @ViewChild('userModal') userModal!: TemplateRef<any>;
 
-  constructor(private readonly usersService: UserInfoService) {}
+  userEditId: number = 0;
+
+  constructor(
+    private readonly usersService: UserInfoService,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.getUsers();
@@ -36,7 +45,31 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  AddUser() {}
+  addUser() {
+    const dialogRef = this.dialog.open(InsertUpdateUserComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: null,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getUsers();
+      }
+    });
+  }
+
+  openAddModal(isEdit: boolean = false): void {
+    if (!isEdit) {
+      this.userEditId = 0;
+    }
+    this.dialogRef = this.dialog.open(this.userModal, {
+      width: '600px',
+      disableClose: false,
+      autoFocus: false,
+      data: { id: this.userEditId },
+    });
+  }
 
   onEditUser(user: Users) {}
 
