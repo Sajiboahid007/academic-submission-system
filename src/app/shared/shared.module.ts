@@ -23,6 +23,9 @@ import { SelectModule } from 'primeng/select';
 // import { TableModule } from 'primeng/table';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { Table, TableModule } from 'primeng/table';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 const materialNgModule = [
   MatButtonModule,
@@ -48,21 +51,14 @@ const primeNgModules = [
   SelectModule,
   SelectButtonModule,
   ToggleSwitchModule,
+  TableModule,
+  IconFieldModule,
+  InputIconModule,
 ];
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    FlexLayoutModule,
-    ...materialNgModule,
-    ...primeNgModules,
-  ],
-  exports: [
-    ReactiveFormsModule,
-    FlexLayoutModule,
-    ...materialNgModule,
-    ...primeNgModules,
-  ],
+  imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
+  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
 })
-export class SharedModule { }
+export class SharedModule {}

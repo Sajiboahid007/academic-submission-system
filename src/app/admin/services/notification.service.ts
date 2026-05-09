@@ -20,7 +20,7 @@ export class NotificationService {
   constructor(private readonly http: HttpClient) {}
 
   getNotifications(): Observable<NotificationItem[]> {
-    const url = `${this.baseUrl}${AcademicSubmissionConfig.NotificationsGetUrl}`;
+    const url = `${this.baseUrl}${AcademicSubmissionConfig}`;
     return this.http.get<AppQuery<NotificationListPayload>>(url).pipe(
       map((res) => this.mapResultRows(res.data?.Result ?? [])),
       catchError(() => of(this.mapResultRows(SAMPLE_NOTIFICATION_RESULT))),

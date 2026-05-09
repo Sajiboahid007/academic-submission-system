@@ -31,4 +31,8 @@ export class CategoriesService {
       category,
     );
   }
+
+  deleteCategory(id: number): Observable<AppQuery<Category[]>> {
+    return this.http.put<AppQuery<Category[]>>(`${this.baseUrl}/api/categories/delete/${id}`, null);
+  }
 }

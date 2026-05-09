@@ -27,4 +27,7 @@ export class UserInfoService {
   addUser(user: Users): Observable<AppQuery<Users>> {
     return this.http.post<AppQuery<Users>>(`${this.baseUrl}/api/users/create`, user);
   }
+  getUsersById(id: number): Observable<AppQuery<Users[]>> {
+    return this.http.get<AppQuery<Users[]>>(`${this.baseUrl}/api/users/get/${id}`);
+  }
 }

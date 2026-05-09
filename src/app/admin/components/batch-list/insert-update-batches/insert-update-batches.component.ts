@@ -21,7 +21,6 @@ export class InsertUpdateBatchesComponent implements OnInit {
   batchForm!: FormGroup;
   batches: Batches[] = [];
   department: Department[] = [];
-  dataSource = new MatTableDataSource<Batches>([]);
 
   constructor(
     private readonly dialogRef: MatDialogRef<InsertUpdateBatchesComponent>,

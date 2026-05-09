@@ -21,19 +21,10 @@ import { CategoryInsertUpdateComponent } from './category-insert-update/category
   styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent implements OnInit, OnDestroy {
-  @ViewChild('CategoryModal') CategoryModal!: TemplateRef<any>;
   destroy$: Subject<void> = new Subject<void>();
   categories: Category[] = [];
-  meters: any[] = [];
 
-  CategoryEditId: number = 0;
-
-  dataSource = new MatTableDataSource<Category>([]);
   private dialogReF!: MatDialogRef<any>;
-
-  displayedColumns = ['Name', 'Code', 'Action'];
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private readonly categoriesService: CategoriesService,
@@ -52,10 +43,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: AppQuery<Category[]>) => {
           this.categories = res?.data;
-          // this.manageMeter();
-          this.dataSource.data = this.categories;
-          this.dataSource.paginator = this.paginator;
-
           this.cd.detectChanges();
         },
         error: (error) => {
@@ -63,18 +50,6 @@ export class CategoriesComponent implements OnInit, OnDestroy {
         },
       });
   }
-
-  // openAddModal(isEdit: boolean = false): void {
-  //   if (!isEdit) {
-  //     this.CategoryEditId = 0;
-  //   }
-  //   this.dialogReF = this.dialog.open(this.CategoryModal, {
-  //     width: '600px',
-  //     disableClose: false,
-  //     autoFocus: false,
-  //     data: { id: this.CategoryEditId },
-  //   });
-  // }
 
   AddCategory(): void {
     const dialogRef = this.dialog.open(CategoryInsertUpdateComponent, {
@@ -113,14 +88,16 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // private manageMeter() {
-  //   const active = this.categories.filter((item) => item.Status).length;
-  //   const inActive = this.categories.filter((item) => !item.Status).length;
-  //   this.meters = [
-  //     { label: 'Active', value: active, color: 'green' },
-  //     { label: 'Inactive', value: inActive, color: 'red' },
-  //   ];
-  // }
+  onDeleteCategory(id: number): void {
+    this.categoriesService.deleteCategory(id).subscribe({
+      next: () => {
+        this.getCategories();
+      },
+      error: (error) => {
+        console.error('Error deleting category:', error);
+      },
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.complete();

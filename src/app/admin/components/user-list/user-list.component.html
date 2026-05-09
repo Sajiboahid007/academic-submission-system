@@ -21,52 +21,66 @@
   ></button>
 </div>
 
-<div class="table-container">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z0" style="width: 100%">
-    <ng-container matColumnDef="Name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let user">{{ user.Name }}</td>
-    </ng-container>
+<div class="card">
+  <p-table
+    [value]="users"
+    #dt2
+    dataKey="id"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50, 100]"
+    [paginator]="true"
+    [globalFilterFields]="['Name', 'Email', 'StudentId', 'Roles.Name', 'Department.Name']"
+  >
+    <ng-template #caption>
+      <div class="flex justify-content-end">
+        <p-iconfield iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
 
-    <ng-container matColumnDef="Email">
-      <th mat-header-cell *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let user">{{ user.Email }}</td>
-    </ng-container>
+          <input
+            pInputText
+            type="text"
+            (input)="dt2.filterGlobal($event.target.value, 'contains')"
+            placeholder="Search keyword"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
 
-    <ng-container matColumnDef="Role">
-      <th mat-header-cell *matHeaderCellDef>Role</th>
-      <td mat-cell *matCellDef="let user">{{ user.Roles?.Name }}</td>
-    </ng-container>
+    <ng-template #header>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Student</th>
+        <th>Role</th>
+        <th>Department</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-user>
+      <tr>
+        <td>{{ user?.Name }}</td>
+        <td>{{ user?.Email }}</td>
+        <td>{{ user?.StudentId }}</td>
+        <td>{{ user?.Roles?.Name }}</td>
+        <td>{{ user?.Department?.Name }}</td>
+        <td>
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-success btn-save"
+            (click)="onEditUser(user.Id)"
+          ></button>
 
-    <ng-container matColumnDef="Department">
-      <th mat-header-cell *matHeaderCellDef>Department</th>
-      <td mat-cell *matCellDef="let user">{{ user.Department?.Name }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="Actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let user">
-        <button
-          pButton
-          icon="pi pi-pencil"
-          class="p-button-success btn-save"
-          (click)="onEditUser(user.Id)"
-        ></button>
-        <button
-          pButton
-          icon="pi pi-trash"
-          class="p-button-danger btn-save"
-          (click)="onDeleteUser(user.Id)"
-        ></button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20, 50]"
-    [pageSize]="10"
-    showFirstLastButtons
-  ></mat-paginator>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger btn-save"
+            (click)="onDeleteUser(user.Id)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

@@ -24,20 +24,17 @@ import { SubcategoryService } from '../../services/subcategory-service';
 })
 export class SubcategoryListComponent implements OnInit, OnDestroy {
   @ViewChild('subCategoryModal') subCategoryModal!: TemplateRef<any>;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   private dialogRef!: MatDialogRef<any>;
 
   destroy$: Subject<void> = new Subject<void>();
   subcategories: SubCategory[] = [];
-  dataSource = new MatTableDataSource<SubCategory>([]);
-  displayedColumns = ['CategoryName', 'SubCategoryName', 'Code', 'Action'];
 
   subCategoryEditId: number = 0;
 
   constructor(
     private readonly dialog: MatDialog,
     private readonly subcategoryService: SubcategoryService,
-    private readonly cd: ChangeDetectorRef,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -51,9 +48,7 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: AppQuery<SubCategory[]>) => {
           this.subcategories = res?.data || [];
-          this.dataSource.data = this.subcategories;
-          this.dataSource.paginator = this.paginator;
-          this.cd.detectChanges();
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Error fetching subcategories:', error);
@@ -83,8 +78,18 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
 
   onEditSubcategory(id: number): void {
     this.subCategoryEditId = id;
-    this.cd.detectChanges();
+    this.cdr.markForCheck();
     this.openAddModal(true);
+  }
+  onDeleteSubcategory(id: number): void {
+    this.subcategoryService.deleteSubcategory(id).subscribe({
+      next: () => {
+        this.getSubcategories();
+      },
+      error: (error) => {
+        console.error('Error deleting subcategory:', error);
+      },
+    });
   }
 
   ngOnDestroy(): void {

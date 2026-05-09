@@ -15,19 +15,68 @@
     ></button>
   </div>
   <form [formGroup]="userForm">
-    <div fxLayout="column" fxLayoutGap="24px">
-      <div fxLayout="row" fxLayoutGap="24px">
-        <!-- CategoryName -->
-        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+    <div fxLayout="column" fxLayoutGap="17px">
+      <!-- DepartmentId -->
+      <div fxLayout="column" fxLayoutGap="6px">
+        <p-floatlabel variant="on" class="float-label-wrapper">
+          <p-select
+            id="DepartmentId"
+            formControlName="DepartmentId"
+            [options]="departments"
+            optionLabel="Name"
+            optionValue="Id"
+            [filter]="true"
+            filterBy="Name"
+            [showClear]="true"
+            styleClass="full-width"
+          >
+          </p-select>
+          <label for="DepartmentId" class="field-label"
+            >Select Department <span class="required-asterisk">*</span></label
+          >
+        </p-floatlabel>
+        <p-message severity="error" size="small" variant="simple">
+          <span *ngIf="userForm.get('DepartmentId')?.invalid">Department is required.</span>
+        </p-message>
+      </div>
+      <div fxLayout="column" fxLayoutGap="6px">
+        <p-floatlabel variant="on" class="float-label-wrapper">
+          <p-select
+            id="RoleId"
+            formControlName="RoleId"
+            [options]="roles"
+            optionLabel="Name"
+            optionValue="Id"
+            [filter]="true"
+            filterBy="Name"
+            [showClear]="true"
+            styleClass="full-width"
+          >
+          </p-select>
+          <label for="RoleId" class="field-label"
+            >Select Role <span class="required-asterisk">*</span></label
+          >
+        </p-floatlabel>
+        <p-message severity="error" size="small" variant="simple">
+          <span *ngIf="userForm.get('RoleId')?.invalid && userForm.get('RoleId')?.touched"
+            >Role is required.</span
+          >
+        </p-message>
+      </div>
+
+      <!-- User name -->
+
+      <div fxLayout="row" fxLayoutGap="17px">
+        <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
             <input
               pInputText
-              id="categoryName"
+              id="userName"
               formControlName="Name"
               autocomplete="off"
               class="full-width"
             />
-            <label for="categoryName" class="field-label"
+            <label for="userName" class="field-label"
               >User Name <span class="required-asterisk">*</span></label
             >
           </p-floatlabel>
@@ -36,40 +85,63 @@
             size="small"
             variant="simple"
             text="Name is required."
-            *ngIf="userForm.get('Name')?.invalid && userForm.get('Name')?.touched"
+            *ngIf="userForm.get('Name')?.invalid"
           >
           </p-message>
         </div>
-
-        <!-- Code -->
-        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+        <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
             <input
               pInputText
-              id="code"
-              formControlName="Code"
+              id="StudentId"
+              formControlName="StudentId"
               autocomplete="off"
               class="full-width"
             />
-            <label for="code" class="field-label">
-              Code <span class="required-asterisk">*</span></label
+            <label for="studentId" class="field-label">
+              Student ID <span class="required-asterisk">*</span></label
             >
           </p-floatlabel>
           <p-message
             severity="error"
             size="small"
             variant="simple"
-            text="Code is required."
-            *ngIf="userForm.get('Code')?.invalid && userForm.get('Code')?.touched"
+            text="Student ID is required."
+            *ngIf="userForm.get('StudentId')?.invalid"
           >
           </p-message>
         </div>
+      </div>
+
+      <!-- Email -->
+      <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
+        <p-floatlabel variant="on" class="float-label-wrapper">
+          <input
+            pInputText
+            id="Email"
+            formControlName="Email"
+            autocomplete="off"
+            class="full-width"
+            [readonly]="isEditMode"
+          />
+          <label for="email" class="field-label">
+            Email <span class="required-asterisk">*</span></label
+          >
+        </p-floatlabel>
+        <p-message
+          severity="error"
+          size="small"
+          variant="simple"
+          text="Email is required."
+          *ngIf="userForm.get('Email')?.invalid"
+        >
+        </p-message>
       </div>
     </div>
   </form>
 
   <!-- Actions -->
-  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="20px" class="modal-footer-section">
     <button
       pButton
       type="button"

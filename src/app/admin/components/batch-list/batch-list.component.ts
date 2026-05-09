@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Batches } from '../../../fds-config/entity-models/batch';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -17,15 +23,12 @@ import { AppQuery } from '../../../shared/app-query';
 export class BatchListComponent implements OnInit {
   batches: Batches[] = [];
 
-  dataSource = new MatTableDataSource<Batches>([]);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   private dialogRef!: MatDialogRef<any>;
-
-  displayedColumns = ['Name', 'Year', 'Department', 'Action'];
 
   constructor(
     private readonly batchService: BatchService,
     private readonly dialog: MatDialog,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
   ngOnInit(): void {
     this.getBatches();
@@ -35,8 +38,7 @@ export class BatchListComponent implements OnInit {
     this.batchService.getBatches().subscribe({
       next: (response) => {
         this.batches = response.data;
-        this.dataSource.data = this.batches;
-        this.dataSource.paginator = this.paginator;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Error fetching batches:', error);
@@ -47,6 +49,7 @@ export class BatchListComponent implements OnInit {
   AddBatch() {
     const dialogRef = this.dialog.open(InsertUpdateBatchesComponent, {
       width: '500px',
+      height: '400px',
       autoFocus: true,
       data: null,
     });
@@ -66,6 +69,7 @@ export class BatchListComponent implements OnInit {
 
         const dialogRef = this.dialog.open(InsertUpdateBatchesComponent, {
           width: '500px',
+          height: '400px',
           autoFocus: true,
           data: batchToUpdate,
         });

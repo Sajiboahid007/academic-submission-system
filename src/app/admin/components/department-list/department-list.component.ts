@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Department } from '../../../fds-config/entity-models/department';
 import { DepartmentService } from '../../services/department-service';
 import { MatPaginator } from '@angular/material/paginator';
@@ -16,16 +22,13 @@ import { ToastService } from '../../../shared/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DepartmentListComponent implements OnInit {
-  Department: Department[] = [];
-
-  dataSource = new MatTableDataSource<Department>([]);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  displayedColumns = ['Name', 'Code', 'Action'];
+  department: Department[] = [];
 
   constructor(
     private readonly departmentService: DepartmentService,
     private readonly dialog: MatDialog,
     private readonly toastService: ToastService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
   ngOnInit(): void {
     this.getDepartments();
@@ -34,9 +37,8 @@ export class DepartmentListComponent implements OnInit {
   getDepartments() {
     this.departmentService.getDepartments().subscribe({
       next: (response: AppQuery<Department[]>) => {
-        this.Department = response.data;
-        this.dataSource.data = this.Department;
-        this.dataSource.paginator = this.paginator;
+        this.department = response.data;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Error fetching departments:', error);

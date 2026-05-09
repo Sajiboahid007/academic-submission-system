@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { Users } from '../../../fds-config/entity-models/user';
 import { UserInfoService } from '../../services/user-info-service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InsertUpdateUserComponent } from './insert-update-user/insert-update-user.component';
+import { AppQuery } from '../../../shared/app-query';
 
 @Component({
   selector: 'app-user-list',
@@ -15,9 +21,7 @@ import { InsertUpdateUserComponent } from './insert-update-user/insert-update-us
 })
 export class UserListComponent implements OnInit {
   users: Users[] = [];
-  dataSource = new MatTableDataSource<Users>([]);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   private dialogRef!: MatDialogRef<any>;
   @ViewChild('userModal') userModal!: TemplateRef<any>;
 
@@ -26,9 +30,10 @@ export class UserListComponent implements OnInit {
   constructor(
     private readonly usersService: UserInfoService,
     private dialog: MatDialog,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getUsers();
   }
 
@@ -36,8 +41,7 @@ export class UserListComponent implements OnInit {
     this.usersService.getUsers().subscribe({
       next: (response) => {
         this.users = response.data;
-        this.dataSource.data = this.users;
-        this.dataSource.paginator = this.paginator;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Error fetching users:', error);
@@ -47,7 +51,8 @@ export class UserListComponent implements OnInit {
 
   addUser() {
     const dialogRef = this.dialog.open(InsertUpdateUserComponent, {
-      width: '500px',
+      width: '600px',
+      height: '520px',
       autoFocus: true,
       data: null,
     });
@@ -59,21 +64,28 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  openAddModal(isEdit: boolean = false): void {
-    if (!isEdit) {
-      this.userEditId = 0;
-    }
-    this.dialogRef = this.dialog.open(this.userModal, {
-      width: '600px',
-      disableClose: false,
-      autoFocus: false,
-      data: { id: this.userEditId },
+  onEditUser(id: number): void {
+    this.usersService.getUsersById(id).subscribe({
+      next: (res: AppQuery<Users[]>) => {
+        const users = res?.data;
+
+        const dialogRef = this.dialog.open(InsertUpdateUserComponent, {
+          width: '500px',
+          autoFocus: true,
+          data: users,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.getUsers();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error fetching category:', error);
+      },
     });
   }
 
-  onEditUser(user: Users) {}
-
   onDeleteUser(user: Users) {}
-
-  displayedColumns = ['Name', 'Email', 'Role', 'Department', 'Actions'];
 }

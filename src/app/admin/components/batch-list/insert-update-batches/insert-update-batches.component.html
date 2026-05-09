@@ -36,13 +36,11 @@
             >Select Department <span class="required-asterisk">*</span></label
           >
         </p-floatlabel>
-        <p-message
-          severity="error"
-          size="small"
-          variant="simple"
-          text="Department is required."
-          *ngIf="batchForm.get('DepartmentId')?.invalid && batchForm.get('DepartmentId')?.touched"
-        >
+        <p-message severity="error" size="small" variant="simple">
+          <span
+            *ngIf="batchForm.get('DepartmentId')?.invalid && batchForm.get('DepartmentId')?.touched"
+            >Department is required.</span
+          >
         </p-message>
       </div>
 
