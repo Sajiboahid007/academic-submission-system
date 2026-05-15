@@ -83,6 +83,12 @@ export class DashboardComponent implements OnInit {
       icon: '📦',
       description: 'Manage Batches',
     },
+    {
+      label: 'Role',
+      route: '/dashboard/role',
+      icon: '👤',
+      description: 'Manage Role',
+    },
   ];
 
   constructor(

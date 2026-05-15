@@ -24,30 +24,17 @@
           <span *ngIf="userForm.get('DepartmentId')?.invalid">Department is required.</span>
         </p-message>
       </div>
-      <!-- <div fxLayout="column" fxLayoutGap="6px">
+      <div fxLayout="column" fxLayoutGap="6px">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-select
-            id="RoleId"
-            formControlName="RoleId"
-            [options]="roles"
-            optionLabel="Name"
-            optionValue="Id"
-            [filter]="true"
-            filterBy="Name"
-            [showClear]="true"
-            styleClass="full-width"
-          >
+          <p-select id="RoleId" formControlName="RoleId" [options]="roles" optionLabel="Name" optionValue="Id"
+            [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
           </p-select>
-          <label for="RoleId" class="field-label"
-            >Select Role <span class="required-asterisk">*</span></label
-          >
+          <label for="RoleId" class="field-label">Select Role <span class="required-asterisk">*</span></label>
         </p-floatlabel>
         <p-message severity="error" size="small" variant="simple">
-          <span *ngIf="userForm.get('RoleId')?.invalid && userForm.get('RoleId')?.touched"
-            >Role is required.</span
-          >
+          <span *ngIf="userForm.get('RoleId')?.invalid && userForm.get('RoleId')?.touched">Role is required.</span>
         </p-message>
-      </div> -->
+      </div>
 
       <!-- User name -->
 

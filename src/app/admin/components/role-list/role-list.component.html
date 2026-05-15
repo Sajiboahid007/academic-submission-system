@@ -1,0 +1,33 @@
+<div fxLayout="row" fxLayoutAlign="space-between center" style="
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+  ">
+    <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Role List</h2>
+    <button pButton label="Add" icon="pi pi-plus" class="p-button-rounded p-button-success"
+        (click)="AddRole()"></button>
+</div>
+
+<p-table [value]="roles" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+    [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-role>
+        <tr>
+            <td>{{ role.Name }}</td>
+            <td>
+                <button pButton icon="pi pi-pencil" class="p-button-success btn-save"
+                    (click)="onEditRole(role.Id)"></button>
+                <button pButton icon="pi pi-trash" class="p-button-danger btn-save"
+                    (click)="onDeleteRole(role.Id)"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

@@ -13,6 +13,8 @@ import { Department } from '../../../../fds-config/entity-models/department';
 import { DepartmentService } from '../../../services/department-service';
 import { Password } from 'primeng/password';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { Role } from '../../../../fds-config/entity-models/role';
+import { RoleService } from '../../../services/role-service';
 
 @Component({
   selector: 'app-insert-update-user',
@@ -25,7 +27,7 @@ export class InsertUpdateUserComponent implements OnInit {
   userForm: FormGroup = null as any;
   users: Users[] = [];
   departments: Department[] = [];
-  roles: any[] = [];
+  roles: Role[] = [];
   isEditMode: boolean = false;
   userId!: number;
 
@@ -37,7 +39,10 @@ export class InsertUpdateUserComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Users | null,
     private readonly departmentService: DepartmentService,
     private readonly toastService: ToastService,
+    private readonly roleService: RoleService
   ) { }
+
+
   ngOnInit(): void {
     this.userForm = new FormGroup({
       Name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -45,7 +50,7 @@ export class InsertUpdateUserComponent implements OnInit {
       StudentId: new FormControl('', [Validators.required]),
       DepartmentId: new FormControl('', [Validators.required]),
       Password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      // RoleId: new FormControl('', [Validators.required]),
+      RoleId: new FormControl('', [Validators.required]),
     });
     if (this.data) {
       this.isEditMode = true;
@@ -57,6 +62,7 @@ export class InsertUpdateUserComponent implements OnInit {
     this.userForm.updateValueAndValidity();
 
     this.getDepartments();
+    this.getRoles();
   }
 
   getDepartments() {
@@ -72,6 +78,23 @@ export class InsertUpdateUserComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching departments:', error);
+      },
+    });
+  }
+
+  getRoles() {
+    this.roleService.getRoles().subscribe({
+      next: (response) => {
+        this.roles = response.data;
+
+        if (this.data) {
+          this.userForm.patchValue({
+            RoleId: this.data.RoleId,
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching roles:', error);
       },
     });
   }

@@ -17,6 +17,7 @@ import { InsertUpdateBatchesComponent } from './components/batch-list/insert-upd
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { InsertUpdateUserComponent } from './components/user-list/insert-update-user/insert-update-user.component';
+import { RoleListComponent } from './components/role-list/role-list.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { InsertUpdateUserComponent } from './components/user-list/insert-update-
     ProfileComponent,
     ChangePasswordComponent,
     InsertUpdateUserComponent,
+    RoleListComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -51,6 +53,7 @@ import { InsertUpdateUserComponent } from './components/user-list/insert-update-
     ProfileComponent,
     ChangePasswordComponent,
     InsertUpdateUserComponent,
+    RoleListComponent,
   ],
 })
 export class AdminModule {}

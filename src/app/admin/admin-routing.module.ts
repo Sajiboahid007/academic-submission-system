@@ -9,6 +9,7 @@ import { DepartmentListComponent } from './components/department-list/department
 import { BatchListComponent } from './components/batch-list/batch-list.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { RoleListComponent } from './components/role-list/role-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -48,6 +49,10 @@ const routes: Routes = [
         path: 'change-password',
         component: ChangePasswordComponent,
       },
+      {
+        path: 'role',
+        component: RoleListComponent,
+      }
     ],
   },
 ];
@@ -56,4 +61,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminRoutingModule {}
+export class AdminRoutingModule { }
