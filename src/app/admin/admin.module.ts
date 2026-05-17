@@ -18,6 +18,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { InsertUpdateUserComponent } from './components/user-list/insert-update-user/insert-update-user.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
+import { InsertUpdateRolesComponent } from './components/role-list/insert-update-roles/insert-update-roles.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { RoleListComponent } from './components/role-list/role-list.component';
     ChangePasswordComponent,
     InsertUpdateUserComponent,
     RoleListComponent,
+    InsertUpdateRolesComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -54,6 +56,7 @@ import { RoleListComponent } from './components/role-list/role-list.component';
     ChangePasswordComponent,
     InsertUpdateUserComponent,
     RoleListComponent,
+    InsertUpdateRolesComponent,
   ],
 })
 export class AdminModule {}

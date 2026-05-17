@@ -1,0 +1,37 @@
+<div class="modal-form-container">
+    <!-- Header Section -->
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+            <div fxLayout="column">
+                <h2 class="header-title">Role</h2>
+            </div>
+        </div>
+        <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+            (click)="onCancel()"></button>
+    </div>
+
+    <form [formGroup]="roleFrom">
+        <div fxLayout="column" fxLayoutGap="24px">
+            <div fxLayout="row" fxLayoutGap="24px">
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="roleName" formControlName="Name" autocomplete="off" class="full-width" />
+                        <label for="roleName" class="field-label">Role Name <span
+                                class="required-asterisk">*</span></label>
+                    </p-floatlabel>
+                    <p-message severity="error" size="small" variant="simple" text="Name is required."
+                        *ngIf="roleFrom.get('Name')?.invalid && roleFrom.get('Name')?.touched">
+                    </p-message>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Actions -->
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+            (click)="onCancel()"></button>
+        <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
+            [disabled]="roleFrom.invalid" (click)="onSave()"></button>
+    </div>
+</div>
