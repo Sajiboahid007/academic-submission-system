@@ -27,6 +27,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableCaptionComponent } from './components/table-caption/table-caption.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 
 const materialNgModule = [
   MatButtonModule,
@@ -61,9 +62,10 @@ const primeNgModules = [
 @NgModule({
   declarations: [
   
-    TableCaptionComponent
+    TableCaptionComponent,
+    PageHeaderComponent
   ],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
-  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules, TableCaptionComponent]
+  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules, TableCaptionComponent, PageHeaderComponent]
 })
 export class SharedModule { }

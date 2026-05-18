@@ -80,6 +80,8 @@ export class UserListComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result) => {
+          console.debug(result);
+
           if (result) {
             this.getUsers();
           }

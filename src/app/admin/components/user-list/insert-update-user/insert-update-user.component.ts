@@ -24,11 +24,11 @@ import { RoleService } from '../../../services/role-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InsertUpdateUserComponent implements OnInit {
-  userForm: FormGroup = null as any;
+  userForm!: FormGroup;
   users: Users[] = [];
   departments: Department[] = [];
   roles: Role[] = [];
-  isEditMode: boolean = false;
+  isEditMode = false;
   userId!: number;
 
   // Assuming you have a similar structure for roles
@@ -49,12 +49,18 @@ export class InsertUpdateUserComponent implements OnInit {
       Email: new FormControl('', [Validators.required, Validators.email]),
       StudentId: new FormControl('', [Validators.required]),
       DepartmentId: new FormControl('', [Validators.required]),
-      Password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      Password: new FormControl('', [Validators.required, Validators.minLength(4)]),
       RoleId: new FormControl('', [Validators.required]),
     });
+
     if (this.data) {
       this.isEditMode = true;
       this.userId = this.data.Id;
+
+      // clearing existing validators for password
+      this.userForm.get('Password')?.clearValidators();
+      this.userForm.get('Password')?.updateValueAndValidity();
+
       this.userForm.patchValue(this.data);
     }
 
@@ -102,10 +108,14 @@ export class InsertUpdateUserComponent implements OnInit {
   onCancel() {
     this.dialogRef.close();
   }
+
+
   onSave() {
     if (this.userForm.invalid) {
+      console.log(this.userForm);
       return;
     }
+
 
     if (this.isEditMode) {
       this.updateUser();
@@ -115,7 +125,7 @@ export class InsertUpdateUserComponent implements OnInit {
   }
 
   saveUser(): void {
-    const users = this.userForm.getRawValue() as Users;
+    const users: Users = this.userForm.getRawValue();
     this.usersService.addUserAdmin(users).subscribe({
       next: (res: any) => {
         this.toastService.success('User created successfully');
@@ -128,10 +138,12 @@ export class InsertUpdateUserComponent implements OnInit {
   }
 
   updateUser(): void {
-    this.usersService.updateUser(this.userForm.getRawValue()).subscribe({
-      next: (res: any) => {
+    const users: Users = this.userForm.getRawValue();
+    users.Id = this.userId;
+    this.usersService.updateUser(users).subscribe({
+      next: (_: any) => {
         this.toastService.success('User updated successfully');
-        this.dialogRef.close();
+        this.dialogRef.close(true);
       },
       error: (error) => {
         console.error('Error updating user:', error);
