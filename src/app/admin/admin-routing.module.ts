@@ -10,6 +10,7 @@ import { BatchListComponent } from './components/batch-list/batch-list.component
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
+import { PapersListComponent } from './components/papers-list/papers-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -52,6 +53,10 @@ const routes: Routes = [
       {
         path: 'role',
         component: RoleListComponent,
+      },
+      {
+        path: 'papers',
+        component: PapersListComponent,
       }
     ],
   },

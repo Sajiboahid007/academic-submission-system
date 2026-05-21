@@ -1,4 +1,4 @@
-<div class="profile-page">
+<!-- <div class="profile-page">
   <h1 class="page-title">Profile</h1>
   <p class="page-lead">Information from your signed-in session.</p>
 
@@ -20,4 +20,92 @@
   </div>
 
   <p class="profile-empty" *ngIf="!user">Unable to load profile. Try signing in again.</p>
+</div> -->
+
+
+<div class="grid">
+
+  <!-- PROFILE SECTION -->
+  <div class="col-12">
+    <div class="card border-round-2xl shadow-2 p-4">
+
+      <div class="flex flex-column md:flex-row gap-4 align-items-start">
+
+        <!-- LEFT PROFILE -->
+        <div class="flex align-items-center gap-4">
+
+          <!-- Profile Image -->
+          <img src="assets/profile.jpg" alt="profile" class="profile-image" />
+
+          <!-- Name & Department -->
+          <div>
+            <h1 class="m-0 text-900 text-4xl font-bold">
+              Sajib Oahid
+            </h1>
+
+            <p class="text-600 text-lg mt-2 mb-3">
+              Computer Science & Engineering
+            </p>
+
+            <!-- About -->
+            <div class="flex align-items-center gap-3">
+
+              <span class="about-text">
+                Passionate developer working with Angular,
+                Node.js, Prisma and Machine Learning projects.
+              </span>
+
+              <!-- Edit Profile -->
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm" label="Edit"></button>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PAPERS SECTION -->
+  <div class="col-12">
+    <div class="card border-round-2xl shadow-2 p-4">
+
+      <!-- Header -->
+      <div class="flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-900 text-4xl">
+          Active Papers
+        </h2>
+
+        <p-badge [value]="papers.length" severity="info">
+        </p-badge>
+      </div>
+
+      <!-- Paper List -->
+      <div *ngFor="let paper of papers"
+        class="paper-row flex flex-row justify-content-between align-items-center border-round-xl p-3 mb-3">
+        <!-- Left -->
+        <div class="flex flex-row align-items-center justify-content-between gap-3 w-full">
+          <!-- Left side: Title + Abstract -->
+          <div style="display: flex;" class="lex-column gap-1">
+            <span class="text-900 text-xl font-semibold">
+              {{ paper.Title }}
+            </span>
+            <small class="text-600">
+              {{ paper.Abstract }}
+            </small>
+            <!-- Right side: buttons -->
+            <div style="margin-left: 490px;" class="flex gap-3">
+              <button pButton type="button" icon="pi pi-eye"
+                class="p-button-rounded p-button-info p-button-sm"></button>
+              <button pButton type="button" icon="pi pi-pencil"
+                class="p-button-rounded p-button-success p-button-sm"></button>
+              <button pButton type="button" icon="pi pi-trash"
+                class="p-button-rounded p-button-danger p-button-sm"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

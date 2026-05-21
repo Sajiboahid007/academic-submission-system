@@ -28,6 +28,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableCaptionComponent } from './components/table-caption/table-caption.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { AccordionModule } from 'primeng/accordion';
 
 const materialNgModule = [
   MatButtonModule,
@@ -56,12 +57,13 @@ const primeNgModules = [
   TableModule,
   IconFieldModule,
   InputIconModule,
-  ConfirmDialogModule
+  ConfirmDialogModule,
+  AccordionModule
 ];
 
 @NgModule({
   declarations: [
-  
+
     TableCaptionComponent,
     PageHeaderComponent
   ],

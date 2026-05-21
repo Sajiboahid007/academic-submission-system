@@ -89,6 +89,12 @@ export class DashboardComponent implements OnInit {
       icon: '👤',
       description: 'Manage Role',
     },
+    {
+      label: 'Papers',
+      route: '/dashboard/papers',
+      icon: '📄',
+      description: 'Manage Papers',
+    }
   ];
 
   constructor(

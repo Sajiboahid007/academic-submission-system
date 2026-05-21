@@ -19,6 +19,8 @@ import { ChangePasswordComponent } from './components/change-password/change-pas
 import { InsertUpdateUserComponent } from './components/user-list/insert-update-user/insert-update-user.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
 import { InsertUpdateRolesComponent } from './components/role-list/insert-update-roles/insert-update-roles.component';
+import { PapersListComponent } from './components/papers-list/papers-list.component';
+import { InsertUpdatePaperComponent } from './components/papers-list/insert-update-paper/insert-update-paper.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { InsertUpdateRolesComponent } from './components/role-list/insert-update
     InsertUpdateUserComponent,
     RoleListComponent,
     InsertUpdateRolesComponent,
+    PapersListComponent,
+    InsertUpdatePaperComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -57,6 +61,8 @@ import { InsertUpdateRolesComponent } from './components/role-list/insert-update
     InsertUpdateUserComponent,
     RoleListComponent,
     InsertUpdateRolesComponent,
+    PapersListComponent,
+    InsertUpdatePaperComponent,
   ],
 })
 export class AdminModule {}

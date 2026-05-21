@@ -66,3 +66,33 @@
   color: $accent-error;
   margin: 0;
 }
+
+//new profile
+.profile-image {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.about-text {
+  font-size: 15px;
+  color: var(--text-color-secondary);
+  line-height: 1.7;
+}
+
+.paper-row {
+  transition: all 0.3s ease;
+  border: 1px solid var(--surface-border);
+  cursor: pointer;
+  background: var(--surface-card);
+}
+
+.paper-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-color);
+  background: var(--surface-50);
+}
