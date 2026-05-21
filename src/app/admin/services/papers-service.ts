@@ -16,7 +16,7 @@ export class PapersService {
   constructor(private readonly http: HttpClient, private readonly fb: FormBuilder) { }
 
   getPapers(): Observable<AppQuery<Papers[]>> {
-    return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/papers/get`);
+    return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/get`);
   }
 
   addPaper(paper: Papers): Observable<AppQuery<Papers>> {
@@ -40,7 +40,7 @@ export class PapersService {
     return this.fb.group({
       Id: [papers?.Id ?? 0],
       Title: [papers?.Title ?? '', Validators.required],
-      Abstract: [papers?.Abstract ?? '', Validators.required],
+      Abstract: [papers?.Abstract ?? ''],
       UserId: [papers?.UserId ?? null, Validators.required],
       CategoryId: [papers?.CategoryId ?? null, Validators.required],
       SubcategoryId: [papers?.SubcategoryId ?? null],

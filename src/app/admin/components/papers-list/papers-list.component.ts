@@ -31,7 +31,7 @@ export class PapersListComponent implements OnInit {
   getPapers() {
     this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
       this.papers = res.data;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 

@@ -15,6 +15,8 @@ import { Password } from 'primeng/password';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { Role } from '../../../../fds-config/entity-models/role';
 import { RoleService } from '../../../services/role-service';
+import { BatchService } from '../../../services/batch-service';
+import { Batches } from '../../../../fds-config/entity-models/batch';
 
 @Component({
   selector: 'app-insert-update-user',
@@ -27,6 +29,7 @@ export class InsertUpdateUserComponent implements OnInit {
   userForm!: FormGroup;
   users: Users[] = [];
   departments: Department[] = [];
+  batches: Batches[] = []
   roles: Role[] = [];
   isEditMode = false;
   userId!: number;
@@ -39,7 +42,8 @@ export class InsertUpdateUserComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Users | null,
     private readonly departmentService: DepartmentService,
     private readonly toastService: ToastService,
-    private readonly roleService: RoleService
+    private readonly roleService: RoleService,
+    private readonly batchService: BatchService,
   ) { }
 
 
@@ -51,6 +55,7 @@ export class InsertUpdateUserComponent implements OnInit {
       DepartmentId: new FormControl('', [Validators.required]),
       Password: new FormControl('', [Validators.required, Validators.minLength(4)]),
       RoleId: new FormControl('', [Validators.required]),
+      BatchId: new FormControl(''),
     });
 
     if (this.data) {
@@ -69,6 +74,7 @@ export class InsertUpdateUserComponent implements OnInit {
 
     this.getDepartments();
     this.getRoles();
+    this.getBatches();
   }
 
   getDepartments() {
@@ -84,6 +90,22 @@ export class InsertUpdateUserComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching departments:', error);
+      },
+    });
+  }
+  getBatches() {
+    this.batchService.getBatches().subscribe({
+      next: (response) => {
+        this.batches = response.data;
+
+        if (this.data) {
+          this.userForm.patchValue({
+            BatchId: this.data.BatchId,
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching batches:', error);
       },
     });
   }

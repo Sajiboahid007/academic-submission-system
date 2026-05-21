@@ -11,4 +11,153 @@
     </div>
 
 
+
+
+    <form [formGroup]="papersForm">
+        <div fxLayout="column" fxLayoutGap="24px">
+
+
+            <!-- Category Row -->
+            <div fxLayout="row" fxLayoutGap="24px">
+                <!-- Category -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-select id="CategoryId" formControlName="CategoryId" [options]="category" optionLabel="Name"
+                            optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
+                        </p-select>
+                        <label for="CategoryId" class="field-label">
+                            Select Category <span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+                    <p-message severity="error" size="small" variant="simple">
+                        <span *ngIf="papersForm.get('CategoryId')?.invalid && papersForm.get('CategoryId')?.touched">
+                            Category is required.
+                        </span>
+                    </p-message>
+                </div>
+
+                <!-- SubCategory -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-select id="SubcategoryId" formControlName="SubcategoryId" [options]="subcategory"
+                            optionLabel="Name" optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true"
+                            styleClass="full-width">
+                        </p-select>
+                        <label for="SubcategoryId" class="field-label">
+                            Select Sub Category
+                        </label>
+                    </p-floatlabel>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="Title" formControlName="Title" autocomplete="off" class="full-width" />
+
+                    <label for="Title" class="field-label">
+                        Paper Title <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+
+                <p-message severity="error" size="small" variant="simple" text="Title is required."
+                    *ngIf="papersForm.get('Title')?.invalid && papersForm.get('Title')?.touched">
+                </p-message>
+            </div>
+
+            <!-- Abstract -->
+            <!-- <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    
+                    <input pInputText id="Abstract" formControlName="Abstract" autocomplete="off" class="full-width" />
+                    <label for="Abstract" class="field-label">
+                        Abstract <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+                <p-message severity="error" size="small" variant="simple" text="Abstract is required."
+                    *ngIf="papersForm.get('Abstract')?.invalid && papersForm.get('Abstract')?.touched">
+                </p-message>
+            </div> -->
+
+            <!-- User Info Row -->
+            <div fxLayout="row" fxLayoutGap="24px">
+                <!-- User Name -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="UserName" formControlName="UserId" class="full-width" readonly />
+                        <label for="UserName" class="field-label">
+                            User Name
+                        </label>
+                    </p-floatlabel>
+                </div>
+
+                <!-- Department -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="DepartmentName" formControlName="DepartmentId" class="full-width"
+                            readonly />
+                        <label for="DepartmentName" class="field-label">
+                            Department
+                        </label>
+                    </p-floatlabel>
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Year + File -->
+            <div fxLayout="row" fxLayoutGap="24px">
+                <!-- Year -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-datepicker id="Year" formControlName="Year" view="year" dateFormat="yy"
+                            styleClass="full-width">
+                        </p-datepicker>
+                        <label for="Year" class="field-label">
+                            Select Year
+                        </label>
+                    </p-floatlabel>
+                </div>
+
+                <!-- Batch -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="BatchId" formControlName="BatchId" class="full-width" readonly />
+                        <label for="BatchId" class="field-label">
+                            Batch
+                        </label>
+                    </p-floatlabel>
+                </div>
+            </div>
+
+            <!-- File URL -->
+            <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="FileUrl" formControlName="FileUrl" autocomplete="off" class="full-width" />
+                    <label for="FileUrl" class="field-label">
+                        File URL
+                    </label>
+                </p-floatlabel>
+            </div>
+        </div>
+    </form>
+
+    <!-- Actions -->
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+            (click)="onCancel()">
+        </button>
+
+        <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
+            [disabled]="papersForm.invalid" (click)="onSave()">
+        </button>
+
+    </div>
+
+
+
+
 </div>

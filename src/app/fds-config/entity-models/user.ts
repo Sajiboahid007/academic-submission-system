@@ -6,6 +6,7 @@ export interface Users {
   Password: string;
   DepartmentId: number;
   RoleId?: number | null;
+  BatchId?: number | null;
   IsMarkToDelete?: boolean | null;
   CreatedAt?: Date | null;
   UpdatedAt?: Date | null;
