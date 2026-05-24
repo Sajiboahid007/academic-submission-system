@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,7 +29,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TableCaptionComponent } from './components/table-caption/table-caption.component';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { AccordionModule } from 'primeng/accordion';
-
+import { MultiSelectModule } from 'primeng/multiselect';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -38,6 +38,7 @@ const materialNgModule = [
   MatInputModule,
   MatPaginatorModule,
   MatTableModule,
+  FormsModule,
 ];
 
 const primeNgModules = [
@@ -58,7 +59,8 @@ const primeNgModules = [
   IconFieldModule,
   InputIconModule,
   ConfirmDialogModule,
-  AccordionModule
+  AccordionModule,
+  MultiSelectModule
 ];
 
 @NgModule({

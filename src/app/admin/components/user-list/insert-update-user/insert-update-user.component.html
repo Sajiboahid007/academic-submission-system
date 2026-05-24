@@ -12,18 +12,35 @@
   <form [formGroup]="userForm">
     <div fxLayout="column" fxLayoutGap="17px">
       <!-- DepartmentId -->
-      <div fxLayout="column" fxLayoutGap="6px">
-        <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-select id="DepartmentId" formControlName="DepartmentId" [options]="departments" optionLabel="Name"
-            optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
-          </p-select>
-          <label for="DepartmentId" class="field-label">Select Department <span
-              class="required-asterisk">*</span></label>
-        </p-floatlabel>
-        <p-message severity="error" size="small" variant="simple">
-          <span *ngIf="userForm.get('DepartmentId')?.invalid">Department is required.</span>
-        </p-message>
+
+      <div fxLayout="row" fxLayoutGap="17px">
+        <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <p-select id="DepartmentId" formControlName="DepartmentId" [options]="departments" optionLabel="Name"
+              optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
+            </p-select>
+            <label for="DepartmentId" class="field-label">Select Department <span
+                class="required-asterisk">*</span></label>
+          </p-floatlabel>
+          <p-message severity="error" size="small" variant="simple">
+            <span *ngIf="userForm.get('DepartmentId')?.invalid">Department is required.</span>
+          </p-message>
+        </div>
+        <!-- BatchId -->
+        <div fxLayout="column" fxLayoutGap="6px" fxFlex="1 1 auto">
+          <p-floatlabel variant="on" class="float-label-wrapper">
+            <p-select id="BatchId" formControlName="BatchId" [options]="batches" optionLabel="Name" optionValue="Id"
+              [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
+            </p-select>
+            <label for="BatchId" class="field-label">Select Batch <span class="required-asterisk">*</span></label>
+          </p-floatlabel>
+          <!-- <p-message severity="error" size="small" variant="simple">
+            <span *ngIf="userForm.get('BatchId')?.invalid">Batch is required.</span>
+          </p-message> -->
+        </div>
       </div>
+
+
       <div fxLayout="column" fxLayoutGap="6px">
         <p-floatlabel variant="on" class="float-label-wrapper">
           <p-select id="RoleId" formControlName="RoleId" [options]="roles" optionLabel="Name" optionValue="Id"
@@ -52,7 +69,7 @@
           <p-floatlabel variant="on" class="float-label-wrapper">
             <input pInputText id="StudentId" formControlName="StudentId" autocomplete="off" class="full-width" />
             <label for="studentId" class="field-label">
-              Student ID <span class="required-asterisk">*</span></label>
+              Unique ID <span class="required-asterisk">*</span></label>
           </p-floatlabel>
           <p-message severity="error" size="small" variant="simple" text="Student ID is required."
             *ngIf="userForm.get('StudentId')?.invalid">

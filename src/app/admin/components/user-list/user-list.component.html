@@ -2,7 +2,7 @@
 
 <div class="card">
   <p-table [value]="users" #dt2 dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50, 100]" [paginator]="true"
-    [globalFilterFields]="['Name', 'Email', 'StudentId', 'Roles.Name', 'Department.Name']">
+    [globalFilterFields]="['Name', 'Email', 'StudentId', 'Roles.Name', 'Department.Name', 'Batches.Name']">
     <!-- CAPTION -->
     <ng-template pTemplate="caption">
       <app-table-caption [table]="dt2"></app-table-caption>
@@ -15,6 +15,7 @@
         <th>Student</th>
         <th>Role</th>
         <th>Department</th>
+        <th>Batch</th>
         <th>Action</th>
       </tr>
     </ng-template>
@@ -25,6 +26,7 @@
         <td>{{ user?.StudentId }}</td>
         <td>{{ user?.Roles?.Name }}</td>
         <td>{{ user?.Department?.Name }}</td>
+        <td>{{ user?.Batches?.Name }}</td>
         <td>
           <button pButton icon="pi pi-pencil" class="p-button-success btn-save" (click)="onEditUser(user.Id)"></button>
 

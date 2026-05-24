@@ -1,0 +1,10 @@
+:host ::ng-deep .p-datatable table {
+    table-layout: fixed;
+}
+
+:host ::ng-deep .p-datatable td,
+:host ::ng-deep .p-datatable th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

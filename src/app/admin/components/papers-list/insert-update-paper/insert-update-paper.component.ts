@@ -68,6 +68,7 @@ export class InsertUpdatePaperComponent implements OnInit {
 
         UserId: res.data.Name,
         DepartmentId: res.data.Department?.Code,
+        BatchId: res.data.Batches?.Name,
       });
     });
     console.log(this.users)
