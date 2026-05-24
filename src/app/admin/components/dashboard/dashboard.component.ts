@@ -35,7 +35,6 @@ export class DashboardComponent implements OnInit {
   notificationsOpen = signal(false);
   notifications = signal<NotificationItem[]>([]);
 
-
   userInfo: Users | null = null;
 
   ngOnInit(): void {
@@ -68,7 +67,7 @@ export class DashboardComponent implements OnInit {
     {
       label: 'User',
       route: '/dashboard/user',
-      icon: '👤',
+      icon: '👥',
       description: 'Manage Users',
     },
     {
@@ -86,7 +85,7 @@ export class DashboardComponent implements OnInit {
     {
       label: 'Role',
       route: '/dashboard/role',
-      icon: '👤',
+      icon: '🔑',
       description: 'Manage Role',
     },
     {

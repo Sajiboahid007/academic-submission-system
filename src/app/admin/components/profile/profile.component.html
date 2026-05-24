@@ -1,111 +1,190 @@
-<!-- <div class="profile-page">
-  <h1 class="page-title">Profile</h1>
-  <p class="page-lead">Information from your signed-in session.</p>
+<div class="profile-container">
 
-  <div class="profile-card" *ngIf="user">
-    <dl class="profile-dl">
-      <div class="profile-row">
-        <dt>Name</dt>
-        <dd>{{ displayValue('Name') }}</dd>
-      </div>
-      <div class="profile-row">
-        <dt>Role</dt>
-        <dd>{{ displayValue('Role') }}</dd>
-      </div>
-      <div class="profile-row">
-        <dt>Email</dt>
-        <dd>{{ displayValue('Email') }}</dd>
-      </div>
-    </dl>
-  </div>
+  <!-- LEFT SIDEBAR: PROFILE INFO -->
+  <aside class="profile-sidebar">
+    <div class="profile-sidebar-card">
 
-  <p class="profile-empty" *ngIf="!user">Unable to load profile. Try signing in again.</p>
-</div> -->
+      <!-- Gradient Header background -->
+      <div class="profile-header-gradient"></div>
 
-
-<div class="grid">
-
-  <!-- PROFILE SECTION -->
-  <div class="col-12">
-    <div class="card border-round-2xl shadow-2 p-4">
-
-      <div class="flex flex-column md:flex-row gap-4 align-items-start">
-
-        <!-- LEFT PROFILE -->
-        <div class="flex align-items-center gap-4">
-
-          <!-- Profile Image -->
-          <img src="assets/profile.jpg" alt="profile" class="profile-image" />
-
-          <!-- Name & Department -->
-          <div>
-            <h1 class="m-0 text-900 text-4xl font-bold">
-              Sajib Oahid
-            </h1>
-
-            <p class="text-600 text-lg mt-2 mb-3">
-              Computer Science & Engineering
-            </p>
-
-            <!-- About -->
-            <div class="flex align-items-center gap-3">
-
-              <span class="about-text">
-                Passionate developer working with Angular,
-                Node.js, Prisma and Machine Learning projects.
-              </span>
-
-              <!-- Edit Profile -->
-              <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-sm" label="Edit"></button>
-
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- PAPERS SECTION -->
-  <div class="col-12">
-    <div class="card border-round-2xl shadow-2 p-4">
-
-      <!-- Header -->
-      <div class="flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0 text-900 text-4xl">
-          Active Papers
-        </h2>
-
-        <p-badge [value]="papers.length" severity="info">
-        </p-badge>
-      </div>
-
-      <!-- Paper List -->
-      <div *ngFor="let paper of papers"
-        class="paper-row flex flex-row justify-content-between align-items-center border-round-xl p-3 mb-3">
-        <!-- Left -->
-        <div class="flex flex-row align-items-center justify-content-between gap-3 w-full">
-          <!-- Left side: Title + Abstract -->
-          <div style="display: flex;" class="lex-column gap-1">
-            <span class="text-900 text-xl font-semibold">
-              {{ paper.Title }}
-            </span>
-            <small class="text-600">
-              {{ paper.Abstract }}
-            </small>
-            <!-- Right side: buttons -->
-            <div style="margin-left: 490px;" class="flex gap-3">
-              <button pButton type="button" icon="pi pi-eye"
-                class="p-button-rounded p-button-info p-button-sm"></button>
-              <button pButton type="button" icon="pi pi-pencil"
-                class="p-button-rounded p-button-success p-button-sm"></button>
-              <button pButton type="button" icon="pi pi-trash"
-                class="p-button-rounded p-button-danger p-button-sm"></button>
-            </div>
+      <!-- Avatar & Camera Icon wrapper -->
+      <div class="profile-avatar-section">
+        <div class="avatar-circle">
+          <span>
+            {{ userDetailedData?.Name ? (userDetailedData.Name.split(' ').map(n => n[0]).join('').substring(0,
+            2).toUpperCase()) : 'SO' }}
+          </span>
+          <div class="camera-overlay">
+            <i class="pi pi-camera"></i>
           </div>
         </div>
       </div>
+
+      <!-- User Info Details -->
+      <div class="profile-meta-section">
+        <h1 class="user-display-name">
+          {{ userDetailedData?.Name || 'Sajib Oahid' }}
+        </h1>
+        <p class="user-short-bio">
+          Passionate developer working with Angular, Node.js, Prisma and Machine Learning projects.
+        </p>
+      </div>
+
+      <!-- Information Fields Grid -->
+      <div class="profile-info-grid">
+        <div class="info-field">
+          <span class="field-title">Department</span>
+          <span class="field-value">
+            {{ userDetailedData?.Department?.Name || userDetailedData?.Department?.Code || 'Computer Science &
+            Engineering' }}
+          </span>
+        </div>
+
+        <div class="info-field">
+          <span class="field-title">Batch</span>
+          <span class="field-value">
+            {{ userDetailedData?.Batches?.Name || '2022 - 2026' }}
+          </span>
+        </div>
+
+        <div class="info-field">
+          <span class="field-title">Role</span>
+          <span class="field-value">
+            {{ userDetailedData?.Roles?.Name || 'Research Lead' }}
+          </span>
+        </div>
+
+        <div class="info-field">
+          <span class="field-title">Student ID</span>
+          <span class="field-value">
+            {{ userDetailedData?.StudentId || 'CSE-220101' }}
+          </span>
+        </div>
+
+        <div class="info-field">
+          <span class="field-title">Email</span>
+          <span class="field-value email-value">
+            {{ userDetailedData?.Email || 'sajib.oahid@research.edu' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Edit Profile Action Button -->
+      <div class="profile-action-btn-container">
+        <button pButton type="button" icon="pi pi-pencil" label="Edit Profile" class="p-button-rounded edit-profile-btn"
+          (click)="editProfile()">
+        </button>
+      </div>
+
     </div>
-  </div>
+  </aside>
+
+  <!-- RIGHT MAIN SECTION: PAPERS & ACTIVITIES -->
+  <main class="profile-main-content">
+
+    <!-- Top Header Title & Upload button -->
+    <header class="papers-list-header">
+      <div class="header-left">
+        <span class="header-icon">📚</span>
+        <h2 class="papers-title">Papers & Activities</h2>
+      </div>
+      <button pButton type="button" icon="pi pi-plus" label="Upload Paper" class="p-button-rounded upload-paper-btn"
+        (click)="uploadPaper()">
+      </button>
+    </header>
+
+    <!-- Search and Status filter controls -->
+    <div class="filter-controls-row">
+      <div class="search-input-wrapper">
+        <i class="pi pi-search search-icon"></i>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Search by title, author, keyword..."
+          class="search-input-field" />
+      </div>
+
+      <div class="status-dropdown-wrapper">
+        <select class="status-select-control" [(ngModel)]="statusFilter">
+          <option value="All">All Status</option>
+          <option value="approved">Approved</option>
+          <option value="submitted">Submitted</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Papers Cards List -->
+    <div class="papers-cards-container" style="max-height: 450px; overflow-y: scroll;"
+      *ngIf="filteredPapers.length > 0; else emptyState">
+
+      <article class="paper-card" *ngFor="let paper of filteredPapers">
+
+        <!-- Header row (Title & Status) -->
+        <div class="paper-card-header">
+          <h3 class="paper-card-title">{{ paper.Title }}</h3>
+          <span class="status-badge" [ngClass]="'status-' + getPaperStatus(paper)">
+            {{ getPaperStatus(paper) }}
+          </span>
+        </div>
+
+        <!-- Abstract Description -->
+        <p class="paper-card-abstract">
+          {{ paper.Abstract || 'No abstract/description provided.' }}
+        </p>
+
+        <!-- Metadata items with Icons -->
+        <div class="paper-card-metadata">
+          <div class="meta-item author-meta">
+            <i class="pi pi-user"></i>
+            <span>{{ userDetailedData?.Name || 'Sajib Oahid' }}</span>
+          </div>
+
+          <div class="meta-item date-meta">
+            <i class="pi pi-calendar"></i>
+            <span>{{ paper.CreatedDate ? (paper.CreatedDate | date:'M/d/yyyy') : '3/10/2025' }}</span>
+          </div>
+
+          <div class="meta-item tag-meta">
+            <i class="pi pi-tag"></i>
+            <span>{{ paper.Category?.Name || 'Angular, Node.js, Prisma' }}</span>
+          </div>
+
+          <div class="meta-item view-meta">
+            <i class="pi pi-eye"></i>
+            <span>{{ (paper.Id * 29 + 17) % 180 + 30 }} views</span>
+          </div>
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="paper-card-actions">
+          <button pButton type="button" label="View" icon="pi pi-eye"
+            class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewPaper(paper)">
+          </button>
+
+          <button pButton type="button" label="Edit" icon="pi pi-pencil"
+            class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editPaper(paper)">
+          </button>
+
+          <button pButton type="button" label="Delete" icon="pi pi-trash"
+            class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deletePaper(paper.Id)">
+          </button>
+        </div>
+
+      </article>
+
+    </div>
+
+    <!-- Empty state template -->
+    <ng-template #emptyState>
+      <div class="empty-state-card">
+        <div class="empty-icon-wrapper">
+          <i class="pi pi-folder-open empty-icon"></i>
+        </div>
+        <h4 class="empty-title">No papers found</h4>
+        <p class="empty-description">
+          We couldn't find any papers matching your active filters or search criteria.
+        </p>
+      </div>
+    </ng-template>
+
+  </main>
+
 </div>

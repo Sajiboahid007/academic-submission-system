@@ -85,7 +85,7 @@ export class PapersListComponent implements OnInit {
 
   AddPapers() {
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
-      width: '800px',
+      width: '1000px',
       height: '650px',
       autoFocus: true,
       data: null,
