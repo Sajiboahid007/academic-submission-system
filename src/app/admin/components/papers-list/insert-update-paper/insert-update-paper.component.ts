@@ -114,4 +114,7 @@ export class InsertUpdatePaperComponent implements OnInit {
 
   onSave() { }
 
+
+  onUpload() { }
+
 }

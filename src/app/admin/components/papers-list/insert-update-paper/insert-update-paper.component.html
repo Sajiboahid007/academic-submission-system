@@ -112,11 +112,9 @@
                 <!-- Year -->
                 <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
-                        <p-datepicker id="Year" formControlName="Year" view="year" dateFormat="yy"
-                            styleClass="full-width">
-                        </p-datepicker>
+                        <input pInputText id="Year" formControlName="Year" autocomplete="off" class="full-width" />
                         <label for="Year" class="field-label">
-                            Select Year
+                            Year
                         </label>
                     </p-floatlabel>
                 </div>
@@ -133,13 +131,22 @@
             </div>
 
             <!-- File URL -->
-            <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+            <!-- <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                 <p-floatlabel variant="on" class="float-label-wrapper">
                     <input pInputText id="FileUrl" formControlName="FileUrl" autocomplete="off" class="full-width" />
                     <label for="FileUrl" class="field-label">
                         File URL
                     </label>
                 </p-floatlabel>
+            </div> -->
+
+            <div class="card">
+                <p-fileupload name="demo[]" (onUpload)="onUpload()" [multiple]="true" accept="image/*"
+                    maxFileSize="1000000" mode="advanced">
+                    <ng-template #empty>
+                        <div>Drag and drop files to here to upload.</div>
+                    </ng-template>
+                </p-fileupload>
             </div>
         </div>
     </form>
