@@ -12,6 +12,7 @@ import { CategoriesService } from '../../services/categories-service';
 import { SubcategoryService } from '../../services/subcategory-service';
 import { DepartmentService } from '../../services/department-service';
 import { BatchService } from '../../services/batch-service';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-papers-list',
@@ -21,26 +22,26 @@ import { BatchService } from '../../services/batch-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PapersListComponent implements OnInit {
-
-
   papers: Papers[] = [];
   loading: boolean = false;
-  categories: Category[] = []
-  subCategories: SubCategory[] = []
-  departments: Department[] = []
-  batches: Batches[] = []
+  categories: Category[] = [];
+  subCategories: SubCategory[] = [];
+  departments: Department[] = [];
+  batches: Batches[] = [];
+  years: string[] = [];
+  searchValue = '';
 
-  constructor(private readonly papersService: PapersService,
+  constructor(
+    private readonly papersService: PapersService,
     private readonly cdr: ChangeDetectorRef,
     private readonly dialog: MatDialog,
     private readonly categoryService: CategoriesService,
     private readonly subCategoryService: SubcategoryService,
     private readonly departmentService: DepartmentService,
-    private readonly batchService: BatchService
-  ) { }
+    private readonly batchService: BatchService,
+  ) {}
 
   ngOnInit(): void {
-
     this.getPapers();
     this.getCategory();
     this.getSubCategory();
@@ -48,10 +49,12 @@ export class PapersListComponent implements OnInit {
     this.getBatch();
   }
 
-
   getPapers() {
     this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
       this.papers = res.data;
+      this.years = Array.from(
+        new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
+      ).sort();
       this.cdr.markForCheck();
     });
   }
@@ -82,7 +85,8 @@ export class PapersListComponent implements OnInit {
 
   AddPapers() {
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
-      width: '500px',
+      width: '800px',
+      height: '650px',
       autoFocus: true,
       data: null,
     });
@@ -94,4 +98,8 @@ export class PapersListComponent implements OnInit {
     });
   }
 
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = '';
+  }
 }

@@ -20,19 +20,19 @@ export class PapersService {
   }
 
   addPaper(paper: Papers): Observable<AppQuery<Papers>> {
-    return this.http.post<AppQuery<Papers>>(`${this.baseUrl}/api/papers/create`, paper);
+    return this.http.post<AppQuery<Papers>>(`${this.baseUrl}/api/paper/create`, paper);
   }
 
   getPaperById(id: number): Observable<AppQuery<Papers>> {
-    return this.http.get<AppQuery<Papers>>(`${this.baseUrl}/api/papers/get/${id}`);
+    return this.http.get<AppQuery<Papers>>(`${this.baseUrl}/api/paper/get/${id}`);
   }
 
   updatePaper(paper: Papers): Observable<AppQuery<Papers>> {
-    return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/papers/update/${paper.Id}`, paper);
+    return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/paper/update/${paper.Id}`, paper);
   }
 
   deletePaper(id: number): Observable<AppQuery<Papers>> {
-    return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/papers/delete/${id}`, {});
+    return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/paper/delete/${id}`, {});
   }
 
 
@@ -46,7 +46,7 @@ export class PapersService {
       SubcategoryId: [papers?.SubcategoryId ?? null],
       DepartmentId: [papers?.DepartmentId ?? null, Validators.required],
       BatchId: [papers?.BatchId ?? null],
-      Year: [papers?.Year ?? new Date(), Validators.required],
+      Year: [papers?.Year ?? new Date().getFullYear().toString(), Validators.required],
       FileUrl: [papers?.FileUrl ?? ''],
       CreatedDate: [papers?.CreatedDate ?? new Date()],
 

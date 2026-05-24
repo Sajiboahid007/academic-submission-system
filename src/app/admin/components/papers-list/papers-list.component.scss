@@ -1,10 +1,18 @@
 :host ::ng-deep .p-datatable table {
-    table-layout: fixed;
+  table-layout: fixed;
 }
 
 :host ::ng-deep .p-datatable td,
 :host ::ng-deep .p-datatable th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .p-datatable th .p-select,
+:host ::ng-deep .p-datatable th .p-dropdown,
+:host ::ng-deep .p-datatable th .p-dropdown-panel,
+:host ::ng-deep .p-datatable th .p-overlaypanel {
+  overflow: visible;
+  z-index: 9999;
 }

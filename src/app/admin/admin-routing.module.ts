@@ -57,6 +57,10 @@ const routes: Routes = [
       {
         path: 'papers',
         component: PapersListComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
       }
     ],
   },

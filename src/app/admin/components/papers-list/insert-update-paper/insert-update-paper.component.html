@@ -84,7 +84,7 @@
                 <!-- User Name -->
                 <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
-                        <input pInputText id="UserName" formControlName="UserId" class="full-width" readonly />
+                        <input pInputText id="UserName" [value]="userName" class="full-width" readonly />
                         <label for="UserName" class="field-label">
                             User Name
                         </label>
@@ -94,15 +94,13 @@
                 <!-- Department -->
                 <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
-                        <input pInputText id="DepartmentName" formControlName="DepartmentId" class="full-width"
+                        <input pInputText id="DepartmentName" [value]="departmentName" class="full-width"
                             readonly />
                         <label for="DepartmentName" class="field-label">
                             Department
                         </label>
                     </p-floatlabel>
                 </div>
-
-
             </div>
 
 
@@ -122,7 +120,7 @@
                 <!-- Batch -->
                 <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
-                        <input pInputText id="BatchId" formControlName="BatchId" class="full-width" readonly />
+                        <input pInputText id="BatchId" [value]="batchName" class="full-width" readonly />
                         <label for="BatchId" class="field-label">
                             Batch
                         </label>

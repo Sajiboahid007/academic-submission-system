@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Papers } from '../../../../fds-config/entity-models/papers';
 import { FormGroup } from '@angular/forms';
 import { PapersService } from '../../../services/papers-service';
@@ -22,23 +22,28 @@ import { Users } from '../../../../fds-config/entity-models/user';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InsertUpdatePaperComponent implements OnInit {
-
   isEditMode = false;
-  papers: Papers[] = []
+  papers: Papers[] = [];
   category: Category[] = [];
   subcategory: SubCategory[] = [];
   batch: Batches[] = [];
   department: Department[] = [];
   users: Users[] = [];
 
+  userName = '';
+  departmentName = '';
+  batchName = '';
+
   papersForm!: FormGroup;
 
-  constructor(private readonly papersService: PapersService,
+  constructor(
+    private readonly papersService: PapersService,
     private readonly dialogRef: MatDialogRef<InsertUpdatePaperComponent>,
     private readonly categoryService: CategoriesService,
     private readonly batchService: BatchService,
     private readonly userService: UserInfoService,
-    private readonly subcategoryService: SubcategoryService
+    private readonly subcategoryService: SubcategoryService,
+    private readonly cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -47,42 +52,42 @@ export class InsertUpdatePaperComponent implements OnInit {
     const userInfo = this.userService.getUserInfo();
 
     //function call
-    this.getCategory()
-    this.getBatch()
-    this.getSubcategory()
+    this.getCategory();
+    this.getBatch();
+    this.getSubcategory();
     this.getUserById(userInfo.userId);
-
 
     this.papersForm.markAllAsTouched();
   }
 
-
-
-
-
-
   getUserById(id: number) {
     this.userService.getUsersById(id).subscribe((res: any) => {
       this.users = res.data;
-      this.papersForm.patchValue({
+      this.userName = res.data?.Name || '';
+      this.departmentName = res.data?.Department?.Code || res.data?.Department?.Name || '';
+      this.batchName = res.data?.Batches?.Name || '';
 
-        UserId: res.data.Name,
-        DepartmentId: res.data.Department?.Code,
-        BatchId: res.data.Batches?.Name,
+
+      this.papersForm.patchValue({
+        UserId: res.data?.Id,
+        DepartmentId: res.data?.DepartmentId || res.data?.Department?.Id,
+        BatchId: res.data?.BatchId || res.data?.Batches?.Id,
       });
+      this.cdr.markForCheck();
     });
-    console.log(this.users)
+    console.log(this.users);
   }
 
   getCategory() {
     this.categoryService.getCategories().subscribe({
       next: (res) => {
         this.category = res.data;
+        this.cdr.markForCheck();
       },
 
       error: (err) => {
         console.log(err);
-      }
+      },
     });
   }
 
@@ -90,31 +95,44 @@ export class InsertUpdatePaperComponent implements OnInit {
     this.batchService.getBatches().subscribe({
       next: (res) => {
         this.batch = res.data;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   getSubcategory() {
     this.subcategoryService.getSubcategories().subscribe({
       next: (res) => {
         this.subcategory = res.data;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   onCancel() {
     this.dialogRef.close();
   }
 
-  onSave() { }
-
+  onSave() {
+    if (this.papersForm.invalid) {
+      this.papersForm.markAllAsTouched();
+      return;
+    }
+    this.papersService.addPaper(this.papersForm.value).subscribe({
+      next: (res) => {
+        this.dialogRef.close(res);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 
   onUpload() { }
-
 }
