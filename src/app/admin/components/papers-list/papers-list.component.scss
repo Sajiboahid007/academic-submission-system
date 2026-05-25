@@ -16,3 +16,7 @@
   overflow: visible;
   z-index: 9999;
 }
+
+// :host ::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+//   max-width: 1000px !important;
+// }

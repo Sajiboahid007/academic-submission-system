@@ -1,3 +1,5 @@
+import { Role } from './role';
+
 export interface Users {
   Id: number;
   Name: string;
@@ -6,6 +8,7 @@ export interface Users {
   Password: string;
   DepartmentId: number;
   RoleId?: number | null;
+  Roles?: Role | null;
   BatchId?: number | null;
   IsMarkToDelete?: boolean | null;
   CreatedAt?: Date | null;

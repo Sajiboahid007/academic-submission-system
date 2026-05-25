@@ -30,6 +30,8 @@ import { TableCaptionComponent } from './components/table-caption/table-caption.
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { AccordionModule } from 'primeng/accordion';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { AvatarModule } from 'primeng/avatar';
+
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -60,16 +62,20 @@ const primeNgModules = [
   InputIconModule,
   ConfirmDialogModule,
   AccordionModule,
-  MultiSelectModule
+  MultiSelectModule,
+  AvatarModule,
 ];
 
 @NgModule({
-  declarations: [
-
-    TableCaptionComponent,
-    PageHeaderComponent
-  ],
+  declarations: [TableCaptionComponent, PageHeaderComponent],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
-  exports: [ReactiveFormsModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules, TableCaptionComponent, PageHeaderComponent]
+  exports: [
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    ...materialNgModule,
+    ...primeNgModules,
+    TableCaptionComponent,
+    PageHeaderComponent,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

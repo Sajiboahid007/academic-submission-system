@@ -13,6 +13,7 @@ import { BatchService } from '../../../services/batch-service';
 import { SubcategoryService } from '../../../services/subcategory-service';
 import { UserInfoService } from '../../../services/user-info-service';
 import { Users } from '../../../../fds-config/entity-models/user';
+import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
 
 @Component({
   selector: 'app-insert-update-paper',
@@ -26,13 +27,13 @@ export class InsertUpdatePaperComponent implements OnInit {
   papers: Papers[] = [];
   category: Category[] = [];
   subcategory: SubCategory[] = [];
-  batch: Batches[] = [];
-  department: Department[] = [];
-  users: Users[] = [];
+  batches: Batches[] = [];
+  departments: Department[] = [];
 
-  userName = '';
-  departmentName = '';
-  batchName = '';
+  // users
+  users: Users[] = [];
+  students: Users[] = [];
+  teachers: Users[] = [];
 
   papersForm!: FormGroup;
 
@@ -43,8 +44,9 @@ export class InsertUpdatePaperComponent implements OnInit {
     private readonly batchService: BatchService,
     private readonly userService: UserInfoService,
     private readonly subcategoryService: SubcategoryService,
+    private readonly departmentService: DepartmentService,
     private readonly cdr: ChangeDetectorRef,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.papersForm = this.papersService.papersFrom();
@@ -55,28 +57,55 @@ export class InsertUpdatePaperComponent implements OnInit {
     this.getCategory();
     this.getBatch();
     this.getSubcategory();
-    this.getUserById(userInfo.userId);
+    this.getUsers();
+    this.getDepartment();
 
     this.papersForm.markAllAsTouched();
   }
 
-  getUserById(id: number) {
-    this.userService.getUsersById(id).subscribe((res: any) => {
-      this.users = res.data;
-      this.userName = res.data?.Name || '';
-      this.departmentName = res.data?.Department?.Code || res.data?.Department?.Name || '';
-      this.batchName = res.data?.Batches?.Name || '';
+  getDepartment() {
+    this.departmentService.getDepartments().subscribe({
+      next: (res) => {
+        this.departments = res.data;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 
+  getUsers() {
+    this.userService.getUsers().subscribe((res) => {
+      this.users = res.data as Users[];
 
-      this.papersForm.patchValue({
-        UserId: res.data?.Id,
-        DepartmentId: res.data?.DepartmentId || res.data?.Department?.Id,
-        BatchId: res.data?.BatchId || res.data?.Batches?.Id,
-      });
+      this.students = this.users.filter(
+        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Student,
+      );
+
+      this.teachers = this.users.filter(
+        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Teacher,
+      );
       this.cdr.markForCheck();
     });
-    console.log(this.users);
   }
+
+  // getUserById(id: number) {
+  //   this.userService.getUsersById(id).subscribe((res: any) => {
+  //     this.users = res.data;
+  //     this.userName = res.data?.Name || '';
+  //     this.departmentName = res.data?.Department?.Code || res.data?.Department?.Name || '';
+  //     this.batchName = res.data?.Batches?.Name || '';
+
+  //     this.papersForm.patchValue({
+  //       UserId: res.data?.Id,
+  //       DepartmentId: res.data?.DepartmentId || res.data?.Department?.Id,
+  //       BatchId: res.data?.BatchId || res.data?.Batches?.Id,
+  //     });
+  //     this.cdr.markForCheck();
+  //   });
+  //   console.log(this.users);
+  // }
 
   getCategory() {
     this.categoryService.getCategories().subscribe({
@@ -94,7 +123,7 @@ export class InsertUpdatePaperComponent implements OnInit {
   getBatch() {
     this.batchService.getBatches().subscribe({
       next: (res) => {
-        this.batch = res.data;
+        this.batches = res.data;
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -134,5 +163,5 @@ export class InsertUpdatePaperComponent implements OnInit {
     });
   }
 
-  onUpload() { }
+  onUpload() {}
 }

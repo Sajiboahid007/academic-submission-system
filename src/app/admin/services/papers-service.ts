@@ -10,10 +10,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   providedIn: 'root',
 })
 export class PapersService {
-
   baseUrl = AcademicSubmissionConfig.BaseUrl;
 
-  constructor(private readonly http: HttpClient, private readonly fb: FormBuilder) { }
+  constructor(
+    private readonly http: HttpClient,
+    private readonly fb: FormBuilder,
+  ) {}
 
   getPapers(): Observable<AppQuery<Papers[]>> {
     return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/get`);
@@ -35,8 +37,7 @@ export class PapersService {
     return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/paper/delete/${id}`, {});
   }
 
-
-  papersFrom(papers?: Papers): FormGroup {
+  papersFrom(papers?: any): FormGroup {
     return this.fb.group({
       Id: [papers?.Id ?? 0],
       Title: [papers?.Title ?? '', Validators.required],
@@ -50,8 +51,8 @@ export class PapersService {
       FileUrl: [papers?.FileUrl ?? ''],
       CreatedDate: [papers?.CreatedDate ?? new Date()],
 
+      TeacherIds: [papers?.TeacherIds ?? []],
+      StudentIds: [papers?.StudentIds ?? []],
     });
-
   }
-
 }

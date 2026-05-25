@@ -58,24 +58,28 @@ export class PapersListComponent implements OnInit {
       this.cdr.markForCheck();
     });
   }
+
   getCategory() {
     this.categoryService.getCategories().subscribe((res: AppQuery<Category[]>) => {
       this.categories = res.data;
       this.cdr.markForCheck();
     });
   }
+
   getSubCategory() {
     this.subCategoryService.getSubcategories().subscribe((res: AppQuery<SubCategory[]>) => {
       this.subCategories = res.data;
       this.cdr.markForCheck();
     });
   }
+
   getDepartment() {
     this.departmentService.getDepartments().subscribe((res: AppQuery<Department[]>) => {
       this.departments = res.data;
       this.cdr.markForCheck();
     });
   }
+
   getBatch() {
     this.batchService.getBatches().subscribe((res: AppQuery<Batches[]>) => {
       this.batches = res.data;
@@ -85,8 +89,9 @@ export class PapersListComponent implements OnInit {
 
   AddPapers() {
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
-      width: '1000px',
-      height: '650px',
+      width: '900px',
+      height: '700px',
+      maxWidth: 'none',
       autoFocus: true,
       data: null,
     });
