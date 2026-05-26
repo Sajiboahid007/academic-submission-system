@@ -51,8 +51,6 @@ export class InsertUpdatePaperComponent implements OnInit {
   ngOnInit(): void {
     this.papersForm = this.papersService.papersFrom();
 
-    const userInfo = this.userService.getUserInfo();
-
     //function call
     this.getCategory();
     this.getBatch();
@@ -89,23 +87,6 @@ export class InsertUpdatePaperComponent implements OnInit {
       this.cdr.markForCheck();
     });
   }
-
-  // getUserById(id: number) {
-  //   this.userService.getUsersById(id).subscribe((res: any) => {
-  //     this.users = res.data;
-  //     this.userName = res.data?.Name || '';
-  //     this.departmentName = res.data?.Department?.Code || res.data?.Department?.Name || '';
-  //     this.batchName = res.data?.Batches?.Name || '';
-
-  //     this.papersForm.patchValue({
-  //       UserId: res.data?.Id,
-  //       DepartmentId: res.data?.DepartmentId || res.data?.Department?.Id,
-  //       BatchId: res.data?.BatchId || res.data?.Batches?.Id,
-  //     });
-  //     this.cdr.markForCheck();
-  //   });
-  //   console.log(this.users);
-  // }
 
   getCategory() {
     this.categoryService.getCategories().subscribe({
@@ -153,7 +134,8 @@ export class InsertUpdatePaperComponent implements OnInit {
       this.papersForm.markAllAsTouched();
       return;
     }
-    this.papersService.addPaper(this.papersForm.value).subscribe({
+
+    this.papersService.createPaper(this.papersForm.value).subscribe({
       next: (res) => {
         this.dialogRef.close(res);
       },

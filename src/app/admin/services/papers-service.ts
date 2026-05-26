@@ -21,7 +21,7 @@ export class PapersService {
     return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/get`);
   }
 
-  addPaper(paper: Papers): Observable<AppQuery<Papers>> {
+  createPaper(paper: Papers): Observable<AppQuery<Papers>> {
     return this.http.post<AppQuery<Papers>>(`${this.baseUrl}/api/paper/create`, paper);
   }
 
@@ -41,15 +41,14 @@ export class PapersService {
     return this.fb.group({
       Id: [papers?.Id ?? 0],
       Title: [papers?.Title ?? '', Validators.required],
-      Abstract: [papers?.Abstract ?? ''],
-      UserId: [papers?.UserId ?? null, Validators.required],
+      Abstract: [papers?.Abstract ?? '', Validators.required],
+      UserId: [papers?.UserId ?? null],
       CategoryId: [papers?.CategoryId ?? null, Validators.required],
-      SubcategoryId: [papers?.SubcategoryId ?? null],
+      SubcategoryId: [papers?.SubcategoryId ?? null, Validators.required],
       DepartmentId: [papers?.DepartmentId ?? null, Validators.required],
-      BatchId: [papers?.BatchId ?? null],
+      BatchId: [papers?.BatchId ?? null, Validators.required],
       Year: [papers?.Year ?? new Date().getFullYear().toString(), Validators.required],
       FileUrl: [papers?.FileUrl ?? ''],
-      CreatedDate: [papers?.CreatedDate ?? new Date()],
 
       TeacherIds: [papers?.TeacherIds ?? []],
       StudentIds: [papers?.StudentIds ?? []],

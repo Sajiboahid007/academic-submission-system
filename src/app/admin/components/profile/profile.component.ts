@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
     private readonly toastService: ToastService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const userInfo = this.userInfoService.getUserInfo();
@@ -100,7 +100,8 @@ export class ProfileComponent implements OnInit {
   uploadPaper(): void {
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
       width: '800px',
-      height: '650px',
+      height: '700px',
+      maxWidth: 'none',
       autoFocus: true,
       data: null,
     });
@@ -124,7 +125,8 @@ export class ProfileComponent implements OnInit {
     // Open paper dialog pre-populated for edit mode
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
       width: '800px',
-      height: '650px',
+      height: '700px',
+      maxWidth: 'none',
       autoFocus: true,
       data: paper,
     });

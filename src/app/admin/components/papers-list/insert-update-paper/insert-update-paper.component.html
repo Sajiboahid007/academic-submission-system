@@ -46,13 +46,14 @@
       <!-- Abstract -->
       <div fxLayout="column" fxLayoutGap="8px">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <input
-            pInputText
+          <textarea
+            pTextarea
             id="Abstract"
             formControlName="Abstract"
-            autocomplete="off"
+            rows="5"
             class="full-width"
-          />
+          ></textarea>
+
           <label for="Abstract" class="field-label">
             Abstract <span class="required-asterisk">*</span>
           </label>
@@ -274,7 +275,6 @@
       label="Save Details"
       icon="pi pi-check"
       class="p-button-success btn-save"
-      [disabled]="papersForm.invalid"
       (click)="onSave()"
     ></button>
   </div>
