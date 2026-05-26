@@ -21,49 +21,28 @@
   >
     <!-- Search -->
     <ng-template #caption>
-      <div class="flex">
-        <p-iconfield iconPosition="left" class="ml-auto">
-          <p-inputicon>
-            <i class="pi pi-search"></i>
-          </p-inputicon>
+      <div class="row">
+        <!-- Search -->
+        <div class="col-auto">
+          <p-iconfield iconPosition="left">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
 
-          <input
-            pInputText
-            type="text"
-            [(ngModel)]="searchValue"
-            name="search"
-            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
-            placeholder="Search papers"
-          />
-          <p-button
-            class="ml-2"
-            label="Clear"
-            [outlined]="true"
-            icon="pi pi-filter-slash"
-            (click)="clear(dt2)"
-          />
-        </p-iconfield>
-      </div>
-    </ng-template>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchValue"
+              name="search"
+              (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Search papers"
+              style="width: 250px"
+            />
+          </p-iconfield>
+        </div>
 
-    <!-- Header -->
-    <ng-template #header>
-      <tr>
-        <th style="width: 30%">Title</th>
-        <th style="width: 14%">Category</th>
-        <th style="width: 14%">Sub Category</th>
-        <th style="width: 14%">Department</th>
-        <th style="width: 14%">Year</th>
-        <th style="width: 14%">Batch</th>
-      </tr>
-
-      <!-- Filter Row -->
-      <tr>
-        <th style="width: 30%">
-          <p-columnFilter type="text" field="Title" placeholder="Search Title"></p-columnFilter>
-        </th>
-
-        <th style="width: 10%; max-width: 10%">
+        <!-- Category Dropdown -->
+        <div class="col-auto">
           <p-columnFilter field="Category.Name" matchMode="equals" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-select
@@ -72,10 +51,10 @@
                 [options]="categories"
                 optionLabel="Name"
                 optionValue="Name"
-                placeholder="Select Category"
+                placeholder="Category"
                 [showClear]="true"
                 (onChange)="filter($event.value)"
-                style="width: 84%"
+                style="width: 120px"
               >
                 <ng-template let-option #item>
                   <span>{{ option.Name }}</span>
@@ -83,9 +62,8 @@
               </p-select>
             </ng-template>
           </p-columnFilter>
-        </th>
-
-        <th style="width: 10%">
+        </div>
+        <div class="col-auto">
           <p-columnFilter field="SubCategory.Name" matchMode="equals" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-select
@@ -94,20 +72,20 @@
                 [options]="subCategories"
                 optionLabel="Name"
                 optionValue="Name"
-                placeholder="Select Sub Category"
+                placeholder="SubCategory"
                 [showClear]="true"
                 (onChange)="filter($event.value)"
-                style="width: 73%"
+                style="width: 150px"
               >
+                <!-- style="width: 73%" -->
                 <ng-template let-option #item>
                   <span>{{ option.Name }}</span>
                 </ng-template>
               </p-select>
             </ng-template>
           </p-columnFilter>
-        </th>
-
-        <th style="width: 12%; max-width: 14%">
+        </div>
+        <div class="col-auto">
           <p-columnFilter field="Department.Name" matchMode="equals" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-select
@@ -116,36 +94,37 @@
                 [options]="departments"
                 optionLabel="Name"
                 optionValue="Name"
-                placeholder="Select Department"
+                placeholder="Department"
                 [showClear]="true"
                 (onChange)="filter($event.value)"
-                style="width: 74%"
+                style="width: 120px"
               >
+                <!-- style="width: 74%" -->
                 <ng-template let-option #item>
                   <span>{{ option.Name }}</span>
                 </ng-template>
               </p-select>
             </ng-template>
           </p-columnFilter>
-        </th>
-
-        <th style="width: 8%">
+        </div>
+        <div class="col-auto">
           <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-select
                 appendTo="body"
                 [ngModel]="value"
                 [options]="years"
-                placeholder="Select Year"
+                placeholder="Year"
                 [showClear]="true"
                 (onChange)="filter($event.value)"
-                style="width: 94%"
-              ></p-select>
+                style="width: 98px"
+              >
+                <!-- style="width: 94%" -->
+              </p-select>
             </ng-template>
           </p-columnFilter>
-        </th>
-
-        <th style="width: 10%">
+        </div>
+        <div class="col">
           <p-columnFilter field="Batches.Name" matchMode="equals" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-select
@@ -154,35 +133,87 @@
                 [options]="batches"
                 optionLabel="Name"
                 optionValue="Name"
-                placeholder="Select Batch"
+                placeholder="Batch"
                 [showClear]="true"
                 (onChange)="filter($event.value)"
-                style="width: 84%"
+                style="width: 120px"
               >
+                <!-- style="width: 84%" -->
                 <ng-template let-option #item>
                   <span>{{ option.Name }}</span>
                 </ng-template>
               </p-select>
             </ng-template>
           </p-columnFilter>
-        </th>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="col-auto">
+          <p-button
+            label="Clear"
+            [outlined]="true"
+            icon="pi pi-filter-slash"
+            (click)="clear(dt2)"
+          />
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Header -->
+    <ng-template #header style="margin-top: 10px">
+      <!-- Filter Row -->
+
+      <tr style="margin-top: 50px">
+        <th style="width: 30%">Title</th>
+        <th style="width: 10%">Category</th>
+        <!-- <th style="width: 10%">Sub Category</th> -->
+        <th style="width: 15%">Department</th>
+        <th style="width: 5%">Year</th>
+        <!-- <th style="width: 5%">Batch</th> -->
+        <th style="width: 10%">Action</th>
       </tr>
     </ng-template>
 
     <!-- Body -->
     <ng-template #body let-paper>
       <tr>
-        <td style="width: 30%">{{ paper.Title }}</td>
+        <td>
+          <div>
+            <div>{{ paper.Title | truncateText: 50 }}</div>
+            <small style="font-size: 12px; color: rgb(169, 169, 169)">
+              {{ paper.Abstract | truncateText: 80 }}
+            </small>
+          </div>
+        </td>
 
-        <td style="width: 14%">{{ paper.Category?.Name }}</td>
+        <td>
+          <div>
+            <div>{{ paper.Category?.Name | truncateText: 50 }}</div>
+            <small style="font-size: 12px; color: rgb(169, 169, 169)">
+              {{ paper.SubCategory?.Name | truncateText: 30 }}
+            </small>
+          </div>
+        </td>
 
-        <td style="width: 14%">{{ paper.SubCategory?.Name }}</td>
+        <td>
+          <div>
+            <div>{{ paper.Department?.Name | truncateText: 50 }}</div>
+            <small style="font-size: 12px; color: rgb(169, 169, 169)">
+              {{ paper.Batches?.Name | truncateText: 30 }}
+            </small>
+          </div>
+        </td>
 
-        <td style="width: 14%">{{ paper.Department?.Name }}</td>
-
-        <td style="width: 14%">{{ paper.Year }}</td>
-
-        <td style="width: 14%">{{ paper.Batches?.Name }}</td>
+        <td>{{ paper.Year }}</td>
+        <td>
+          <p-button
+            label="View"
+            [outlined]="true"
+            icon="pi pi-eye"
+            size="small"
+            styleClass="p-button-sm p-button-outlined"
+          />
+        </td>
       </tr>
     </ng-template>
 

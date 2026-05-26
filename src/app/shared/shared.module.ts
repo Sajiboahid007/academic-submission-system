@@ -31,6 +31,7 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { AccordionModule } from 'primeng/accordion';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AvatarModule } from 'primeng/avatar';
+import { TruncateTextPipe } from './pipes/truncate-text/truncate-text-pipe';
 
 const materialNgModule = [
   MatButtonModule,
@@ -67,7 +68,7 @@ const primeNgModules = [
 ];
 
 @NgModule({
-  declarations: [TableCaptionComponent, PageHeaderComponent],
+  declarations: [TableCaptionComponent, PageHeaderComponent, TruncateTextPipe],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
     ReactiveFormsModule,
@@ -76,6 +77,7 @@ const primeNgModules = [
     ...primeNgModules,
     TableCaptionComponent,
     PageHeaderComponent,
+    TruncateTextPipe,
   ],
 })
 export class SharedModule {}
