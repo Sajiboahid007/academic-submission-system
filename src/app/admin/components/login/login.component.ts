@@ -90,8 +90,10 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['dashboard']);
         },
         error: (err) => {
-          this.loginError =
-            err?.error?.message ?? err?.message ?? 'Sign in failed. Check your Email and password.';
+          this.loginError = 'Wrong Email or password. Please try again.';
+          // this.loginError =
+          //   err?.error?.message ?? err?.message ??
+          console.error('Sign in failed. Check your Email and password.');
         },
       });
   }

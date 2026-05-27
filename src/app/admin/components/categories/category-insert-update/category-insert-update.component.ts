@@ -73,7 +73,6 @@ export class CategoryInsertUpdateComponent implements OnInit {
 
   saveCategory(): void {
     const payload: Category = this.categoryForm.getRawValue();
-    console.log('Payload to save:', payload);
     this.categoriesService.addCategory(payload).subscribe({
       next: () => this.dialogRef.close(true),
       error: (error) => console.error('Error adding category:', error),
