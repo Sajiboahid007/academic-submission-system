@@ -134,8 +134,10 @@
             >
               <ng-template let-item pTemplate="item">
                 <div class="flex items-center gap-2">
+                  <!-- <img src="https://picsum.photos/300/200" alt="Sample Image" class="rounded-image" /> -->
+
                   <img
-                    src="https://picsum.photos/300/200"
+                    [src]="item?.ImageUrl || 'https://picsum.photos/300/200'"
                     alt="Sample Image"
                     class="rounded-image"
                   />
@@ -172,7 +174,7 @@
               <ng-template let-item pTemplate="item">
                 <div class="flex items-center gap-2">
                   <img
-                    src="https://picsum.photos/300/200"
+                    [src]="item?.ImageUrl || 'https://picsum.photos/300/200'"
                     alt="Sample Image"
                     class="rounded-image"
                   />
@@ -243,11 +245,13 @@
 
       <div class="card">
         <p-fileupload
-          name="demo[]"
-          (onUpload)="onUpload()"
-          [multiple]="true"
-          accept="image/*"
-          maxFileSize="1000000"
+          (onSelect)="onFileSelect($event)"
+          (onClear)="onFileClear()"
+          (onRemove)="onFileRemove($event)"
+          [showUploadButton]="false"
+          [multiple]="false"
+          accept=".pdf,image/*"
+          maxFileSize="10000000"
           mode="advanced"
         >
           <ng-template #empty>
@@ -266,6 +270,7 @@
       label="Cancel"
       icon="pi pi-times"
       class="p-button-danger btn-cancel"
+      [disabled]="isLoading"
       (click)="onCancel()"
     ></button>
 
@@ -275,7 +280,16 @@
       label="Save Details"
       icon="pi pi-check"
       class="p-button-success btn-save"
+      [disabled]="papersForm.invalid || isLoading"
       (click)="onSave()"
     ></button>
+
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '50px', height: '50px' }"
+      *ngIf="isLoading"
+    />
   </div>
 </div>

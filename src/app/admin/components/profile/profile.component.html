@@ -9,15 +9,17 @@
 
       <!-- Avatar & Camera Icon wrapper -->
       <div class="profile-avatar-section">
-        <div class="avatar-circle">
-          <span>
+        <div class="avatar-circle" [class.uploading]="isUploading" (click)="!isUploading && fileInput.click()">
+          <img *ngIf="userDetailedData?.ImageUrl" [src]="userDetailedData.ImageUrl" alt="Profile Picture" class="avatar-img" />
+          <span *ngIf="!userDetailedData?.ImageUrl">
             {{ userDetailedData?.Name ? (userDetailedData.Name.split(' ').map(n => n[0]).join('').substring(0,
             2).toUpperCase()) : 'SO' }}
           </span>
           <div class="camera-overlay">
-            <i class="pi pi-camera"></i>
+            <i [class]="isUploading ? 'pi pi-spin pi-spinner' : 'pi pi-camera'"></i>
           </div>
         </div>
+        <input type="file" #fileInput style="display: none;" accept="image/*" (change)="onFileSelected($event)" />
       </div>
 
       <!-- User Info Details -->

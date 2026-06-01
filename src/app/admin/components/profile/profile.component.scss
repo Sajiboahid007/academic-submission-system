@@ -85,9 +85,29 @@
     }
   }
 
+  &.uploading {
+    cursor: not-allowed;
+    opacity: 0.8;
+    transform: none !important;
+
+    .camera-overlay {
+      opacity: 1;
+      background: #f3f4f6;
+      color: #3b82f6;
+    }
+  }
+
   span {
     letter-spacing: 1px;
   }
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
 // Camera Icon Hover Overlay

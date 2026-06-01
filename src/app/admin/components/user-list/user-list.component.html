@@ -1,8 +1,22 @@
 <app-page-header title="User List" (onButtonClick)="addUser()"></app-page-header>
 
 <div class="card">
-  <p-table [value]="users" #dt2 dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50, 100]" [paginator]="true"
-    [globalFilterFields]="['Name', 'Email', 'StudentId', 'Roles.Name', 'Department.Name', 'Batches.Name']">
+  <p-table
+    [value]="users"
+    #dt2
+    dataKey="id"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50, 100]"
+    [paginator]="true"
+    [globalFilterFields]="[
+      'Name',
+      'Email',
+      'StudentId',
+      'Roles.Name',
+      'Department.Name',
+      'Batches.Name',
+    ]"
+  >
     <!-- CAPTION -->
     <ng-template pTemplate="caption">
       <app-table-caption [table]="dt2"></app-table-caption>
@@ -11,6 +25,7 @@
     <ng-template #header>
       <tr>
         <th>Name</th>
+        <th>Image</th>
         <th>Email</th>
         <th>Student</th>
         <th>Role</th>
@@ -22,15 +37,32 @@
     <ng-template #body let-user>
       <tr>
         <td>{{ user?.Name }}</td>
+        <td>
+          <img
+            [src]="user?.ImageUrl"
+            [alt]="user?.Name"
+            style="width: 50px; height: 50px; object-fit: cover"
+          />
+        </td>
         <td>{{ user?.Email }}</td>
         <td>{{ user?.StudentId }}</td>
         <td>{{ user?.Roles?.Name }}</td>
         <td>{{ user?.Department?.Name }}</td>
         <td>{{ user?.Batches?.Name }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" class="p-button-success btn-save" (click)="onEditUser(user.Id)"></button>
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-success btn-save"
+            (click)="onEditUser(user.Id)"
+          ></button>
 
-          <button pButton icon="pi pi-trash" class="p-button-danger btn-save" (click)="onDeleteUser(user.Id)"></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger btn-save"
+            (click)="onDeleteUser(user.Id)"
+          ></button>
         </td>
       </tr>
     </ng-template>

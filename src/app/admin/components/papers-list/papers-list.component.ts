@@ -102,6 +102,23 @@ export class PapersListComponent implements OnInit {
       }
     });
   }
+  viewPapers(id: number) {}
+  viewPaper(id: number) {
+    const paper = this.papers.find((p) => p.Id === id);
+
+    if (paper?.FileUrl) {
+      const link = document.createElement('a');
+      link.href = paper.FileUrl;
+      link.download = paper.FileUrl.split('/').pop() || 'document.pdf';
+      link.target = '_blank';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.warn('No PDF file URL found.');
+    }
+  }
 
   clear(table: Table) {
     table.clear();

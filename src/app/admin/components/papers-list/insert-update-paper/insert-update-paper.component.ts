@@ -14,6 +14,7 @@ import { SubcategoryService } from '../../../services/subcategory-service';
 import { UserInfoService } from '../../../services/user-info-service';
 import { Users } from '../../../../fds-config/entity-models/user';
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
+import { FileService } from '../../../services/file-service';
 
 @Component({
   selector: 'app-insert-update-paper',
@@ -37,6 +38,8 @@ export class InsertUpdatePaperComponent implements OnInit {
 
   papersForm!: FormGroup;
 
+  isLoading: boolean = false;
+
   constructor(
     private readonly papersService: PapersService,
     private readonly dialogRef: MatDialogRef<InsertUpdatePaperComponent>,
@@ -46,10 +49,11 @@ export class InsertUpdatePaperComponent implements OnInit {
     private readonly subcategoryService: SubcategoryService,
     private readonly departmentService: DepartmentService,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+    private readonly fileService: FileService,
+  ) { }
 
   ngOnInit(): void {
-    this.papersForm = this.papersService.papersFrom();
+    this.papersForm = this.papersService.createPaperForm();
 
     //function call
     this.getCategory();
@@ -135,15 +139,55 @@ export class InsertUpdatePaperComponent implements OnInit {
       return;
     }
 
-    this.papersService.createPaper(this.papersForm.value).subscribe({
+    this.isLoading = true;
+    const file = this.papersForm.value.File;
+
+    if (file) {
+      this.fileService.uploadFile(file).subscribe({
+        next: (res) => {
+          const paper = this.papersForm.getRawValue() as Papers;
+          paper.FileUrl = res?.data?.url;
+          this.savePaper(paper);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.log(err);
+        },
+      });
+    } else {
+      const paper = this.papersForm.getRawValue() as Papers;
+      this.savePaper(paper);
+    }
+  }
+
+  private savePaper(paper: Papers) {
+    this.papersService.createPaper(paper).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
+        this.isLoading = false;
         console.log(err);
       },
     });
   }
 
-  onUpload() {}
+  onFileSelect(event: any) {
+    const file = event.files[0];
+    if (file) {
+      this.papersForm.patchValue({ File: file });
+      this.cdr.markForCheck();
+    }
+  }
+
+  onFileClear() {
+    this.papersForm.patchValue({ File: null });
+    this.cdr.markForCheck();
+  }
+
+  onFileRemove(event: any) {
+    this.papersForm.patchValue({ File: null });
+    this.cdr.markForCheck();
+  }
 }
