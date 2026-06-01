@@ -37,7 +37,13 @@ export class PapersService {
     return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/paper/delete/${id}`, {});
   }
 
-  papersFrom(papers?: any): FormGroup {
+  getPapersByUserId(userId: number): Observable<AppQuery<Papers[]>> {
+    return this.http.get<AppQuery<Papers[]>>(
+      `${this.baseUrl}/api/paper/getPapersByUserId/${userId}`,
+    );
+  }
+
+  createPaperForm(papers?: any): FormGroup {
     return this.fb.group({
       Id: [papers?.Id ?? 0],
       Title: [papers?.Title ?? '', Validators.required],
@@ -52,6 +58,7 @@ export class PapersService {
 
       TeacherIds: [papers?.TeacherIds ?? []],
       StudentIds: [papers?.StudentIds ?? []],
+      File: [papers?.File ?? null],
     });
   }
 }

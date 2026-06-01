@@ -37,16 +37,6 @@ export class DashboardComponent implements OnInit {
 
   userInfo: Users | null = null;
 
-  ngOnInit(): void {
-    this.loadNotifications();
-    const userInfo = this.userInfoService.getUserInfo();
-    if (!userInfo) {
-      return;
-    }
-
-    this.getUserById(userInfo.userId);
-  }
-
   isSidebarOpen = signal(true);
   isSidebarCollapsed = signal(false);
   currentRoute = signal('');
@@ -116,6 +106,28 @@ export class DashboardComponent implements OnInit {
         this.currentRoute.set(event.url);
       });
     this.currentRoute.set(this.router.url);
+  }
+
+  ngOnInit(): void {
+    this.loadNotifications();
+    const userInfo = this.userInfoService.getUserInfo();
+    if (!userInfo) {
+      return;
+    }
+
+    this.getUserById(userInfo.userId);
+
+    this.checkIfUserDataUpdate();
+  }
+
+  private checkIfUserDataUpdate(): void {
+    this.userInfoService.user$.subscribe((user) => {
+      if (user) {
+        this.userInfo = user;
+        console.log('dashboard user info updated', user);
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   getUserById(userId: number) {

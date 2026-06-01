@@ -3,6 +3,7 @@ import { Role } from './role';
 export interface Users {
   Id: number;
   Name: string;
+  ImageUrl?: string;
   Email: string;
   StudentId: string;
   Password: string;

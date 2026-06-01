@@ -32,6 +32,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AvatarModule } from 'primeng/avatar';
 import { TruncateTextPipe } from './pipes/truncate-text/truncate-text-pipe';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 const materialNgModule = [
   MatButtonModule,
@@ -65,6 +66,7 @@ const primeNgModules = [
   AccordionModule,
   MultiSelectModule,
   AvatarModule,
+  ProgressSpinnerModule
 ];
 
 @NgModule({
@@ -80,4 +82,4 @@ const primeNgModules = [
     TruncateTextPipe,
   ],
 })
-export class SharedModule {}
+export class SharedModule { }
