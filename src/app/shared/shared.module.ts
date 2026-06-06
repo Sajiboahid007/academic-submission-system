@@ -66,7 +66,7 @@ const primeNgModules = [
   AccordionModule,
   MultiSelectModule,
   AvatarModule,
-  ProgressSpinnerModule
+  ProgressSpinnerModule,
 ];
 
 @NgModule({
@@ -82,4 +82,4 @@ const primeNgModules = [
     TruncateTextPipe,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}

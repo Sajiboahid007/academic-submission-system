@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -14,6 +15,7 @@ import { InsertUpdateDepartmentComponent } from './insert-update-department/inse
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmationService } from 'primeng/api';
+import { Table } from 'primeng/table';
 @Component({
   selector: 'app-department-list',
   standalone: false,
@@ -23,6 +25,8 @@ import { ConfirmationService } from 'primeng/api';
 })
 export class DepartmentListComponent implements OnInit {
   department: Department[] = [];
+  @Input() table!: Table;
+  @Input() isCsvExportRequired = false;
 
   constructor(
     private readonly departmentService: DepartmentService,
@@ -30,7 +34,7 @@ export class DepartmentListComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly cdr: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
-  ) { }
+  ) {}
   ngOnInit(): void {
     this.getDepartments();
   }
@@ -75,8 +79,8 @@ export class DepartmentListComponent implements OnInit {
             console.error('Error deleting department:', error);
           },
         });
-      }
-    })
+      },
+    });
   }
 
   onEditDepartment(id: number) {

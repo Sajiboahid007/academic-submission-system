@@ -1,7 +1,16 @@
-<div class="caption-bar" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+<div
+  class="caption-bar"
+  style="display: flex; justify-content: space-between; align-items: center; width: 100%"
+>
   <!-- center export -->
   <div class="center-actions" *ngIf="isCsvExportRequired">
-    <button pButton label="CSV" size="small" icon="pi pi-download" (click)="table.exportCSV()"></button>
+    <button
+      pButton
+      label="CSV"
+      size="small"
+      icon="pi pi-download"
+      (click)="table.exportCSV()"
+    ></button>
   </div>
 
   <!-- right search -->

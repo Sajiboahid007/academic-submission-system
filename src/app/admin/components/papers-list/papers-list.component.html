@@ -1,4 +1,4 @@
-<app-page-header title="Papers List" (onButtonClick)="AddPapers()"></app-page-header>
+<app-page-header title="Papers List" (onButtonClick)="AddPapers()"> </app-page-header>
 
 <div class="card">
   <p-table
@@ -165,6 +165,7 @@
 
       <tr style="margin-top: 50px">
         <th style="width: 30%">Title</th>
+        <th style="width: 10%">Status</th>
         <th style="width: 10%">Category</th>
         <!-- <th style="width: 10%">Sub Category</th> -->
         <th style="width: 15%">Department</th>
@@ -184,6 +185,20 @@
               {{ paper.Abstract | truncateText: 80 }}
             </small>
           </div>
+        </td>
+        <td>
+          <p-badge
+            *ngIf="paper.PaperApprovals[0]?.Status"
+            [value]="paper?.PaperApprovals[0]?.Status"
+            [severity]="
+              paper.PaperApprovals[0]?.Status === 'Approved'
+                ? 'success'
+                : paper.PaperApprovals[0]?.Status === 'Rejected'
+                  ? 'danger'
+                  : 'warn'
+            "
+          >
+          </p-badge>
         </td>
 
         <td>

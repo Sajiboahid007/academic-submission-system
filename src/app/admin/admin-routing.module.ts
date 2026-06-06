@@ -11,6 +11,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
 import { PapersListComponent } from './components/papers-list/papers-list.component';
+import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -61,7 +62,11 @@ const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
-      }
+      },
+      {
+        path: 'papers-approval',
+        component: PaperApprovalComponent,
+      },
     ],
   },
 ];
@@ -70,4 +75,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminRoutingModule { }
+export class AdminRoutingModule {}
