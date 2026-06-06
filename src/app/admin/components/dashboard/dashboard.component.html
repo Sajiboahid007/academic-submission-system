@@ -1,6 +1,10 @@
 <div class="layout-container">
   <!-- Navbar -->
-  <header class="navbar" [class.sidebar-open]="isSidebarOpen()">
+  <header
+    class="navbar"
+    [class.sidebar-open]="isSidebarOpen()"
+    [class.sidebar-collapsed]="isSidebarCollapsed()"
+  >
     <div class="navbar-content">
       <div class="navbar-left">
         <button
@@ -236,6 +240,308 @@
     >
       <div class="content-wrapper">
         <router-outlet></router-outlet>
+
+        <!-- Dashboard Statistics (Home View) -->
+        <div *ngIf="isDashboardHome()" class="dashboard-home animate-fade-in">
+          <!-- Stat Cards Row -->
+          <div class="stats-grid">
+            <!-- Card 1: Total Files -->
+            <div class="stat-card">
+              <div class="stat-icon-wrap bg-blue-light">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#5c6bc0"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ totalFiles() }}</span>
+                <span class="stat-label">Total files (YTD)</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Total Users -->
+            <div class="stat-card">
+              <div class="stat-icon-wrap bg-teal-light">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#0d635c"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ totalUsers() }}</span>
+                <span class="stat-label">Total users</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Avg Monthly Uploads -->
+            <div class="stat-card">
+              <div class="stat-icon-wrap bg-amber-light">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ffa726"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ avgMonthlyUploads() }}</span>
+                <span class="stat-label">Avg monthly uploads</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-grid">
+            <!-- Monthly Upload Volume -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-title-wrap">
+                  <span class="chart-icon">📅</span>
+                  <h3 class="chart-title">Monthly Upload Volume</h3>
+                </div>
+                <span class="chart-badge">Year 2026</span>
+              </div>
+              <div class="chart-card-body">
+                <div class="bar-chart">
+                  <div class="bar-y-axis">
+                    <span>80</span>
+                    <span>60</span>
+                    <span>40</span>
+                    <span>20</span>
+                    <span>0</span>
+                  </div>
+                  <div class="bar-chart-content">
+                    <!-- Grid background lines -->
+                    <div class="chart-grid-lines">
+                      <div class="grid-line"></div>
+                      <div class="grid-line"></div>
+                      <div class="grid-line"></div>
+                      <div class="grid-line"></div>
+                      <div class="grid-line"></div>
+                    </div>
+                    <!-- Bars -->
+                    <div class="bars-container">
+                      <div *ngFor="let item of monthlyUploads()" class="bar-column">
+                        <div class="bar-wrapper">
+                          <div class="bar-fill" [style.height.%]="item.percentage">
+                            <span class="bar-tooltip">{{ item.count }} files</span>
+                          </div>
+                        </div>
+                        <span class="bar-label">{{ item.month }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-card-footer">
+                <span class="footer-icon">📊</span>
+                <span class="footer-text">{{ peakMonthLabel() }}</span>
+              </div>
+            </div>
+
+            <!-- Uploads by Department -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-title-wrap">
+                  <span class="chart-icon">🍰</span>
+                  <h3 class="chart-title">Uploads by Department</h3>
+                </div>
+                <span class="chart-badge bg-light">% Share</span>
+              </div>
+              <div class="chart-card-body pie-chart-layout">
+                <!-- Pie SVG Chart -->
+                <div class="pie-svg-container">
+                  <svg viewBox="0 0 100 100" width="200" height="200" class="pie-svg">
+                    <circle cx="50" cy="50" r="41" fill="#f8fafc" />
+                    <path
+                      *ngFor="let slice of departmentSlices()"
+                      [attr.d]="slice.pathData"
+                      [attr.fill]="slice.color"
+                      class="pie-slice"
+                    >
+                      <title>
+                        {{ slice.name }}: {{ slice.count }} files ({{ slice.percent }}%)
+                      </title>
+                    </path>
+                    <circle cx="50" cy="50" r="10" fill="#ffffff" />
+                  </svg>
+                </div>
+                <!-- Legend -->
+                <div class="pie-legend">
+                  <div *ngFor="let slice of departmentSlices()" class="legend-item">
+                    <span class="legend-dot" [style.background-color]="slice.color"></span>
+                    <span class="legend-label">{{ slice.name }}</span>
+                    <span class="legend-percentage">{{ slice.count }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-card-footer">
+                <span class="footer-icon">🏆</span>
+                <span class="footer-text">{{ topDeptLabel() }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity Table -->
+          <div class="recent-files-card">
+            <div class="recent-files-header">
+              <div class="recent-title-wrap">
+                <span class="recent-icon">🕒</span>
+                <h3 class="recent-title">Recent Academic Uploads</h3>
+              </div>
+              <span class="recent-badge">Live Submissions</span>
+            </div>
+            <div class="recent-files-body">
+              <div class="table-responsive">
+                <!-- <p-table
+                  [value]="recentPapers.slice(0, 5)"
+                  [paginator]="true"
+                  [rows]="paginationRows()"
+                  [first]="paginationFirst()"
+                  [totalRecords]="recentPapers.length"
+                  [rowsPerPageOptions]="[5, 10, 15, 20]"
+                  (onPageChange)="onPaginationChange($event)"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Paper</th>
+                      <th>Category</th>
+                      <th>Department</th>
+                      <th>Year</th>
+                      <th>Action</th>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-paper>
+                    <tr>
+                      <td>
+                        <div>
+                          <div>{{ paper.Title | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.Abstract | truncateText: 80 }}
+                          </small>
+                        </div>
+                      </td>
+
+                      <td>
+                        <div>
+                          <div>{{ paper.Category?.Name | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.SubCategory?.Name | truncateText: 30 }}
+                          </small>
+                        </div>
+                      </td>
+
+                      <td>
+                        <div>
+                          <div>{{ paper.Department?.Name | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.Batches?.Name | truncateText: 30 }}
+                          </small>
+                        </div>
+                      </td>
+
+                      <td>{{ paper.Year }}</td>
+
+                      <td>
+                        <p-button
+                          label="View"
+                          [outlined]="true"
+                          icon="pi pi-eye"
+                          size="small"
+                          styleClass="p-button-sm p-button-outlined"
+                          (click)="viewPaper(file.Id)"
+                        >
+                        </p-button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table> -->
+
+                <table class="recent-table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Department</th>
+                      <th>Category</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let file of recentFiles()">
+                      <td class="file-title-cell">
+                        <div class="file-icon">📄</div>
+                        <div>
+                          <div>{{ file.Title | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ file.Abstract | truncateText: 80 }}
+                          </small>
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <div>{{ file.Department?.Name | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ file.Batches?.Name | truncateText: 30 }}
+                          </small>
+                        </div>
+                      </td>
+                      <td>
+                        <div>
+                          <div>{{ file.Category?.Name | truncateText: 50 }}</div>
+                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ file.SubCategory?.Name | truncateText: 30 }}
+                          </small>
+                        </div>
+                      </td>
+                      <td>
+                        <p-button
+                          label="View"
+                          [outlined]="true"
+                          icon="pi pi-eye"
+                          size="small"
+                          styleClass="p-button-sm p-button-outlined"
+                          (click)="viewPaper(file)"
+                        >
+                        </p-button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
