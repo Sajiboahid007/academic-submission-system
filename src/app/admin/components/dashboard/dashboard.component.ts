@@ -116,16 +116,16 @@ export class DashboardComponent implements OnInit {
       description: 'Manage Papers',
     },
     {
-      label: 'Profile',
-      route: '/dashboard/profile',
-      icon: '👤',
-      description: 'Manage Profile',
-    },
-    {
       label: 'Papers Approval',
       route: '/dashboard/papers-approval',
       icon: '📃',
       description: 'Manage Papers Approval',
+    },
+    {
+      label: 'Profile',
+      route: '/dashboard/profile',
+      icon: '👤',
+      description: 'Manage Profile',
     },
   ];
 
@@ -167,7 +167,6 @@ export class DashboardComponent implements OnInit {
     this.userInfoService.user$.subscribe((user) => {
       if (user) {
         this.userInfo = user;
-        console.log('dashboard user info updated', user);
         this.cdr.markForCheck();
       }
     });
@@ -176,7 +175,6 @@ export class DashboardComponent implements OnInit {
   getUserById(userId: number) {
     this.userInfoService.getUsersById(userId).subscribe({
       next: (response) => {
-        console.debug('user info', response.data);
         this.userInfo = response.data;
         this.cdr.markForCheck();
       },

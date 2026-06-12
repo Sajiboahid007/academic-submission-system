@@ -33,7 +33,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { AvatarModule } from 'primeng/avatar';
 import { TruncateTextPipe } from './pipes/truncate-text/truncate-text-pipe';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-
+import { PaperApprovalConfirmationComponent } from './components/paper-approval-confirmation/paper-approval-confirmation.component';
+import { RadioButtonModule } from 'primeng/radiobutton';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -67,10 +68,17 @@ const primeNgModules = [
   MultiSelectModule,
   AvatarModule,
   ProgressSpinnerModule,
+  RadioButtonModule,
+  ReactiveFormsModule,
 ];
 
 @NgModule({
-  declarations: [TableCaptionComponent, PageHeaderComponent, TruncateTextPipe],
+  declarations: [
+    TableCaptionComponent,
+    PageHeaderComponent,
+    TruncateTextPipe,
+    PaperApprovalConfirmationComponent,
+  ],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
     ReactiveFormsModule,
@@ -80,6 +88,7 @@ const primeNgModules = [
     TableCaptionComponent,
     PageHeaderComponent,
     TruncateTextPipe,
+    PaperApprovalConfirmationComponent,
   ],
 })
 export class SharedModule {}

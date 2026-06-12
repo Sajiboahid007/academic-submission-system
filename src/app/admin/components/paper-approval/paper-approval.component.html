@@ -11,11 +11,11 @@
   >
     <ng-template #header>
       <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Submitted By</th>
-        <th>Type</th>
-        <th>Department</th>
+        <th style="width: 30%">Title</th>
+        <th style="width: 10%">Status</th>
+        <th style="width: 10%">Submitted By</th>
+        <th style="width: 15%">Type</th>
+        <th style="width: 20%">Department</th>
         <th>Action</th>
       </tr>
     </ng-template>
@@ -40,8 +40,13 @@
         <td>{{ approval.Papers?.Category?.Name }}</td>
         <td>{{ approval.Papers?.Department?.Name }}</td>
         <td>
-          <button pButton label="Approve" class="p-button-success p-button-sm"></button>
-          <button pButton label="Reject" class="p-button-danger p-button-sm"></button>
+          <button
+            pButton
+            label="Approve"
+            icon="pi pi-verified"
+            class="p-button-sm"
+            (click)="Approvoe()"
+          ></button>
         </td>
       </tr>
     </ng-template>

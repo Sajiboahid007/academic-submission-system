@@ -13,6 +13,7 @@ import { SubcategoryService } from '../../services/subcategory-service';
 import { DepartmentService } from '../../services/department-service';
 import { BatchService } from '../../services/batch-service';
 import { Table } from 'primeng/table';
+import { PaperApprovalConfirmationComponent } from '../../../shared/components/paper-approval-confirmation/paper-approval-confirmation.component';
 
 @Component({
   selector: 'app-papers-list',
@@ -123,5 +124,36 @@ export class PapersListComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     this.searchValue = '';
+  }
+
+  public getSeverity(
+    status: string | undefined,
+  ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warn';
+      case 'Draft':
+        return 'info';
+      default:
+        return 'secondary';
+    }
+  }
+
+  onApprove(paperId: any) {
+    const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: { PaperId: paperId },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getPapers();
+      }
+    });
   }
 }

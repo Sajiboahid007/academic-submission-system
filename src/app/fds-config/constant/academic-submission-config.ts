@@ -15,4 +15,42 @@ export class AcademicSubmissionConfig {
     Teacher: 'Teacher',
     Admin: 'Admin',
   } as const;
+
+  public static readonly ApprovalStatus = {
+    Draft: 'Draft',
+    Pending: 'Pending',
+    Approved: 'Approved',
+    Rejected: 'Rejected',
+  } as const;
+
+  private static readonly RolesExceptStudent = Object.values(
+    AcademicSubmissionConfig.UserRole,
+  ).filter((role) => role !== AcademicSubmissionConfig.UserRole.Student) as string[];
+
+  private static readonly AllRoleAsArray = Object.values(AcademicSubmissionConfig.UserRole).filter(
+    (role) => role !== AcademicSubmissionConfig.UserRole.Student,
+  ) as string[];
+
+  public static readonly RoleWiseApprovalStatus = {
+    Draft: {
+      label: 'Draft',
+      status: AcademicSubmissionConfig.ApprovalStatus.Draft,
+      roles: this.AllRoleAsArray,
+    },
+    Pending: {
+      label: 'Pending',
+      status: AcademicSubmissionConfig.ApprovalStatus.Pending,
+      roles: this.AllRoleAsArray,
+    },
+    Approved: {
+      label: 'Approved',
+      status: AcademicSubmissionConfig.ApprovalStatus.Approved,
+      roles: this.RolesExceptStudent,
+    },
+    Rejected: {
+      label: 'Rejected',
+      status: AcademicSubmissionConfig.ApprovalStatus.Rejected,
+      roles: this.RolesExceptStudent,
+    },
+  } as const;
 }

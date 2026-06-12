@@ -190,13 +190,7 @@
           <p-badge
             *ngIf="paper.PaperApprovals[0]?.Status"
             [value]="paper?.PaperApprovals[0]?.Status"
-            [severity]="
-              paper.PaperApprovals[0]?.Status === 'Approved'
-                ? 'success'
-                : paper.PaperApprovals[0]?.Status === 'Rejected'
-                  ? 'danger'
-                  : 'warn'
-            "
+            [severity]="getSeverity(paper?.PaperApprovals[0]?.Status)"
           >
           </p-badge>
         </td>
@@ -222,13 +216,24 @@
         <td>{{ paper.Year }}</td>
         <td>
           <p-button
-            label="View"
             [outlined]="true"
             icon="pi pi-eye"
             size="small"
             styleClass="p-button-sm p-button-outlined"
             (click)="viewPaper(paper.Id)"
           />
+
+          <button
+            *ngIf="
+              paper.PaperApprovals[0]?.Status === 'Draft' ||
+              paper.PaperApprovals[0]?.Status === 'Pending'
+            "
+            pButton
+            size="small"
+            icon="pi pi-verified"
+            class="p-button-sm"
+            (click)="onApprove(paper.Id)"
+          ></button>
         </td>
       </tr>
     </ng-template>
