@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { Papers } from '../../../../fds-config/entity-models/papers';
 import { FormGroup } from '@angular/forms';
 import { PapersService } from '../../../services/papers-service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Category } from '../../../../fds-config/entity-models/categories';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
 import { Department } from '../../../../fds-config/entity-models/department';
@@ -37,6 +37,7 @@ export class InsertUpdatePaperComponent implements OnInit {
   teachers: Users[] = [];
 
   papersForm!: FormGroup;
+  paperId!: number
 
   isLoading: boolean = false;
 
@@ -50,6 +51,7 @@ export class InsertUpdatePaperComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly cdr: ChangeDetectorRef,
     private readonly fileService: FileService,
+    @Inject(MAT_DIALOG_DATA) public data: Papers | null,
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +65,11 @@ export class InsertUpdatePaperComponent implements OnInit {
     this.getDepartment();
 
     this.papersForm.markAllAsTouched();
+    if (this.data) {
+      this.isEditMode = true;
+      this.paperId = this.data.Id;
+      this.papersForm.patchValue(this.data);
+    }
   }
 
   getDepartment() {
@@ -131,6 +138,28 @@ export class InsertUpdatePaperComponent implements OnInit {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  save() {
+    if (this.isEditMode) {
+      this.updatePaper();
+    } else {
+      this.onSave();
+    }
+  }
+  updatePaper() {
+    const paperData = this.papersForm.getRawValue() as Papers
+    paperData.Id = this.paperId
+    this.papersService.updatePaper(paperData).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.dialogRef.close(res);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.log(err);
+      },
+    });
   }
 
   onSave() {

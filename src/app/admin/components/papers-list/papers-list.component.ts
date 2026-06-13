@@ -14,6 +14,9 @@ import { DepartmentService } from '../../services/department-service';
 import { BatchService } from '../../services/batch-service';
 import { Table } from 'primeng/table';
 import { PaperApprovalConfirmationComponent } from '../../../shared/components/paper-approval-confirmation/paper-approval-confirmation.component';
+import { ToastService } from '../../../shared/services/toast.service';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-papers-list',
@@ -31,6 +34,7 @@ export class PapersListComponent implements OnInit {
   batches: Batches[] = [];
   years: string[] = [];
   searchValue = '';
+  userTokenInfo: any = {};
 
   constructor(
     private readonly papersService: PapersService,
@@ -40,9 +44,12 @@ export class PapersListComponent implements OnInit {
     private readonly subCategoryService: SubcategoryService,
     private readonly departmentService: DepartmentService,
     private readonly batchService: BatchService,
-  ) {}
+    private readonly toastService: ToastService,
+    private readonly userInfoService: UserInfoService
+  ) { }
 
   ngOnInit(): void {
+    this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getPapers();
     this.getCategory();
     this.getSubCategory();
@@ -51,7 +58,7 @@ export class PapersListComponent implements OnInit {
   }
 
   getPapers() {
-    this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
+    this.papersService.getPaperApprovalByUserId().subscribe((res: AppQuery<Papers[]>) => {
       this.papers = res.data;
       this.years = Array.from(
         new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
@@ -103,7 +110,34 @@ export class PapersListComponent implements OnInit {
       }
     });
   }
-  viewPapers(id: number) {}
+
+  editPaper(paperId: number) {
+    this.papersService.getPaperById(paperId).subscribe({
+      next: (res: AppQuery<Papers>) => {
+        const paperToUpdate = res?.data;
+
+        const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
+          width: '900px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: paperToUpdate,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.toastService.success('Paper updated successfully!');
+            this.getPapers();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error fetching paper:', error);
+        this.toastService.error('Failed to fetch paper details.');
+      },
+    });
+  }
+
   viewPaper(id: number) {
     const paper = this.papers.find((p) => p.Id === id);
 
@@ -155,5 +189,41 @@ export class PapersListComponent implements OnInit {
         this.getPapers();
       }
     });
+  }
+
+  isAllowedStatus(paperApproval: any) {
+    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending
+      || paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
+      return true;
+    }
+
+    return false;
+  }
+
+  isUserAllowedToApproveOrEdit(paper: any) {
+    const [paperAproval] = paper?.PaperApprovals;
+
+    if (!this.isAllowedStatus(paperAproval)) {
+      return false;
+    }
+
+    const role = AcademicSubmissionConfig.UserRole;
+    const paperGroups = paper?.PaperGroups || [];
+
+    if ((this.userTokenInfo.role === role.Student ||
+      this.userTokenInfo.role === role.Teacher)
+      && this.isAllowedStatus(paperAproval)) {
+      if (paperGroups.find((group: any) => group.UserId === this.userTokenInfo.userId)) {
+        return true;
+      }
+    }
+
+    // except for student and teacher, everyone can approve
+    if (this.userTokenInfo.role !== role.Student &&
+      this.userTokenInfo.role !== role.Teacher && this.isAllowedStatus(paperAproval)) {
+      return true;
+    }
+
+    return false;
   }
 }
