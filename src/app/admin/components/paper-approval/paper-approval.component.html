@@ -1,14 +1,8 @@
 <app-page-header title="Approval List"> </app-page-header>
 
 <div class="card">
-  <p-table
-    [value]="aprovals"
-    dataKey="Id"
-    [rows]="10"
-    [rowsPerPageOptions]="[10, 25, 50]"
-    [paginator]="true"
-    [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }"
-  >
+  <p-table [value]="aprovals" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+    [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
     <ng-template #header>
       <tr>
         <th style="width: 30%">Title</th>
@@ -24,29 +18,20 @@
       <tr>
         <td>{{ approval.Papers?.Title }}</td>
         <td>
-          <p-badge
-            *ngIf="approval?.Status"
-            [value]="approval?.Status"
-            [severity]="
+          <p-badge *ngIf="approval?.Status" [value]="approval?.Status" [severity]="
               approval?.Status === 'Approved'
                 ? 'success'
                 : approval?.Status === 'Rejected'
                   ? 'danger'
                   : 'warn'
-            "
-          ></p-badge>
+            "></p-badge>
         </td>
         <td>{{ approval.Papers?.Users?.Roles?.Name }}</td>
         <td>{{ approval.Papers?.Category?.Name }}</td>
         <td>{{ approval.Papers?.Department?.Name }}</td>
         <td>
-          <button
-            pButton
-            label="Approve"
-            icon="pi pi-verified"
-            class="p-button-sm"
-            (click)="Approvoe()"
-          ></button>
+          <button *ngIf="isUserAllowedToApprove(approval)" pButton label="Approve" icon="pi pi-verified"
+            class="p-button-sm" (click)="onApprove(approval.PaperId)"></button>
         </td>
       </tr>
     </ng-template>
