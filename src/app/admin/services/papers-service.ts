@@ -15,10 +15,16 @@ export class PapersService {
   constructor(
     private readonly http: HttpClient,
     private readonly fb: FormBuilder,
-  ) {}
+  ) { }
 
   getPapers(): Observable<AppQuery<Papers[]>> {
     return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/get`);
+
+  }
+
+  getPaperApprovalByUserId(): Observable<AppQuery<Papers[]>> {
+    return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/getPaperApprovalByUserId`);
+
   }
 
   createPaper(paper: Papers): Observable<AppQuery<Papers>> {
@@ -26,7 +32,7 @@ export class PapersService {
   }
 
   getPaperById(id: number): Observable<AppQuery<Papers>> {
-    return this.http.get<AppQuery<Papers>>(`${this.baseUrl}/api/paper/get/${id}`);
+    return this.http.get<AppQuery<Papers>>(`${this.baseUrl}/api/paper/getById/${id}`);
   }
 
   updatePaper(paper: Papers): Observable<AppQuery<Papers>> {

@@ -22,6 +22,7 @@ import { InsertUpdateRolesComponent } from './components/role-list/insert-update
 import { PapersListComponent } from './components/papers-list/papers-list.component';
 import { InsertUpdatePaperComponent } from './components/papers-list/insert-update-paper/insert-update-paper.component';
 import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
+import { PaperDetailComponent } from './components/papers-list/paper-detail/paper-detail.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { PaperApprovalComponent } from './components/paper-approval/paper-approv
     PapersListComponent,
     InsertUpdatePaperComponent,
     PaperApprovalComponent,
+    PaperDetailComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -66,6 +68,7 @@ import { PaperApprovalComponent } from './components/paper-approval/paper-approv
     PapersListComponent,
     InsertUpdatePaperComponent,
     PaperApprovalComponent,
+    PaperDetailComponent,
   ],
 })
 export class AdminModule {}

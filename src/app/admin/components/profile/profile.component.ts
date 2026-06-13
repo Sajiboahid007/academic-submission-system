@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly confirmationService: ConfirmationService,
     private readonly fileService: FileService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const userInfo = this.userInfoService.getUserInfo();
@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit {
 
   getPaperStatus(paper: any): string {
     if (paper.Status) return paper.Status;
-    // Dynamic mock fallback based on paper ID to match premium mockup states
+
     const statuses = ['approved', 'submitted', 'draft'];
     return statuses[paper.Id % statuses.length];
   }
@@ -85,7 +85,7 @@ export class ProfileComponent implements OnInit {
         (paper.Title && paper.Title.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
         (paper.Abstract && paper.Abstract.toLowerCase().includes(this.searchQuery.toLowerCase()));
 
-      const paperStatus = this.getPaperStatus(paper);
+      const paperStatus = paper?.PaperApprovals.Status;
       const matchesStatus =
         this.statusFilter === 'All' ||
         paperStatus.toLowerCase() === this.statusFilter.toLowerCase();
@@ -123,11 +123,20 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  viewPaper(paper: any): void {
-    if (paper.FileUrl) {
-      window.open(paper.FileUrl, '_blank');
+  viewPaper(id: number): void {
+    const paper = this.papers.find((p) => p.Id === id);
+
+    if (paper?.FileUrl) {
+      const link = document.createElement('a');
+      link.href = paper.FileUrl;
+      link.download = paper.FileUrl.split('/').pop() || 'document.pdf';
+      link.target = '_blank';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } else {
-      this.toastService.success(`Viewing paper details: ${paper.Title}`);
+      console.warn('No PDF file URL found.');
     }
   }
 
