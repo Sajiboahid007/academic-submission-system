@@ -15,6 +15,7 @@ import { UserInfoService } from '../../../services/user-info-service';
 import { Users } from '../../../../fds-config/entity-models/user';
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
 import { FileService } from '../../../services/file-service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-insert-update-paper',
@@ -51,6 +52,7 @@ export class InsertUpdatePaperComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly cdr: ChangeDetectorRef,
     private readonly fileService: FileService,
+    private readonly toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public data: Papers | null,
   ) { }
 
@@ -141,6 +143,10 @@ export class InsertUpdatePaperComponent implements OnInit {
   }
 
   save() {
+    if (this.papersForm.invalid) {
+      this.papersForm.markAllAsTouched();
+      return;
+    }
     if (this.isEditMode) {
       this.updatePaper();
     } else {
@@ -152,23 +158,16 @@ export class InsertUpdatePaperComponent implements OnInit {
     paperData.Id = this.paperId
     this.papersService.updatePaper(paperData).subscribe({
       next: (res) => {
-        this.isLoading = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
-        this.isLoading = false;
         console.log(err);
+        this.toastService.error('Error updating paper');
       },
     });
   }
 
   onSave() {
-    if (this.papersForm.invalid) {
-      this.papersForm.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading = true;
     const file = this.papersForm.value.File;
 
     if (file) {
@@ -179,8 +178,8 @@ export class InsertUpdatePaperComponent implements OnInit {
           this.savePaper(paper);
         },
         error: (err) => {
-          this.isLoading = false;
           console.log(err);
+          this.toastService.error('Error creating paper');
         },
       });
     } else {
@@ -192,12 +191,12 @@ export class InsertUpdatePaperComponent implements OnInit {
   private savePaper(paper: Papers) {
     this.papersService.createPaper(paper).subscribe({
       next: (res) => {
-        this.isLoading = false;
         this.dialogRef.close(res);
+        this.toastService.success('Paper created successfully!');
       },
       error: (err) => {
-        this.isLoading = false;
         console.log(err);
+        this.toastService.error('Error creating paper');
       },
     });
   }

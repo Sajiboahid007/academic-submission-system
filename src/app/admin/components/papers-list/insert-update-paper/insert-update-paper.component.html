@@ -6,13 +6,8 @@
         <h2 class="header-title">Papers</h2>
       </div>
     </div>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-times"
-      class="p-button-rounded p-button-text p-button-secondary"
-      (click)="onCancel()"
-    ></button>
+    <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onCancel()"></button>
   </div>
 
   <form [formGroup]="papersForm">
@@ -20,51 +15,29 @@
       <!-- Title -->
       <div fxLayout="column" fxLayoutGap="8px">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <input
-            pInputText
-            id="Title"
-            formControlName="Title"
-            autocomplete="off"
-            class="full-width"
-          />
+          <input pInputText id="Title" formControlName="Title" autocomplete="off" class="full-width" />
 
           <label for="Title" class="field-label">
             Paper Title <span class="required-asterisk">*</span>
           </label>
         </p-floatlabel>
 
-        <p-message
-          severity="error"
-          size="small"
-          variant="simple"
-          text="Title is required."
-          *ngIf="papersForm.get('Title')?.invalid && papersForm.get('Title')?.touched"
-        >
+        <p-message severity="error" size="small" variant="simple" text="Title is required."
+          *ngIf="papersForm.get('Title')?.invalid && papersForm.get('Title')?.touched">
         </p-message>
       </div>
 
       <!-- Abstract -->
       <div fxLayout="column" fxLayoutGap="8px">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <textarea
-            pTextarea
-            id="Abstract"
-            formControlName="Abstract"
-            rows="5"
-            class="full-width"
-          ></textarea>
+          <textarea pTextarea id="Abstract" formControlName="Abstract" rows="5" class="full-width"></textarea>
 
           <label for="Abstract" class="field-label">
             Abstract <span class="required-asterisk">*</span>
           </label>
         </p-floatlabel>
-        <p-message
-          severity="error"
-          size="small"
-          variant="simple"
-          text="Abstract is required."
-          *ngIf="papersForm.get('Abstract')?.invalid && papersForm.get('Abstract')?.touched"
-        >
+        <p-message severity="error" size="small" variant="simple" text="Abstract is required."
+          *ngIf="papersForm.get('Abstract')?.invalid && papersForm.get('Abstract')?.touched">
         </p-message>
       </div>
 
@@ -73,26 +46,15 @@
         <!-- Category -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-select
-              id="CategoryId"
-              formControlName="CategoryId"
-              [options]="category"
-              optionLabel="Name"
-              optionValue="Id"
-              [filter]="true"
-              filterBy="Name"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-select id="CategoryId" formControlName="CategoryId" [options]="category" optionLabel="Name"
+              optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
             </p-select>
             <label for="CategoryId" class="field-label">
               Select Category <span class="required-asterisk">*</span>
             </label>
           </p-floatlabel>
           <p-message severity="error" size="small" variant="simple">
-            <span
-              *ngIf="papersForm.get('CategoryId')?.invalid && papersForm.get('CategoryId')?.touched"
-            >
+            <span *ngIf="papersForm.get('CategoryId')?.invalid && papersForm.get('CategoryId')?.touched">
               Category is required.
             </span>
           </p-message>
@@ -101,17 +63,8 @@
         <!-- SubCategory -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-select
-              id="SubcategoryId"
-              formControlName="SubcategoryId"
-              [options]="subcategory"
-              optionLabel="Name"
-              optionValue="Id"
-              [filter]="true"
-              filterBy="Name"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-select id="SubcategoryId" formControlName="SubcategoryId" [options]="subcategory" optionLabel="Name"
+              optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
             </p-select>
             <label for="SubcategoryId" class="field-label"> Select Sub Category </label>
           </p-floatlabel>
@@ -123,24 +76,14 @@
         <!-- Category -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-multiselect
-              [options]="students"
-              formControlName="StudentIds"
-              optionLabel="Name"
-              optionValue="Id"
-              display="chip"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-multiselect [options]="students" formControlName="StudentIds" optionLabel="Name" optionValue="Id"
+              display="chip" [showClear]="true" styleClass="full-width">
               <ng-template let-item pTemplate="item">
                 <div class="flex items-center gap-2">
                   <!-- <img src="https://picsum.photos/300/200" alt="Sample Image" class="rounded-image" /> -->
 
-                  <img
-                    [src]="item?.ImageUrl || 'https://picsum.photos/300/200'"
-                    alt="Sample Image"
-                    class="rounded-image"
-                  />
+                  <img [src]="item?.ImageUrl || 'https://picsum.photos/300/200'" alt="Sample Image"
+                    class="rounded-image" />
 
                   <span>{{ item?.Name }}</span>
                 </div>
@@ -151,9 +94,7 @@
             </label>
           </p-floatlabel>
           <p-message severity="error" size="small" variant="simple">
-            <span
-              *ngIf="papersForm.get('StudentIds')?.invalid && papersForm.get('StudentIds')?.touched"
-            >
+            <span *ngIf="papersForm.get('StudentIds')?.invalid && papersForm.get('StudentIds')?.touched">
               Student Group is required.
             </span>
           </p-message>
@@ -162,22 +103,12 @@
         <!-- Teacher Group -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-multiselect
-              [options]="teachers"
-              formControlName="TeacherIds"
-              optionLabel="Name"
-              optionValue="Id"
-              display="chip"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-multiselect [options]="teachers" formControlName="TeacherIds" optionLabel="Name" optionValue="Id"
+              display="chip" [showClear]="true" styleClass="full-width">
               <ng-template let-item pTemplate="item">
                 <div class="flex items-center gap-2">
-                  <img
-                    [src]="item?.ImageUrl || 'https://picsum.photos/300/200'"
-                    alt="Sample Image"
-                    class="rounded-image"
-                  />
+                  <img [src]="item?.ImageUrl || 'https://picsum.photos/300/200'" alt="Sample Image"
+                    class="rounded-image" />
 
                   <span>{{ item?.Name }}</span>
                 </div>
@@ -192,17 +123,8 @@
         <!-- Department -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-select
-              id="DepartmentId"
-              formControlName="DepartmentId"
-              [options]="departments"
-              optionLabel="Name"
-              optionValue="Id"
-              [filter]="true"
-              filterBy="Name"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-select id="DepartmentId" formControlName="DepartmentId" [options]="departments" optionLabel="Name"
+              optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
             </p-select>
             <label for="DepartmentId" class="field-label"> Department </label>
           </p-floatlabel>
@@ -210,17 +132,8 @@
 
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <p-select
-              id="BatchId"
-              formControlName="BatchId"
-              [options]="batches"
-              optionLabel="Name"
-              optionValue="Id"
-              [filter]="true"
-              filterBy="Name"
-              [showClear]="true"
-              styleClass="full-width"
-            >
+            <p-select id="BatchId" formControlName="BatchId" [options]="batches" optionLabel="Name" optionValue="Id"
+              [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
             </p-select>
             <label for="BatchId" class="field-label"> Batch </label>
           </p-floatlabel>
@@ -231,29 +144,15 @@
         <!-- Year -->
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
-            <input
-              pInputText
-              id="Year"
-              formControlName="Year"
-              autocomplete="off"
-              class="full-width"
-            />
+            <input pInputText id="Year" formControlName="Year" autocomplete="off" class="full-width" />
             <label for="Year" class="field-label"> Year </label>
           </p-floatlabel>
         </div>
       </div>
 
       <div class="card">
-        <p-fileupload
-          (onSelect)="onFileSelect($event)"
-          (onClear)="onFileClear()"
-          (onRemove)="onFileRemove($event)"
-          [showUploadButton]="false"
-          [multiple]="false"
-          accept=".pdf,image/*"
-          maxFileSize="10000000"
-          mode="advanced"
-        >
+        <p-fileupload (onSelect)="onFileSelect($event)" (onClear)="onFileClear()" (onRemove)="onFileRemove($event)"
+          [showUploadButton]="false" [multiple]="false" accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
           <ng-template #empty>
             <div>Drag and drop files to here to upload.</div>
           </ng-template>
@@ -263,33 +162,16 @@
   </form>
 
   <!-- Actions -->
+
+  <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s"
+    [style]="{ width: '50px', height: '50px' }" *ngIf="isLoading" />
   <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
-    <button
-      pButton
-      type="button"
-      label="Cancel"
-      icon="pi pi-times"
-      class="p-button-danger btn-cancel"
-      [disabled]="isLoading"
-      (click)="onCancel()"
-    ></button>
+    <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+      [disabled]="isLoading" (click)="onCancel()"></button>
 
-    <button
-      pButton
-      type="button"
-      label="Save Details"
-      icon="pi pi-check"
-      class="p-button-success btn-save"
-      [disabled]="papersForm.invalid || isLoading"
-      (click)="onSave()"
-    ></button>
+    <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
+      [disabled]="papersForm.invalid" (click)="save()"></button>
 
-    <p-progress-spinner
-      strokeWidth="8"
-      fill="transparent"
-      animationDuration=".5s"
-      [style]="{ width: '50px', height: '50px' }"
-      *ngIf="isLoading"
-    />
+
   </div>
 </div>

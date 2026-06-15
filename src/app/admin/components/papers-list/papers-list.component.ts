@@ -58,7 +58,7 @@ export class PapersListComponent implements OnInit {
   }
 
   getPapers() {
-    this.papersService.getPaperApprovalByUserId().subscribe((res: AppQuery<Papers[]>) => {
+    this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
       this.papers = res.data;
       this.years = Array.from(
         new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
@@ -107,6 +107,7 @@ export class PapersListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
         this.getPapers();
+        this.toastService.success('Paper created successfully!');
       }
     });
   }
