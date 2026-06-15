@@ -1,28 +1,11 @@
 <div class="layout-container">
   <!-- Navbar -->
-  <header
-    class="navbar"
-    [class.sidebar-open]="isSidebarOpen()"
-    [class.sidebar-collapsed]="isSidebarCollapsed()"
-  >
+  <header class="navbar" [class.sidebar-open]="isSidebarOpen()" [class.sidebar-collapsed]="isSidebarCollapsed()">
     <div class="navbar-content">
       <div class="navbar-left">
-        <button
-          class="navbar-toggle"
-          (click)="toggleSidebar()"
-          aria-label="Toggle sidebar"
-          type="button"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+        <button class="navbar-toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -37,40 +20,20 @@
       <div class="navbar-right">
         <div class="navbar-actions">
           <div class="notification-wrap" #notificationWrap [class.open]="notificationsOpen()">
-            <button
-              class="action-btn"
-              type="button"
-              aria-label="Notifications"
-              [attr.aria-expanded]="notificationsOpen()"
-              aria-haspopup="true"
-              aria-controls="notification-panel"
-              (click)="toggleNotifications($event)"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
+            <button class="action-btn" type="button" aria-label="Notifications"
+              [attr.aria-expanded]="notificationsOpen()" aria-haspopup="true" aria-controls="notification-panel"
+              (click)="toggleNotifications($event)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
               </svg>
               <span class="badge" *ngIf="notifications().length > 0">{{
                 notifications().length
-              }}</span>
+                }}</span>
             </button>
-            <div
-              class="notification-panel"
-              id="notification-panel"
-              *ngIf="notificationsOpen()"
-              role="region"
-              aria-label="Notifications"
-            >
+            <div class="notification-panel" id="notification-panel" *ngIf="notificationsOpen()" role="region"
+              aria-label="Notifications">
               <div class="notification-panel-header">
                 <span class="notification-panel-title">Notifications</span>
               </div>
@@ -81,45 +44,28 @@
                 <li *ngFor="let n of notifications()" class="notification-item">
                   <div class="notification-item-top">
                     <span class="notification-title">{{ n.title }}</span>
-                    <span
-                      class="notification-status"
-                      [ngClass]="'notification-status--' + n.status"
-                    >
+                    <span class="notification-status" [ngClass]="'notification-status--' + n.status">
                       {{ statusLabel(n.status) }}
                     </span>
                   </div>
                   <p class="notification-message">{{ n.message }}</p>
                   <time class="notification-time" [attr.datetime]="n.at.toISOString()">{{
                     n.at | date: 'medium'
-                  }}</time>
+                    }}</time>
                 </li>
               </ul>
             </div>
           </div>
           <div class="user-menu-wrap" #userMenuWrap [class.open]="userMenuOpen()">
-            <button
-              type="button"
-              class="user-menu-trigger"
-              (click)="toggleUserMenu($event)"
-              [attr.aria-expanded]="userMenuOpen()"
-              aria-haspopup="true"
-              aria-controls="user-account-menu"
-            >
-              <p-avatar
-                *ngIf="userInfo?.ImageUrl; else initials"
-                [image]="userInfo?.ImageUrl"
-                shape="circle"
-                size="large"
-              >
+            <button type="button" class="user-menu-trigger" (click)="toggleUserMenu($event)"
+              [attr.aria-expanded]="userMenuOpen()" aria-haspopup="true" aria-controls="user-account-menu">
+              <p-avatar *ngIf="userInfo?.ImageUrl; else initials" [image]="userInfo?.ImageUrl" shape="circle"
+                size="large">
               </p-avatar>
 
               <ng-template #initials>
-                <p-avatar
-                  [label]="userInfo?.Name?.charAt(0)"
-                  shape="circle"
-                  size="large"
-                  styleClass="bg-primary text-white"
-                >
+                <p-avatar [label]="userInfo?.Name?.charAt(0)" shape="circle" size="large"
+                  styleClass="bg-primary text-white">
                 </p-avatar>
               </ng-template>
 
@@ -127,42 +73,19 @@
                 <span class="user-name">{{ userInfo?.Name }}</span>
                 <!-- <span class="user-role">{{ userInfo?.Roles.[0].Name }}</span> -->
               </div>
-              <svg
-                class="user-menu-chevron"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
+              <svg class="user-menu-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
             <div class="user-dropdown" id="user-account-menu" *ngIf="userMenuOpen()" role="menu">
-              <button
-                type="button"
-                class="user-dropdown-item"
-                role="menuitem"
-                (click)="goProfile()"
-              >
+              <button type="button" class="user-dropdown-item" role="menuitem" (click)="goProfile()">
                 Profile
               </button>
-              <button
-                type="button"
-                class="user-dropdown-item"
-                role="menuitem"
-                (click)="goChangePassword()"
-              >
+              <button type="button" class="user-dropdown-item" role="menuitem" (click)="goChangePassword()">
                 Change password
               </button>
-              <button
-                type="button"
-                class="user-dropdown-item danger"
-                role="menuitem"
-                (click)="logout()"
-              >
+              <button type="button" class="user-dropdown-item danger" role="menuitem" (click)="logout()">
                 Log out
               </button>
             </div>
@@ -174,49 +97,27 @@
 
   <div class="layout-body">
     <!-- Sidebar -->
-    <aside
-      class="sidebar"
-      [class.open]="isSidebarOpen()"
-      [class.collapsed]="isSidebarCollapsed()"
-      [class.closed]="!isSidebarOpen()"
-    >
+    <aside class="sidebar" [class.open]="isSidebarOpen()" [class.collapsed]="isSidebarCollapsed()"
+      [class.closed]="!isSidebarOpen()">
       <nav class="sidebar-nav">
         <div class="sidebar-header">
+
           <div class="sidebar-logo" *ngIf="!isSidebarCollapsed()">
-            <!-- <span class="logo-icon">🥗</span> -->
             <span class="logo-text">Approval Hub</span>
           </div>
-          <button
-            class="sidebar-collapse-btn"
-            (click)="toggleSidebarCollapse()"
-            aria-label="Collapse sidebar"
-            type="button"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
+          <button class="sidebar-collapse-btn" (click)="toggleSidebarCollapse()" aria-label="Collapse sidebar"
+            type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
         </div>
 
         <ul class="nav-menu">
-          <li *ngFor="let item of menuItems" class="nav-item">
-            <a
-              class="nav-link"
-              [class.active]="isActiveRoute(item.route)"
-              (click)="navigateTo(item.route)"
-              [routerLink]="item.route"
-              routerLinkActive="active"
-              [title]="isSidebarCollapsed() ? item.label : ''"
-            >
+          <li *ngFor="let item of filteredMenuItems" class="nav-item">
+            <a class="nav-link" [class.active]="isActiveRoute(item.route)" (click)="navigateTo(item.route)"
+              [routerLink]="item.route" routerLinkActive="active" [title]="isSidebarCollapsed() ? item.label : ''">
               <span class="nav-icon">{{ item.icon }}</span>
               <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
               <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
@@ -233,11 +134,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main
-      class="main-content"
-      [class.sidebar-open]="isSidebarOpen()"
-      [class.sidebar-collapsed]="isSidebarCollapsed()"
-    >
+    <main class="main-content" [class.sidebar-open]="isSidebarOpen()" [class.sidebar-collapsed]="isSidebarCollapsed()">
       <div class="content-wrapper">
         <router-outlet></router-outlet>
 
@@ -248,16 +145,8 @@
             <!-- Card 1: Total Files -->
             <div class="stat-card">
               <div class="stat-icon-wrap bg-blue-light">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#5c6bc0"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5c6bc0" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="17 8 12 3 7 8"></polyline>
                   <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -272,16 +161,8 @@
             <!-- Card 2: Total Users -->
             <div class="stat-card">
               <div class="stat-icon-wrap bg-teal-light">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#0d635c"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0d635c" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -297,16 +178,8 @@
             <!-- Card 3: Avg Monthly Uploads -->
             <div class="stat-card">
               <div class="stat-icon-wrap bg-amber-light">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#ffa726"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffa726" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -383,12 +256,8 @@
                 <div class="pie-svg-container">
                   <svg viewBox="0 0 100 100" width="200" height="200" class="pie-svg">
                     <circle cx="50" cy="50" r="41" fill="#f8fafc" />
-                    <path
-                      *ngFor="let slice of departmentSlices()"
-                      [attr.d]="slice.pathData"
-                      [attr.fill]="slice.color"
-                      class="pie-slice"
-                    >
+                    <path *ngFor="let slice of departmentSlices()" [attr.d]="slice.pathData" [attr.fill]="slice.color"
+                      class="pie-slice">
                       <title>
                         {{ slice.name }}: {{ slice.count }} files ({{ slice.percent }}%)
                       </title>
@@ -525,14 +394,8 @@
                         </div>
                       </td>
                       <td>
-                        <p-button
-                          label="View"
-                          [outlined]="true"
-                          icon="pi pi-eye"
-                          size="small"
-                          styleClass="p-button-sm p-button-outlined"
-                          (click)="viewPaper(file)"
-                        >
+                        <p-button label="View" [outlined]="true" icon="pi pi-eye" size="small"
+                          styleClass="p-button-sm p-button-outlined" (click)="viewPaper(file)">
                         </p-button>
                       </td>
                     </tr>

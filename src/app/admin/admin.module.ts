@@ -23,6 +23,7 @@ import { PapersListComponent } from './components/papers-list/papers-list.compon
 import { InsertUpdatePaperComponent } from './components/papers-list/insert-update-paper/insert-update-paper.component';
 import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
 import { PaperDetailComponent } from './components/papers-list/paper-detail/paper-detail.component';
+import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { PaperDetailComponent } from './components/papers-list/paper-detail/pape
     InsertUpdatePaperComponent,
     PaperApprovalComponent,
     PaperDetailComponent,
+    CreatePapersComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -69,6 +71,7 @@ import { PaperDetailComponent } from './components/papers-list/paper-detail/pape
     InsertUpdatePaperComponent,
     PaperApprovalComponent,
     PaperDetailComponent,
+    CreatePapersComponent,
   ],
 })
-export class AdminModule {}
+export class AdminModule { }

@@ -1,0 +1,176 @@
+<app-page-header title="Create Papers" (onButtonClick)="AddPapers()"> </app-page-header>
+
+<div class="card">
+    <p-table #dt2 [value]="papers" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
+        [paginator]="true" [globalFilterFields]="[
+      'Title',
+      'Category.Name',
+      'SubCategory.Name',
+      'Department.Name',
+      'Year',
+      'Batches.Name',
+    ]" [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+        <!-- Search -->
+        <ng-template #caption>
+            <div class="row">
+                <!-- Search -->
+                <div class="col-auto">
+                    <p-iconfield iconPosition="left">
+                        <p-inputicon>
+                            <i class="pi pi-search"></i>
+                        </p-inputicon>
+
+                        <input pInputText type="text" [(ngModel)]="searchValue" name="search"
+                            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="Search papers" style="width: 250px" />
+                    </p-iconfield>
+                </div>
+
+                <!-- Category Dropdown -->
+                <div class="col-auto">
+                    <p-columnFilter field="Category.Name" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="categories" optionLabel="Name"
+                                optionValue="Name" placeholder="Category" [showClear]="true"
+                                (onChange)="filter($event.value)" style="width: 120px">
+                                <ng-template let-option #item>
+                                    <span>{{ option.Name }}</span>
+                                </ng-template>
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+                <div class="col-auto">
+                    <p-columnFilter field="SubCategory.Name" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="subCategories" optionLabel="Name"
+                                optionValue="Name" placeholder="SubCategory" [showClear]="true"
+                                (onChange)="filter($event.value)" style="width: 150px">
+                                <!-- style="width: 73%" -->
+                                <ng-template let-option #item>
+                                    <span>{{ option.Name }}</span>
+                                </ng-template>
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+                <div class="col-auto">
+                    <p-columnFilter field="Department.Name" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="departments" optionLabel="Name"
+                                optionValue="Name" placeholder="Department" [showClear]="true"
+                                (onChange)="filter($event.value)" style="width: 120px">
+                                <!-- style="width: 74%" -->
+                                <ng-template let-option #item>
+                                    <span>{{ option.Name }}</span>
+                                </ng-template>
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+                <div class="col-auto">
+                    <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="years" placeholder="Year"
+                                [showClear]="true" (onChange)="filter($event.value)" style="width: 98px">
+                                <!-- style="width: 94%" -->
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+                <div class="col">
+                    <p-columnFilter field="Batches.Name" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="batches" optionLabel="Name"
+                                optionValue="Name" placeholder="Batch" [showClear]="true"
+                                (onChange)="filter($event.value)" style="width: 120px">
+                                <!-- style="width: 84%" -->
+                                <ng-template let-option #item>
+                                    <span>{{ option.Name }}</span>
+                                </ng-template>
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+
+                <!-- Clear Button -->
+                <div class="col-auto">
+                    <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- Header -->
+        <ng-template #header style="margin-top: 10px">
+            <!-- Filter Row -->
+
+            <tr style="margin-top: 50px">
+                <th style="width: 30%">Title</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 10%">Category</th>
+                <!-- <th style="width: 10%">Sub Category</th> -->
+                <th style="width: 15%">Department</th>
+                <th style="width: 5%">Year</th>
+                <!-- <th style="width: 5%">Batch</th> -->
+                <th style="width: 10%">Action</th>
+            </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template #body let-paper>
+            <tr>
+                <td>
+                    <div>
+                        <div>{{ paper.Title | truncateText: 50 }}</div>
+                        <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.Abstract | truncateText: 80 }}
+                        </small>
+                    </div>
+                </td>
+                <td>
+                    <p-badge *ngIf="paper.PaperApprovals[0]?.Status" [value]="paper?.PaperApprovals[0]?.Status"
+                        [severity]="getSeverity(paper?.PaperApprovals[0]?.Status)">
+                    </p-badge>
+                </td>
+
+                <td>
+                    <div>
+                        <div>{{ paper.Category?.Name | truncateText: 50 }}</div>
+                        <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.SubCategory?.Name | truncateText: 30 }}
+                        </small>
+                    </div>
+                </td>
+
+                <td>
+                    <div>
+                        <div>{{ paper.Department?.Name | truncateText: 50 }}</div>
+                        <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                            {{ paper.Batches?.Name | truncateText: 30 }}
+                        </small>
+                    </div>
+                </td>
+
+                <td>{{ paper.Year }}</td>
+                <td>
+                    <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined"
+                        (click)="viewPaper(paper.Id)" />
+
+                    <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit"
+                        size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
+                        (click)="editPaper(paper.Id)" />
+
+                    <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton size="small" icon="pi pi-verified"
+                        class="p-button-sm" (click)="onApprove(paper.Id)"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="6">No papers found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

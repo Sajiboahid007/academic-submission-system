@@ -66,66 +66,84 @@ export class DashboardComponent implements OnInit {
   peakMonthLabel = signal('');
   topDeptLabel = signal('');
 
+  filteredMenuItems: any[] = [];
+
   menuItems = [
     {
       label: 'Dashboard',
       route: '/dashboard',
       icon: '🏠',
-      description: 'Dashboard',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {
       label: 'Category',
       route: '/dashboard/categories',
       icon: '📚',
       description: 'Manage Categories',
+      roles: ['Admin', 'Super-Admin'],
     },
     {
       label: 'Subcategory',
       route: '/dashboard/subcategory',
       icon: '◽',
       description: 'Manage Sub Categories',
+      roles: ['Admin', 'Super-Admin'],
     },
     {
       label: 'User',
       route: '/dashboard/user',
       icon: '👥',
       description: 'Manage Users',
+      roles: ['Admin', 'Super-Admin'],
     },
     {
       label: 'Department',
       route: '/dashboard/department',
       icon: '🏢',
       description: 'Manage Departments',
+      roles: ['Admin', 'Super-Admin'],
     },
     {
       label: 'Batch',
       route: '/dashboard/batch',
       icon: '📦',
       description: 'Manage Batches',
+      roles: ['Admin', 'Super-Admin'],
     },
     {
       label: 'Role',
       route: '/dashboard/role',
       icon: '🔑',
       description: 'Manage Role',
+      roles: ['Admin', 'Super-Admin']
+    },
+    {
+      label: 'Create Papers',
+      route: '/dashboard/create-papers',
+      icon: '📄',
+      description: 'Create Papers',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {
       label: 'Papers',
       route: '/dashboard/papers',
       icon: '📄',
       description: 'Manage Papers',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {
       label: 'Papers Approval',
       route: '/dashboard/papers-approval',
       icon: '📃',
       description: 'Manage Papers Approval',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {
       label: 'Profile',
       route: '/dashboard/profile',
       icon: '👤',
       description: 'Manage Profile',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
   ];
 
@@ -157,6 +175,12 @@ export class DashboardComponent implements OnInit {
     if (!userInfo) {
       return;
     }
+
+    console.log(userInfo)
+
+    this.filteredMenuItems = this.menuItems.filter(item =>
+      item.roles.includes(userInfo.role)
+    );
 
     this.getUserById(userInfo.userId);
 

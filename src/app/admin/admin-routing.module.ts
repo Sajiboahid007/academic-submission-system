@@ -12,6 +12,7 @@ import { ChangePasswordComponent } from './components/change-password/change-pas
 import { RoleListComponent } from './components/role-list/role-list.component';
 import { PapersListComponent } from './components/papers-list/papers-list.component';
 import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
+import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -59,6 +60,7 @@ const routes: Routes = [
         path: 'papers',
         component: PapersListComponent,
       },
+
       {
         path: 'profile',
         component: ProfileComponent,
@@ -67,6 +69,10 @@ const routes: Routes = [
         path: 'papers-approval',
         component: PaperApprovalComponent,
       },
+      {
+        path: 'create-papers',
+        component: CreatePapersComponent,
+      }
     ],
   },
 ];
@@ -75,4 +81,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminRoutingModule {}
+export class AdminRoutingModule { }
