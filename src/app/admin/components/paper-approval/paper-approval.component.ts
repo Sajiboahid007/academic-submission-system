@@ -6,6 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import { UserInfoService } from '../../services/user-info-service';
+import { Papers } from '../../../fds-config/entity-models/papers';
+import { PapersService } from '../../services/papers-service';
+import { InsertUpdatePaperComponent } from '../papers-list/insert-update-paper/insert-update-paper.component';
+import { AppQuery } from '../../../shared/app-query';
 
 @Component({
   selector: 'app-paper-approval',
@@ -17,26 +21,35 @@ import { UserInfoService } from '../../services/user-info-service';
 export class PaperApprovalComponent implements OnInit {
   aprovals: PaperApprovals[] = [];
   userTokenInfo: any = {};
+  papers: Papers[] = [];
 
   constructor(
     private readonly approvalService: ApprovalService,
     private readonly cdr: ChangeDetectorRef,
     private readonly dialog: MatDialog,
     private readonly toastService: ToastService,
-    private readonly userInfoService: UserInfoService
+    private readonly userInfoService: UserInfoService,
+    private readonly papersService: PapersService
   ) { }
 
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
-    console.debug(this.userTokenInfo);
-    this.getApprovalList();
+
+    const userRole = this.userTokenInfo?.role;
+    const { Student: studentRole, Teacher: teacherRole } = AcademicSubmissionConfig.UserRole;
+
+    if (userRole === studentRole || userRole === teacherRole) {
+      this.userPapers(Number(this.userTokenInfo?.userId));
+
+    } else {
+      this.getApprovalList();
+    }
   }
 
   public getApprovalList() {
     try {
-      this.approvalService.getApprovalList().subscribe((res) => {
-        console.debug(res.data);
-        this.aprovals = res.data;
+      this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
+        this.papers = res.data;
         this.cdr.markForCheck();
       });
     } catch (error) {
@@ -44,15 +57,27 @@ export class PaperApprovalComponent implements OnInit {
     }
   }
 
+  private userPapers(id: number) {
+    this.papersService.getPapersByUserId(id).subscribe({
+      next: (res: any) => {
+        this.papers = res?.data || [];
+        console.debug(this.papers);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error fetching papers:', err);
+      },
+    });
+  }
+
   isAllowedStatus(paperApproval: any) {
-    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending) {
+    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
       return true;
     }
-
     return false;
   }
 
-  isUserAllowedToApprove(paperApproval: any): boolean {
+  isUserAllowedToApprove1(paperApproval: any): boolean {
     // this are not allowed status to edit or approve
     if (!this.isAllowedStatus(paperApproval)) {
       return false;
@@ -61,7 +86,7 @@ export class PaperApprovalComponent implements OnInit {
 
     const role = AcademicSubmissionConfig.UserRole;
 
-    // if stuent then he is not allowed
+    // if student then he is not allowed
     if (role?.Student === this.userTokenInfo?.role) {
       return false;
     }
@@ -75,6 +100,66 @@ export class PaperApprovalComponent implements OnInit {
     return true;
   }
 
+
+
+  canEditPaper(approval: any): boolean {
+    return this.isUserAllowedToApprove(approval);
+  }
+
+  editPaper(paperId: any) {
+    this.papersService.getPaperById(paperId).subscribe({
+      next: (res: AppQuery<Papers>) => {
+        const paperToUpdate = res?.data;
+
+        const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
+          width: '900px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: paperToUpdate,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.toastService.success('Paper updated successfully!');
+            this.getApprovalList();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error fetching paper:', error);
+        this.toastService.error('Failed to fetch paper details.');
+      },
+    });
+  }
+
+  isUserAllowedToApprove(approval: any): boolean {
+    if (!this.isAllowedStatus(approval)) return false;
+
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // get assigned users
+    const paperGroups = approval?.Papers?.PaperGroups || [];
+
+    // STUDENT: only if assigned
+    if (userRole === role.Student) {
+      return paperGroups.some(
+        (g: any) => g.UserId === this.userTokenInfo?.userId
+      );
+    }
+
+    // TEACHER: only if assigned
+    if (userRole === role.Teacher) {
+      return paperGroups.some(
+        (g: any) => g.UserId === this.userTokenInfo?.userId
+      );
+    }
+
+    // ADMIN / SUPER ADMIN: always allowed
+    return true;
+  }
+
   onApprove(paperId: any) {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
@@ -85,6 +170,26 @@ export class PaperApprovalComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.getApprovalList();
+      }
+    });
+  }
+
+  viewPaper(paperId: number) {
+    if (!paperId) return;
+
+    this.papersService.getPaperById(paperId).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.FileUrl;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
       }
     });
   }

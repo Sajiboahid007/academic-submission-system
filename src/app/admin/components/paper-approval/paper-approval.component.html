@@ -1,37 +1,46 @@
 <app-page-header title="Approval List"> </app-page-header>
 
 <div class="card">
-  <p-table [value]="aprovals" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+  <p-table [value]="papers" #dt2 dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+    [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals[0].Status']"
     [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+    <ng-template pTemplate="caption">
+      <app-table-caption [table]="dt2"></app-table-caption>
+    </ng-template>
     <ng-template #header>
       <tr>
         <th style="width: 30%">Title</th>
         <th style="width: 10%">Status</th>
-        <th style="width: 10%">Submitted By</th>
         <th style="width: 15%">Type</th>
         <th style="width: 20%">Department</th>
         <th>Action</th>
       </tr>
     </ng-template>
 
-    <ng-template #body let-approval>
+    <ng-template #body let-paper>
       <tr>
-        <td>{{ approval.Papers?.Title }}</td>
+        <td>{{ paper.Title }}</td>
         <td>
-          <p-badge *ngIf="approval?.Status" [value]="approval?.Status" [severity]="
-              approval?.Status === 'Approved'
+          <p-badge *ngIf="paper?.PaperApprovals" [value]="paper?.PaperApprovals[0]?.Status" [severity]="
+              paper?.PaperApprovals[0]?.Status === 'Approved'
                 ? 'success'
-                : approval?.Status === 'Rejected'
+                : paper?.PaperApprovals[0]?.Status === 'Rejected'
                   ? 'danger'
                   : 'warn'
             "></p-badge>
         </td>
-        <td>{{ approval.Papers?.Users?.Roles?.Name }}</td>
-        <td>{{ approval.Papers?.Category?.Name }}</td>
-        <td>{{ approval.Papers?.Department?.Name }}</td>
+        <td>{{ paper?.Category?.Name }}</td>
+        <td>{{ paper?.Department?.Name }}</td>
         <td>
-          <button *ngIf="isUserAllowedToApprove(approval)" pButton label="Approve" icon="pi pi-verified"
-            class="p-button-sm" (click)="onApprove(approval.PaperId)"></button>
+          <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
+            (click)="viewPaper(paper?.Id)" />
+
+          <button *ngIf="isUserAllowedToApprove(paper)" pButton icon="pi pi-verified" class="p-button-sm m-2"
+            (click)="onApprove(paper.Id)"></button>
+
+          <p-button *ngIf="canEditPaper(paper)" [outlined]="true" icon="pi pi-file-edit" size="small" severity="danger"
+            styleClass="p-button-sm p-button-outlined" (click)="editPaper(paper.Id)" />
+
         </td>
       </tr>
     </ng-template>
