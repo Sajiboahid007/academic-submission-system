@@ -116,8 +116,11 @@
 
         <ul class="nav-menu">
           <li *ngFor="let item of filteredMenuItems" class="nav-item">
-            <a class="nav-link" [class.active]="isActiveRoute(item.route)" (click)="navigateTo(item.route)"
-              [routerLink]="item.route" routerLinkActive="active" [title]="isSidebarCollapsed() ? item.label : ''">
+            <a class="nav-link" (click)="navigateTo(item.route)"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+              [title]="isSidebarCollapsed() ? item.label : ''">
               <span class="nav-icon">{{ item.icon }}</span>
               <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
               <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
