@@ -90,13 +90,13 @@
               </ng-template>
             </p-multiselect>
             <label for="StudentIds" class="field-label">
-              Student Group <span class="required-asterisk">*</span>
+              Student Group
             </label>
           </p-floatlabel>
           <p-message severity="error" size="small" variant="simple">
-            <span *ngIf="papersForm.get('StudentIds')?.invalid && papersForm.get('StudentIds')?.touched">
+            <!-- <span *ngIf="papersForm.get('StudentIds')?.invalid && papersForm.get('StudentIds')?.touched">
               Student Group is required.
-            </span>
+            </span> -->
           </p-message>
         </div>
 
@@ -128,6 +128,9 @@
             </p-select>
             <label for="DepartmentId" class="field-label"> Department </label>
           </p-floatlabel>
+          <p-message severity="error" size="small" variant="simple" text="Department is required."
+            *ngIf="papersForm.get('DepartmentId')?.invalid && papersForm.get('DepartmentId')?.touched">
+          </p-message>
         </div>
 
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
@@ -137,6 +140,9 @@
             </p-select>
             <label for="BatchId" class="field-label"> Batch </label>
           </p-floatlabel>
+          <p-message severity="error" size="small" variant="simple" text="Batch is required."
+            *ngIf="papersForm.get('BatchId')?.invalid && papersForm.get('BatchId')?.touched">
+          </p-message>
         </div>
       </div>
 
@@ -171,7 +177,5 @@
 
     <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
       [disabled]="papersForm.invalid" (click)="save()"></button>
-
-
   </div>
 </div>

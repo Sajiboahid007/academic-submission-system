@@ -1,5 +1,21 @@
-<app-page-header title="Create Papers" (onButtonClick)="AddPapers()"> </app-page-header>
+<div fxLayout="row" fxLayoutAlign="space-between center" style="
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+  ">
+    <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Create Papers/Journal</h2>
 
+    <div>
+        <button pButton type="button" label="Add Paper" icon="pi pi-plus" class="p-button-rounded p-button-success m-1"
+            (click)="AddPapers()"></button>
+        <button pButton type="button" label="Add Journal" icon="pi pi-file"
+            class="p-button-rounded p-button-success m-1" (click)="AddJournal()"></button>
+    </div>
+
+</div>
 <div class="card">
     <p-table #dt2 [value]="papers" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
         [paginator]="true" [globalFilterFields]="[
@@ -12,22 +28,16 @@
     ]" [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
         <!-- Search -->
         <ng-template #caption>
-            <div class="row">
-                <!-- Search -->
+            <!-- Search -->
+            <div style="display: flex; margin: 2px; justify-content: flex-end; align-items: center;">
+                <app-table-caption [table]="dt2"></app-table-caption>
                 <div class="col-auto">
-                    <p-iconfield iconPosition="left">
-                        <p-inputicon>
-                            <i class="pi pi-search"></i>
-                        </p-inputicon>
-
-                        <input pInputText type="text" [(ngModel)]="searchValue" name="search"
-                            (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
-                            placeholder="Search papers" style="width: 250px" />
-                    </p-iconfield>
+                    <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
                 </div>
+            </div>
 
-                <!-- Category Dropdown -->
-                <div class="col-auto">
+            <!-- Category Dropdown -->
+            <!-- <div class="col-auto">
                     <p-columnFilter field="Category.Name" matchMode="equals" [showMenu]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-select appendTo="body" [ngModel]="value" [options]="categories" optionLabel="Name"
@@ -46,7 +56,6 @@
                             <p-select appendTo="body" [ngModel]="value" [options]="subCategories" optionLabel="Name"
                                 optionValue="Name" placeholder="SubCategory" [showClear]="true"
                                 (onChange)="filter($event.value)" style="width: 150px">
-                                <!-- style="width: 73%" -->
                                 <ng-template let-option #item>
                                     <span>{{ option.Name }}</span>
                                 </ng-template>
@@ -60,7 +69,6 @@
                             <p-select appendTo="body" [ngModel]="value" [options]="departments" optionLabel="Name"
                                 optionValue="Name" placeholder="Department" [showClear]="true"
                                 (onChange)="filter($event.value)" style="width: 120px">
-                                <!-- style="width: 74%" -->
                                 <ng-template let-option #item>
                                     <span>{{ option.Name }}</span>
                                 </ng-template>
@@ -68,12 +76,18 @@
                         </ng-template>
                     </p-columnFilter>
                 </div>
-                <div class="col-auto">
-                    <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
+                <div class="col-auto"> -->
+            <!-- <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-select appendTo="body" [ngModel]="value" [options]="years" placeholder="Year"
                                 [showClear]="true" (onChange)="filter($event.value)" style="width: 98px">
-                                <!-- style="width: 94%" -->
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter> -->
+            <!-- <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select appendTo="body" [ngModel]="value" [options]="years" placeholder="Year"
+                                [showClear]="true" (onChange)="filter($event.value)" style="width: 98px">
                             </p-select>
                         </ng-template>
                     </p-columnFilter>
@@ -84,20 +98,16 @@
                             <p-select appendTo="body" [ngModel]="value" [options]="batches" optionLabel="Name"
                                 optionValue="Name" placeholder="Batch" [showClear]="true"
                                 (onChange)="filter($event.value)" style="width: 120px">
-                                <!-- style="width: 84%" -->
                                 <ng-template let-option #item>
                                     <span>{{ option.Name }}</span>
                                 </ng-template>
                             </p-select>
                         </ng-template>
                     </p-columnFilter>
-                </div>
+                </div> -->
 
-                <!-- Clear Button -->
-                <div class="col-auto">
-                    <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
-                </div>
-            </div>
+            <!-- Clear Button -->
+
         </ng-template>
 
         <!-- Header -->
@@ -105,14 +115,14 @@
             <!-- Filter Row -->
 
             <tr style="margin-top: 50px">
-                <th style="width: 30%">Title</th>
-                <th style="width: 10%">Status</th>
+                <th style="width: 25%">Title</th>
+                <th style="width: 8%">Status</th>
                 <th style="width: 10%">Category</th>
                 <!-- <th style="width: 10%">Sub Category</th> -->
-                <th style="width: 15%">Department</th>
+                <th style="width: 12%">Department</th>
                 <th style="width: 5%">Year</th>
                 <!-- <th style="width: 5%">Batch</th> -->
-                <th style="width: 10%">Action</th>
+                <th style="width: 20%">Action</th>
             </tr>
         </ng-template>
 
@@ -157,11 +167,13 @@
                         (click)="viewPaper(paper.Id)" />
 
                     <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit"
-                        size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
+                        size="small" severity="danger" styleClass="p-button-sm p-button-outlined m-2"
                         (click)="editPaper(paper.Id)" />
 
                     <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton size="small" icon="pi pi-verified"
                         class="p-button-sm" (click)="onApprove(paper.Id)"></button>
+                    <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" size="small" icon="pi pi-times"
+                        class="p-button-sm" severity="danger" (click)="deletePaper(paper.Id)"></p-button>
                 </td>
             </tr>
         </ng-template>

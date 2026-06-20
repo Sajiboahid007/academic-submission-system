@@ -17,6 +17,8 @@ import { InsertUpdatePaperComponent } from '../insert-update-paper/insert-update
 import { Table } from 'primeng/table';
 import { PaperApprovalConfirmationComponent } from '../../../../shared/components/paper-approval-confirmation/paper-approval-confirmation.component';
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
+import { ConfirmationService } from 'primeng/api';
+import { JournalInsertUpdateComponent } from '../journal-insert-update/journal-insert-update.component';
 
 @Component({
   selector: 'app-create-papers',
@@ -27,6 +29,7 @@ import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academ
 })
 export class CreatePapersComponent {
   papers: Papers[] = [];
+
   loading: boolean = false;
   categories: Category[] = [];
   subCategories: SubCategory[] = [];
@@ -45,23 +48,33 @@ export class CreatePapersComponent {
     private readonly departmentService: DepartmentService,
     private readonly batchService: BatchService,
     private readonly toastService: ToastService,
-    private readonly userInfoService: UserInfoService
+    private readonly userInfoService: UserInfoService,
+    private readonly confirmationService: ConfirmationService,
   ) { }
 
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getPapers();
-    this.getCategory();
-    this.getSubCategory();
-    this.getDepartment();
-    this.getBatch();
+    // this.getCategory();
+    // this.getSubCategory();
+    // this.getDepartment();
+    // this.getBatch();
   }
 
+
+
+
+
   getPapers() {
-    this.papersService.getPapersByUserId(this.userTokenInfo.userId).subscribe((res: AppQuery<Papers[]>) => {
-      this.papers = res.data;
-      this.cdr.markForCheck();
-    });
+    this.papersService
+      .getPapersByUserId(this.userTokenInfo.userId)
+      .subscribe((res: AppQuery<Papers[]>) => {
+        this.papers = res.data;
+        this.years = Array.from(
+          new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
+        ).sort();
+        this.cdr.markForCheck();
+      });
   }
 
   getCategory() {
@@ -89,6 +102,24 @@ export class CreatePapersComponent {
     this.batchService.getBatches().subscribe((res: AppQuery<Batches[]>) => {
       this.batches = res.data;
       this.cdr.markForCheck();
+    });
+  }
+
+
+  AddJournal() {
+    const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+      width: '900px',
+      height: '700px',
+      maxWidth: 'none',
+      autoFocus: true,
+      data: null,
+    });
+
+    dialogRef.afterClosed().subscribe((res: any) => {
+      if (res) {
+        // this.getPapers();
+        this.toastService.success('Paper created successfully!');
+      }
     });
   }
 
@@ -190,8 +221,10 @@ export class CreatePapersComponent {
   }
 
   isAllowedStatus(paperApproval: any) {
-    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending
-      || paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
+    if (
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft
+    ) {
       return true;
     }
 
@@ -208,21 +241,45 @@ export class CreatePapersComponent {
     const role = AcademicSubmissionConfig.UserRole;
     const paperGroups = paper?.PaperGroups || [];
 
-    if ((this.userTokenInfo.role === role.Student ||
-      this.userTokenInfo.role === role.Teacher)
-      && this.isAllowedStatus(paperAproval)) {
+    if (
+      (this.userTokenInfo.role === role.Student || this.userTokenInfo.role === role.Teacher) &&
+      this.isAllowedStatus(paperAproval)
+    ) {
       if (paperGroups.find((group: any) => group.UserId === this.userTokenInfo.userId)) {
         return true;
       }
     }
 
     // except for student and teacher, everyone can approve
-    if (this.userTokenInfo.role !== role.Student &&
-      this.userTokenInfo.role !== role.Teacher && this.isAllowedStatus(paperAproval)) {
+    if (
+      this.userTokenInfo.role !== role.Student &&
+      this.userTokenInfo.role !== role.Teacher &&
+      this.isAllowedStatus(paperAproval)
+    ) {
       return true;
     }
 
     return false;
   }
 
+
+  deletePaper(id: number): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete this paper?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.papersService.deletePaper(id).subscribe({
+          next: () => {
+            this.toastService.success('Paper deleted successfully');
+            this.getPapers();
+          },
+          error: (err) => {
+            console.error('Error deleting paper:', err);
+            this.toastService.error('Failed to delete paper');
+          },
+        });
+      },
+    });
+  }
 }

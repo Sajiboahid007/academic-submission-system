@@ -95,7 +95,9 @@ export class InsertUpdatePaperComponent implements OnInit {
       );
 
       this.teachers = this.users.filter(
-        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Teacher,
+        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Teacher ||
+          user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Admin ||
+          user?.Roles?.Name === AcademicSubmissionConfig.UserRole.SuperAdmin
       );
       this.cdr.markForCheck();
     });

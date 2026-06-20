@@ -71,39 +71,43 @@ export class PaperApprovalComponent implements OnInit {
   }
 
   isAllowedStatus(paperApproval: any) {
-    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
+    if (
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft
+    ) {
       return true;
     }
+
     return false;
   }
 
-  isUserAllowedToApprove1(paperApproval: any): boolean {
-    // this are not allowed status to edit or approve
-    if (!this.isAllowedStatus(paperApproval)) {
-      return false;
-    }
+  // isUserAllowedToApprove(paperApproval: any): boolean {
+  //   // this are not allowed status to edit or approve
+  //   if (!this.isAllowedStatus(paperApproval)) {
+  //     return false;
+  //   }
 
 
-    const role = AcademicSubmissionConfig.UserRole;
+  //   const role = AcademicSubmissionConfig.UserRole;
 
-    // if student then he is not allowed
-    if (role?.Student === this.userTokenInfo?.role) {
-      return false;
-    }
+  //   // if student then he is not allowed
+  //   if (role?.Student === this.userTokenInfo?.role) {
+  //     return false;
+  //   }
 
-    // if teacher and paper is not assigned to him then he is not allowed
-    const paperGroups = paperApproval?.Papers?.PaperGroups;
-    if (role?.Teacher === this.userTokenInfo?.role && paperGroups?.find((group: any) => group.UserId === this.userTokenInfo?.id)) {
-      return false;
-    }
+  //   // if teacher and paper is not assigned to him then he is not allowed
+  //   const paperGroups = paperApproval?.Papers?.PaperGroups;
+  //   if (role?.Teacher === this.userTokenInfo?.role && paperGroups?.find((group: any) => group.UserId === this.userTokenInfo?.id)) {
+  //     return false;
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 
 
 
   canEditPaper(approval: any): boolean {
-    return this.isUserAllowedToApprove(approval);
+    return this.isUserAllowedToApproveOrEdit(approval);
   }
 
   editPaper(paperId: any) {
@@ -133,31 +137,34 @@ export class PaperApprovalComponent implements OnInit {
     });
   }
 
-  isUserAllowedToApprove(approval: any): boolean {
-    if (!this.isAllowedStatus(approval)) return false;
+  isUserAllowedToApproveOrEdit(paper: any) {
+    const [paperAproval] = paper?.PaperApprovals;
+
+    if (!this.isAllowedStatus(paperAproval)) {
+      return false;
+    }
 
     const role = AcademicSubmissionConfig.UserRole;
-    const userRole = this.userTokenInfo?.role;
+    const paperGroups = paper?.PaperGroups || [];
 
-    // get assigned users
-    const paperGroups = approval?.Papers?.PaperGroups || [];
-
-    // STUDENT: only if assigned
-    if (userRole === role.Student) {
-      return paperGroups.some(
-        (g: any) => g.UserId === this.userTokenInfo?.userId
-      );
+    if (
+      this.userTokenInfo.role === role.Teacher &&
+      this.isAllowedStatus(paperAproval)
+    ) {
+      if (paperGroups.find((group: any) => group.UserId === this.userTokenInfo.userId)) {
+        return true;
+      }
     }
 
-    // TEACHER: only if assigned
-    if (userRole === role.Teacher) {
-      return paperGroups.some(
-        (g: any) => g.UserId === this.userTokenInfo?.userId
-      );
+    // except for student and teacher, everyone can approve
+    if (
+      this.userTokenInfo.role !== role.Teacher &&
+      this.isAllowedStatus(paperAproval)
+    ) {
+      return true;
     }
 
-    // ADMIN / SUPER ADMIN: always allowed
-    return true;
+    return false;
   }
 
   onApprove(paperId: any) {
@@ -176,7 +183,6 @@ export class PaperApprovalComponent implements OnInit {
 
   viewPaper(paperId: number) {
     if (!paperId) return;
-
     this.papersService.getPaperById(paperId).subscribe({
       next: (res) => {
         const fileUrl = res?.data?.FileUrl;

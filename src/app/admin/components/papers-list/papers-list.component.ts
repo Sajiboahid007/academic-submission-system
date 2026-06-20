@@ -16,7 +16,6 @@ import { Table } from 'primeng/table';
 import { PaperApprovalConfirmationComponent } from '../../../shared/components/paper-approval-confirmation/paper-approval-confirmation.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
-import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-papers-list',
@@ -34,7 +33,6 @@ export class PapersListComponent implements OnInit {
   batches: Batches[] = [];
   years: string[] = [];
   searchValue = '';
-  userTokenInfo: any = {};
 
   constructor(
     private readonly papersService: PapersService,
@@ -45,11 +43,9 @@ export class PapersListComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly batchService: BatchService,
     private readonly toastService: ToastService,
-    private readonly userInfoService: UserInfoService
   ) { }
 
   ngOnInit(): void {
-    this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getPapers();
     this.getCategory();
     this.getSubCategory();
@@ -107,7 +103,6 @@ export class PapersListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
         this.getPapers();
-        this.toastService.success('Paper created successfully!');
       }
     });
   }
@@ -192,39 +187,15 @@ export class PapersListComponent implements OnInit {
     });
   }
 
-  isAllowedStatus(paperApproval: any) {
-    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending
-      || paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
-      return true;
-    }
-
-    return false;
-  }
-
   isUserAllowedToApproveOrEdit(paper: any) {
     const [paperAproval] = paper?.PaperApprovals;
 
-    if (!this.isAllowedStatus(paperAproval)) {
-      return false;
+    if (
+      paperAproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft ||
+      paperAproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending
+    ) {
+      false;
     }
-
-    const role = AcademicSubmissionConfig.UserRole;
-    const paperGroups = paper?.PaperGroups || [];
-
-    if ((this.userTokenInfo.role === role.Student ||
-      this.userTokenInfo.role === role.Teacher)
-      && this.isAllowedStatus(paperAproval)) {
-      if (paperGroups.find((group: any) => group.UserId === this.userTokenInfo.userId)) {
-        return true;
-      }
-    }
-
-    // except for student and teacher, everyone can approve
-    if (this.userTokenInfo.role !== role.Student &&
-      this.userTokenInfo.role !== role.Teacher && this.isAllowedStatus(paperAproval)) {
-      return true;
-    }
-
     return false;
   }
 }

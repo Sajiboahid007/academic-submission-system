@@ -1,8 +1,19 @@
-<app-page-header title="Approval List"> </app-page-header>
+<div fxLayout="row" fxLayoutAlign="space-between center" style="
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+  ">
+  <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Papers Approval</h2>
+
+
+</div>
 
 <div class="card">
   <p-table [value]="papers" #dt2 dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
-    [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals[0].Status']"
+    [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals.Status']"
     [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
     <ng-template pTemplate="caption">
       <app-table-caption [table]="dt2"></app-table-caption>
@@ -19,7 +30,15 @@
 
     <ng-template #body let-paper>
       <tr>
-        <td>{{ paper.Title }}</td>
+        <td>
+          <div>
+            <div>{{ paper.Title | truncateText: 50 }}</div>
+            <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="paper.Abstract"
+              tooltipPosition="right">
+              {{ paper.Abstract | truncateText: 50 }}
+            </small>
+          </div>
+        </td>
         <td>
           <p-badge *ngIf="paper?.PaperApprovals" [value]="paper?.PaperApprovals[0]?.Status" [severity]="
               paper?.PaperApprovals[0]?.Status === 'Approved'
@@ -35,11 +54,11 @@
           <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
             (click)="viewPaper(paper?.Id)" />
 
-          <button *ngIf="isUserAllowedToApprove(paper)" pButton icon="pi pi-verified" class="p-button-sm m-2"
+          <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton icon="pi pi-verified" class="p-button-sm m-2"
             (click)="onApprove(paper.Id)"></button>
 
-          <p-button *ngIf="canEditPaper(paper)" [outlined]="true" icon="pi pi-file-edit" size="small" severity="danger"
-            styleClass="p-button-sm p-button-outlined" (click)="editPaper(paper.Id)" />
+          <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit" size="small"
+            severity="danger" styleClass="p-button-sm p-button-outlined" (click)="editPaper(paper.Id)" />
 
         </td>
       </tr>
