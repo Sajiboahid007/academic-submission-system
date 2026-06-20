@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit {
       route: '/dashboard/papers-approval',
       icon: '📃',
       description: 'Manage Papers Approval',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+      roles: ['Teacher', 'Admin', 'Super-Admin'],
     },
     {
       label: 'Profile',
@@ -225,14 +225,6 @@ export class DashboardComponent implements OnInit {
     if (window.innerWidth < 768) {
       this.isSidebarOpen.set(false);
     }
-  }
-
-  isActiveRoute(route: string): boolean {
-    const routeValue = this.currentRoute();
-    if (route === '/dashboard') {
-      return routeValue === '/dashboard' || routeValue === '/dashboard/';
-    }
-    return routeValue === route || routeValue.startsWith(route + '/');
   }
 
   viewPaper(paper: any): void {
