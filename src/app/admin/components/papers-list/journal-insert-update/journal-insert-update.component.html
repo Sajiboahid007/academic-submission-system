@@ -1,0 +1,220 @@
+<div class="modal-form-container">
+    <!-- Header Section -->
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+            <div fxLayout="column">
+                <h2 class="header-title">Journal</h2>
+            </div>
+        </div>
+        <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+            (click)="onCancel()"></button>
+    </div>
+
+    <form [formGroup]="journalForm">
+        <div fxLayout="column" fxLayoutGap="24px">
+            <!-- Title -->
+            <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="Title" formControlName="Title" autocomplete="off" class="full-width" />
+                    <label for="Title" class="field-label">
+                        Journal Title<span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+
+                <p-message severity="error" size="small" variant="simple" text="Title is required."
+                    *ngIf="journalForm.get('Title')?.invalid && journalForm.get('Title')?.touched">
+                </p-message>
+            </div>
+
+            <!-- Abstract -->
+            <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <textarea pTextarea id="Abstract" formControlName="Abstract" rows="5" class="full-width"></textarea>
+
+                    <label for="Abstract" class="field-label">
+                        Abstract <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+                <p-message severity="error" size="small" variant="simple" text="Abstract is required."
+                    *ngIf="journalForm.get('Abstract')?.invalid && journalForm.get('Abstract')?.touched">
+                </p-message>
+            </div>
+
+            <!-- Category Row -->
+            <div fxLayout="row" fxLayoutGap="24px">
+                <!-- Category -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-select id="CategoryId" formControlName="CategoryId" [options]="category" optionLabel="Name"
+                            optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true" styleClass="full-width">
+                        </p-select>
+                        <label for="CategoryId" class="field-label">
+                            Select Category <span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+                </div>
+
+                <!-- SubCategory -->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-select id="SubcategoryId" formControlName="SubcategoryId" [options]="subcategory"
+                            optionLabel="Name" optionValue="Id" [filter]="true" filterBy="Name" [showClear]="true"
+                            styleClass="full-width">
+                        </p-select>
+                        <label for="SubcategoryId" class="field-label"> Select Sub Category </label>
+                    </p-floatlabel>
+                </div>
+            </div>
+
+            <!-- Journal Name -->
+            <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="Name" formControlName="Name" autocomplete="off" class="full-width" />
+                    <label for="Name" class="field-label">
+                        Journal Name<span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+
+                <p-message severity="error" size="small" variant="simple" text="Journal Name is required."
+                    *ngIf="journalForm.get('Name')?.invalid && journalForm.get('Name')?.touched">
+                </p-message>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="24px">
+                <!-- Authors-->
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <p-multiselect [options]="authors" formControlName="authorsIds" optionLabel="Name"
+                            optionValue="Id" display="chip" [showClear]="true" styleClass="full-width">
+                            <ng-template let-item pTemplate="item">
+                                <div class="flex items-center gap-2">
+                                    <img [src]="item?.ImageUrl" class="rounded-image" />
+
+                                    <span>{{ item?.Name }}</span>
+                                </div>
+                            </ng-template>
+                        </p-multiselect>
+                        <label for=" authorsIds" class="field-label"> Authors </label>
+                    </p-floatlabel>
+                </div>
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="Affiliation" formControlName="Affiliation" autocomplete="off"
+                            class="full-width" />
+                        <label for="Affiliation" class="field-label">
+                            Affiliation<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Affiliation is required."
+                        *ngIf="journalForm.get('Name')?.invalid && journalForm.get('Name')?.touched">
+                    </p-message>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="24px">
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="Keywords" formControlName="Keywords" autocomplete="off"
+                            class="full-width" />
+                        <label for="Keywords" class="field-label">
+                            Keywords<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Keywords is required."
+                        *ngIf="journalForm.get('Keywords')?.invalid && journalForm.get('Keywords')?.touched">
+                    </p-message>
+                </div>
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="AuthorDeclaration" formControlName="AuthorDeclaration" autocomplete="off"
+                            class="full-width" />
+                        <label for="AuthorDeclaration" class="field-label">
+                            Author Declaration<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Author Declaration is required."
+                        *ngIf="journalForm.get('AuthorDeclaration')?.invalid && journalForm.get('AuthorDeclaration')?.touched">
+                    </p-message>
+                </div>
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="Volume" formControlName="Volume" autocomplete="off" class="full-width" />
+                        <label for="Volume" class="field-label">
+                            Volume<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Volume is required."
+                        *ngIf="journalForm.get('Volume')?.invalid && journalForm.get('Volume')?.touched">
+                    </p-message>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="24px">
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="IssueNumber" formControlName="IssueNumber" autocomplete="off"
+                            class="full-width" />
+                        <label for="IssueNumber" class="field-label">
+                            Issue Number<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Issue Number is required."
+                        *ngIf="journalForm.get('IssueNumber')?.invalid && journalForm.get('IssueNumber')?.touched">
+                    </p-message>
+                </div>
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="DOI" formControlName="DOI" autocomplete="off" class="full-width" />
+                        <label for="DOI" class="field-label">
+                            Digital Object Identifier<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="DOI is required."
+                        *ngIf="journalForm.get('DOI')?.invalid && journalForm.get('DOI')?.touched">
+                    </p-message>
+                </div>
+                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                    <p-floatlabel variant="on" class="float-label-wrapper">
+                        <input pInputText id="Year" formControlName="Year" autocomplete="off" class="full-width" />
+                        <label for="Year" class="field-label">
+                            Publication Year<span class="required-asterisk">*</span>
+                        </label>
+                    </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Year is required."
+                        *ngIf="journalForm.get('Year')?.invalid && journalForm.get('Year')?.touched">
+                    </p-message>
+                </div>
+            </div>
+
+            <div class="card">
+                <p-fileupload (onSelect)="onFileSelect($event)" (onClear)="onFileClear()"
+                    (onRemove)="onFileRemove($event)" [showUploadButton]="false" [multiple]="false"
+                    accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
+                    <ng-template #empty>
+                        <div>Drag and drop files to here to upload.</div>
+                    </ng-template>
+                </p-fileupload>
+            </div>
+
+        </div>
+    </form>
+
+    <!-- Actions -->
+
+    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s"
+        [style]="{ width: '50px', height: '50px' }" *ngIf="isLoading" />
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+            [disabled]="isLoading" (click)="onCancel()"></button>
+
+        <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
+            [disabled]="journalForm.invalid" (click)="save()"></button>
+    </div>
+</div>

@@ -3,16 +3,12 @@
 
 html {
   height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
+  @include mat.theme((color: (primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
-    )
-  );
+    ));
 }
 
 body {
@@ -106,6 +102,7 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
@@ -156,6 +153,7 @@ body {
   gap: 12px;
   align-items: center;
 }
+
 mat-card {
   margin: 16px;
   max-width: 1200px;
@@ -331,6 +329,7 @@ table {
     &.active {
       color: #2e7d32;
     }
+
     &.inactive {
       color: #757575;
     }
@@ -353,4 +352,20 @@ table {
   .right-search {
     margin-left: auto;
   }
+}
+
+
+.p-tooltip {
+  max-width: 400px !important;
+  ;
+  /* container width */
+}
+
+.p-tooltip .p-tooltip-text {
+  max-width: 400px !important;
+  background-color: rgb(255, 255, 255) !important;
+  color: black !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
 }

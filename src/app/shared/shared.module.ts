@@ -35,6 +35,7 @@ import { TruncateTextPipe } from './pipes/truncate-text/truncate-text-pipe';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PaperApprovalConfirmationComponent } from './components/paper-approval-confirmation/paper-approval-confirmation.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { TooltipModule } from 'primeng/tooltip';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -70,6 +71,7 @@ const primeNgModules = [
   ProgressSpinnerModule,
   RadioButtonModule,
   ReactiveFormsModule,
+  TooltipModule,
 ];
 
 @NgModule({
@@ -91,4 +93,4 @@ const primeNgModules = [
     PaperApprovalConfirmationComponent,
   ],
 })
-export class SharedModule {}
+export class SharedModule { }
