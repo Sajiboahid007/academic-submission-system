@@ -10,6 +10,9 @@ import { Papers } from '../../../fds-config/entity-models/papers';
 import { PapersService } from '../../services/papers-service';
 import { InsertUpdatePaperComponent } from '../papers-list/insert-update-paper/insert-update-paper.component';
 import { AppQuery } from '../../../shared/app-query';
+import { Journals } from '../../../fds-config/entity-models/journals';
+import { privateDecrypt } from 'crypto';
+import { JournalService } from '../../services/journal-service';
 
 @Component({
   selector: 'app-paper-approval',
@@ -22,6 +25,9 @@ export class PaperApprovalComponent implements OnInit {
   aprovals: PaperApprovals[] = [];
   userTokenInfo: any = {};
   papers: Papers[] = [];
+  journal: Journals[] = []
+
+  loading: boolean = false;
 
   constructor(
     private readonly approvalService: ApprovalService,
@@ -29,7 +35,8 @@ export class PaperApprovalComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly toastService: ToastService,
     private readonly userInfoService: UserInfoService,
-    private readonly papersService: PapersService
+    private readonly papersService: PapersService,
+    private readonly journalService: JournalService
   ) { }
 
   ngOnInit(): void {
@@ -43,6 +50,7 @@ export class PaperApprovalComponent implements OnInit {
 
     } else {
       this.getApprovalList();
+      this.getJounals()
     }
   }
 
@@ -54,6 +62,35 @@ export class PaperApprovalComponent implements OnInit {
       });
     } catch (error) {
       console.error('Error fetching approval list:', error);
+    }
+  }
+
+  getJounals() {
+    this.journalService.getJournals().subscribe({
+      next: (res: AppQuery<Journals[]>) => {
+        this.journal = res.data;
+        this.cdr.markForCheck();
+      },
+      error: (error: any) => {
+        this.toastService.error('Failed to load journals.');
+      },
+    });
+  }
+
+  public getSeverity(
+    status: string | undefined,
+  ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warn';
+      case 'Draft':
+        return 'info';
+      default:
+        return 'secondary';
     }
   }
 

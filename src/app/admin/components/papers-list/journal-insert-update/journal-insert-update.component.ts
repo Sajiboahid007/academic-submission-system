@@ -10,6 +10,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Users } from '../../../../fds-config/entity-models/user';
 import { UserInfoService } from '../../../services/user-info-service';
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
+import { FileService } from '../../../services/file-service';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-journal-insert-update',
@@ -37,6 +39,8 @@ export class JournalInsertUpdateComponent implements OnInit {
     private readonly subCategoryService: SubcategoryService,
     private readonly dialogRef: MatDialogRef<JournalInsertUpdateComponent>,
     private readonly userService: UserInfoService,
+    private readonly fileService: FileService,
+    private readonly toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public data: Journals | null,
 
   ) { }
@@ -91,7 +95,66 @@ export class JournalInsertUpdateComponent implements OnInit {
     })
   }
 
-  save() { }
+  save() {
+    if (this.journalForm.invalid) {
+      this.journalForm.markAllAsTouched();
+      return;
+    }
+    if (this.isEditMode) {
+      this.updateJournal();
+    } else {
+      this.onSave();
+    }
+  }
+
+  onSave() {
+    const file = this.journalForm.value.File;
+
+    if (file) {
+      this.fileService.uploadFile(file).subscribe({
+        next: (res) => {
+          const journal = this.journalForm.getRawValue() as Journals;
+          journal.FileUrl = res?.data?.url;
+          this.savePaper(journal);
+        },
+        error: (err) => {
+          console.log(err);
+          this.toastService.error('Error creating journal');
+        },
+      });
+    } else {
+      const journal = this.journalForm.getRawValue() as Journals;
+      this.savePaper(journal);
+    }
+  }
+
+  private savePaper(journal: Journals) {
+    this.journalService.createJournal(journal).subscribe({
+      next: (res) => {
+        this.dialogRef.close(res);
+      },
+      error: (err) => {
+        console.log(err);
+        this.toastService.error('Error creating journal');
+      },
+    });
+  }
+
+  updateJournal() {
+    const journalData = this.journalForm.getRawValue() as Journals
+    journalData.Id = this.journalId
+    this.journalService.updateJournal(journalData).subscribe({
+      next: (res) => {
+        this.dialogRef.close(res);
+        this.toastService.success('Journal updated successfully!');
+      },
+      error: (err) => {
+        console.log(err);
+        this.toastService.error('Error updating journal');
+      },
+    });
+  }
+
 
   onCancel() {
     this.dialogRef.close();

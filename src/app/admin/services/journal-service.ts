@@ -17,8 +17,12 @@ export class JournalService {
   getJournals(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/get`);
   }
-  getJournalByUserId(userId: number): Observable<AppQuery<Journals[]>> {
-    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserId/${userId}`);
+  getJournalByUserId(id: number): Observable<AppQuery<Journals>> {
+    return this.http.get<AppQuery<Journals>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);
+  }
+
+  getById(id: number): Observable<AppQuery<Journals>> {
+    return this.http.get<AppQuery<Journals>>(`${this.baseUrl}/api/journal/getById/${id}`);
   }
   getTotalJournal(): Observable<AppQuery<number>> {
     return this.http.get<AppQuery<number>>(`${this.baseUrl}/api/journal/getTotal`);
@@ -43,20 +47,19 @@ export class JournalService {
 
   createForm(journals?: any): FormGroup {
     return this.fb.group({
-      Id: [journals?.Id ?? 0],
       Title: [journals?.Title ?? '', Validators.required],
       Abstract: [journals?.Abstract ?? '', Validators.required],
       CategoryId: [journals?.CategoryId ?? '', Validators.required],
       SubcategoryId: [journals?.SubcategoryId ?? ''],
       UserId: [journals?.UserId ?? null],
       Name: [journals?.Name ?? '', Validators.required],
-      Authors: [journals?.Authors ?? '', Validators.required],
+      // Authors: [journals?.Authors ?? ''],
       Affiliation: [journals?.Affiliation ?? '', Validators.required],
       Keywords: [journals?.Keywords ?? '', Validators.required],
       AuthorDeclaration: [journals?.AuthorDeclaration ?? '', Validators.required],
-      Volume: [journals?.Volume ?? ''],
-      IssueNumber: [journals?.IssueNumber ?? ''],
-      DOI: [journals?.DOI ?? ''],
+      Volume: [journals?.Volume ?? '', Validators.required],
+      IssueNumber: [journals?.IssueNumber ?? '', Validators.required],
+      DOI: [journals?.DOI ?? '', Validators.required],
       Year: [journals?.Year ?? '', Validators.required],
       FileUrl: [journals?.FileUrl ?? ''],
 

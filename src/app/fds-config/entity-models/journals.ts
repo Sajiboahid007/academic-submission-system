@@ -1,6 +1,5 @@
 export interface Journals {
     Id: number;
-
     Title?: string;
     Abstract?: string;
 
@@ -19,7 +18,7 @@ export interface Journals {
     DOI?: string;
     Year?: string;
 
-    FileUrl?: string;
+    FileUrl: string;
 
     CreatedDate?: Date | null;
     UpdatedDate?: Date | null;

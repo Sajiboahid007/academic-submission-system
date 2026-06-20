@@ -52,6 +52,10 @@
                             Select Category <span class="required-asterisk">*</span>
                         </label>
                     </p-floatlabel>
+
+                    <p-message severity="error" size="small" variant="simple" text="Category is required."
+                        *ngIf="journalForm.get('CategoryId')?.invalid && journalForm.get('CategoryId')?.touched">
+                    </p-message>
                 </div>
 
                 <!-- SubCategory -->
@@ -107,7 +111,7 @@
                     </p-floatlabel>
 
                     <p-message severity="error" size="small" variant="simple" text="Affiliation is required."
-                        *ngIf="journalForm.get('Name')?.invalid && journalForm.get('Name')?.touched">
+                        *ngIf="journalForm.get('Affiliation')?.invalid && journalForm.get('Affiliation')?.touched">
                     </p-message>
                 </div>
             </div>
@@ -215,6 +219,6 @@
             [disabled]="isLoading" (click)="onCancel()"></button>
 
         <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
-            [disabled]="journalForm.invalid" (click)="save()"></button>
+            (click)="save()"></button>
     </div>
 </div>

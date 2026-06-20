@@ -19,6 +19,8 @@ import { PaperApprovalConfirmationComponent } from '../../../../shared/component
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
 import { ConfirmationService } from 'primeng/api';
 import { JournalInsertUpdateComponent } from '../journal-insert-update/journal-insert-update.component';
+import { Journals } from '../../../../fds-config/entity-models/journals';
+import { JournalService } from '../../../services/journal-service';
 
 @Component({
   selector: 'app-create-papers',
@@ -29,7 +31,7 @@ import { JournalInsertUpdateComponent } from '../journal-insert-update/journal-i
 })
 export class CreatePapersComponent {
   papers: Papers[] = [];
-
+  journal: Journals[] = [];
   loading: boolean = false;
   categories: Category[] = [];
   subCategories: SubCategory[] = [];
@@ -43,27 +45,17 @@ export class CreatePapersComponent {
     private readonly papersService: PapersService,
     private readonly cdr: ChangeDetectorRef,
     private readonly dialog: MatDialog,
-    private readonly categoryService: CategoriesService,
-    private readonly subCategoryService: SubcategoryService,
-    private readonly departmentService: DepartmentService,
-    private readonly batchService: BatchService,
     private readonly toastService: ToastService,
     private readonly userInfoService: UserInfoService,
+    private readonly journalService: JournalService,
     private readonly confirmationService: ConfirmationService,
   ) { }
 
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getPapers();
-    // this.getCategory();
-    // this.getSubCategory();
-    // this.getDepartment();
-    // this.getBatch();
+    this.getJournals();
   }
-
-
-
-
 
   getPapers() {
     this.papersService
@@ -77,34 +69,17 @@ export class CreatePapersComponent {
       });
   }
 
-  getCategory() {
-    this.categoryService.getCategories().subscribe((res: AppQuery<Category[]>) => {
-      this.categories = res.data;
-      this.cdr.markForCheck();
+  getJournals() {
+    this.journalService.getJournals().subscribe({
+      next: (res: AppQuery<Journals[]>) => {
+        this.journal = res.data;
+        this.cdr.markForCheck();
+      },
+      error: (error: any) => {
+        this.toastService.error('Failed to load journals.');
+      },
     });
   }
-
-  getSubCategory() {
-    this.subCategoryService.getSubcategories().subscribe((res: AppQuery<SubCategory[]>) => {
-      this.subCategories = res.data;
-      this.cdr.markForCheck();
-    });
-  }
-
-  getDepartment() {
-    this.departmentService.getDepartments().subscribe((res: AppQuery<Department[]>) => {
-      this.departments = res.data;
-      this.cdr.markForCheck();
-    });
-  }
-
-  getBatch() {
-    this.batchService.getBatches().subscribe((res: AppQuery<Batches[]>) => {
-      this.batches = res.data;
-      this.cdr.markForCheck();
-    });
-  }
-
 
   AddJournal() {
     const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
@@ -117,8 +92,8 @@ export class CreatePapersComponent {
 
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
-        // this.getPapers();
         this.toastService.success('Paper created successfully!');
+        this.getJournals();
       }
     });
   }
@@ -182,6 +157,55 @@ export class CreatePapersComponent {
     } else {
       console.warn('No PDF file URL found.');
     }
+  }
+  viewJournal(id: number) {
+    if (!id) return;
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.FileUrl;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+
+  }
+  editJournal(id: number) {
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const journal = res?.data;
+
+        const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+          width: '900px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: journal,
+        });
+
+        dialogRef.afterClosed().subscribe((res: any) => {
+          if (res) {
+            this.toastService.success('Journal updated successfully!');
+            this.getJournals();
+          }
+        })
+      },
+      error: (error: any) => {
+        console.error('Error fetching journal:', error);
+        this.toastService.error('Failed to fetch journal details.');
+      },
+    })
+  }
+
+  deleteJournal(id: number) {
+
   }
 
   clear(table: Table) {

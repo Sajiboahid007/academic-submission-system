@@ -5,13 +5,8 @@
         <h2 class="header-title">Approve Paper</h2>
       </div>
     </div>
-    <button
-      pButton
-      type="button"
-      icon="pi pi-times"
-      class="p-button-rounded p-button-text p-button-secondary"
-      (click)="onCancel()"
-    ></button>
+    <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onCancel()"></button>
   </div>
 
   <form [formGroup]="approveFrom">
@@ -20,12 +15,7 @@
 
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="24px">
         <div *ngFor="let option of statusOptions">
-          <p-radiobutton
-            name="Status"
-            [value]="option.value"
-            [inputId]="option.value"
-            formControlName="Status"
-          >
+          <p-radiobutton name="Status" [value]="option.value" [inputId]="option.value" formControlName="Status">
           </p-radiobutton>
 
           <label [for]="option.value" style="margin-left: 8px; cursor: pointer">
@@ -35,33 +25,15 @@
       </div>
 
       <label><b>Remarks</b></label>
-      <textarea
-        pInputTextarea
-        rows="4"
-        placeholder="Enter remarks"
-        style="width: 100%"
-        formControlName="Remarks"
-      ></textarea>
+      <textarea pInputTextarea rows="4" placeholder="Enter remarks" style="width: 100%"
+        formControlName="Remarks"></textarea>
     </div>
   </form>
 
   <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
-    <button
-      pButton
-      type="button"
-      label="Cancel"
-      icon="pi pi-times"
-      class="p-button-danger btn-cancel"
-      (click)="onCancel()"
-    ></button>
-    <button
-      pButton
-      type="button"
-      label="Save Details"
-      [icon]="isSaving ? 'pi pi-spinner pi-spin' : 'pi pi-check'"
-      class="p-button-success btn-save"
-      (click)="onSave()"
-      [disabled]="approveFrom.invalid || isSaving"
-    ></button>
+    <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+      (click)="onCancel()"></button>
+    <button pButton type="button" label="Save Details" [icon]="isSaving ? 'pi pi-spinner pi-spin' : 'pi pi-check'"
+      class="p-button-success btn-save" (click)="onSave2()" [disabled]="approveFrom.invalid || isSaving"></button>
   </div>
 </div>

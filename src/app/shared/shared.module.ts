@@ -36,6 +36,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PaperApprovalConfirmationComponent } from './components/paper-approval-confirmation/paper-approval-confirmation.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { TooltipModule } from 'primeng/tooltip';
+import { TabsModule } from 'primeng/tabs';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -72,6 +73,7 @@ const primeNgModules = [
   RadioButtonModule,
   ReactiveFormsModule,
   TooltipModule,
+  TabsModule
 ];
 
 @NgModule({

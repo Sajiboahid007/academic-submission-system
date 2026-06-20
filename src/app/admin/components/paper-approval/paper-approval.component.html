@@ -6,62 +6,163 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     border: 1px solid #eaeaea;
   ">
-  <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Papers Approval</h2>
+  <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Approval</h2>
 
 
 </div>
 
-<div class="card">
-  <p-table [value]="papers" #dt2 dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
-    [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals.Status']"
-    [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
-    <ng-template pTemplate="caption">
-      <app-table-caption [table]="dt2"></app-table-caption>
-    </ng-template>
-    <ng-template #header>
-      <tr>
-        <th style="width: 30%">Title</th>
-        <th style="width: 10%">Status</th>
-        <th style="width: 15%">Type</th>
-        <th style="width: 20%">Department</th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
+<p-tabs value="0">
+  <p-tablist>
+    <p-tab value="0">Papers</p-tab>
+    <p-tab value="1">Journals</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel value="0">
+      <div class="card">
+        <p-table [value]="papers" #dt2 dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
+          [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals.Status']"
+          [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+          <ng-template pTemplate="caption">
+            <app-table-caption [table]="dt2"></app-table-caption>
+          </ng-template>
+          <ng-template #header>
+            <tr>
+              <th style="width: 30%">Title</th>
+              <th style="width: 10%">Status</th>
+              <th style="width: 15%">Type</th>
+              <th style="width: 20%">Department</th>
+              <th>Action</th>
+            </tr>
+          </ng-template>
 
-    <ng-template #body let-paper>
-      <tr>
-        <td>
-          <div>
-            <div>{{ paper.Title | truncateText: 50 }}</div>
-            <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="paper.Abstract"
-              tooltipPosition="right">
-              {{ paper.Abstract | truncateText: 50 }}
-            </small>
-          </div>
-        </td>
-        <td>
-          <p-badge *ngIf="paper?.PaperApprovals" [value]="paper?.PaperApprovals[0]?.Status" [severity]="
+          <ng-template #body let-paper>
+            <tr>
+              <td>
+                <div>
+                  <div>{{ paper.Title | truncateText: 50 }}</div>
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="paper.Abstract"
+                    tooltipPosition="right">
+                    {{ paper.Abstract | truncateText: 50 }}
+                  </small>
+                </div>
+              </td>
+              <td>
+                <p-badge *ngIf="paper?.PaperApprovals" [value]="paper?.PaperApprovals[0]?.Status" [severity]="
               paper?.PaperApprovals[0]?.Status === 'Approved'
                 ? 'success'
                 : paper?.PaperApprovals[0]?.Status === 'Rejected'
                   ? 'danger'
                   : 'warn'
             "></p-badge>
-        </td>
-        <td>{{ paper?.Category?.Name }}</td>
-        <td>{{ paper?.Department?.Name }}</td>
-        <td>
-          <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
-            (click)="viewPaper(paper?.Id)" />
+              </td>
+              <td>{{ paper?.Category?.Name }}</td>
+              <td>{{ paper?.Department?.Name }}</td>
+              <td>
+                <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
+                  (click)="viewPaper(paper?.Id)" />
 
-          <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton icon="pi pi-verified" class="p-button-sm m-2"
-            (click)="onApprove(paper.Id)"></button>
+                <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton icon="pi pi-verified"
+                  class="p-button-sm m-2" (click)="onApprove(paper.Id)"></button>
 
-          <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit" size="small"
-            severity="danger" styleClass="p-button-sm p-button-outlined" (click)="editPaper(paper.Id)" />
+                <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit"
+                  size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
+                  (click)="editPaper(paper.Id)" />
 
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabpanel>
+    <p-tabpanel value="1">
+      <div class="card">
+        <p-table #dt2 [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
+          [paginator]="true" [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Year']"
+          [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+
+          <ng-template #caption>
+            <!-- Search -->
+            <div style="display: flex; margin: 2px; justify-content: flex-end; align-items: center;">
+              <app-table-caption [table]="dt2"></app-table-caption>
+              <div class="col-auto">
+
+              </div>
+            </div>
+          </ng-template>
+
+          <!-- Header -->
+          <ng-template #header style="margin-top: 10px">
+            <tr style="margin-top: 50px">
+
+              <th style="width: 25%">Title</th>
+              <th style="width: 8%">Status</th>
+              <th style="width: 10%">Category</th>
+              <th style="width: 10%">Name</th>
+              <th style="width: 10%">Volume</th>
+              <th style="width: 5%">Year</th>
+              <th style="width: 20%">Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template #body let-journal>
+            <tr>
+              <td>
+                <div>
+                  <div>{{ journal.Title | truncateText: 50 }}</div>
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                    {{ journal.Abstract | truncateText: 80 }}
+                  </small>
+                </div>
+              </td>
+              <td>
+                <p-badge *ngIf="journal.PaperApprovals[0]?.Status" [value]="journal?.PaperApprovals[0]?.Status"
+                  [severity]="getSeverity(journal?.PaperApprovals[0]?.Status)">
+                </p-badge>
+              </td>
+              <td>
+                <div>
+                  <div>{{ journal.Category?.Name | truncateText: 50 }}</div>
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                    {{ journal.SubCategory?.Name | truncateText: 30 }}
+                  </small>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <div>{{ journal.Name | truncateText: 50 }}</div>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <div>{{ journal.Volume | truncateText: 50 }}</div>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <div>{{ journal.Year | truncateText: 50 }}</div>
+                </div>
+              </td>
+              <td>
+                <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
+                  (click)="viewPaper(journal?.Id)" />
+
+                <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton icon="pi pi-verified"
+                  class="p-button-sm m-2" (click)="onApprove(journal.Id)"></button>
+
+                <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit"
+                  size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
+                  (click)="editPaper(journal.Id)" />
+              </td>
+            </tr>
+          </ng-template>
+
+
+
+
+
+
+        </p-table>
+      </div>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

@@ -31,10 +31,11 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { PaperId: number } | null,
+    @Inject(MAT_DIALOG_DATA) public datajournal: { JournalId: number } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const userInfo = this.userInfoService.getUserInfo();
@@ -44,7 +45,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       Remarks: new FormControl(''),
     });
 
-    if (userInfo && userInfo.role === AcademicSubmissionConfig.UserRole.Student) {
+    if (userInfo && (userInfo.role === AcademicSubmissionConfig.UserRole.Student || userInfo.role === AcademicSubmissionConfig.UserRole.Teacher)) {
       this.statusOptions = [
         {
           label: AcademicSubmissionConfig.ApprovalStatus.Draft,
@@ -96,4 +97,63 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       },
     });
   }
+
+
+
+
+  //this is new function
+  // In your component
+  onSave2() {
+    if (!this.approveFrom.valid) {
+      return;
+    }
+
+    if (this.data?.PaperId) {
+      this.updatePaperApproval();
+    } else if (this.datajournal?.JournalId) {
+      this.updateJournalApproval();
+    } else {
+      this.toastService.error('Paper ID or Journal ID could not be empty');
+    }
+  }
+
+  private updatePaperApproval() {
+    this.isSaving = true;
+    let formData = this.approveFrom.getRawValue();
+    formData.PaperId = this.data?.PaperId;
+
+    this.paperApprovalConfirmation.updateApprovalStatus(formData).subscribe({
+      next: (_) => {
+        this.toastService.success('Paper approval status updated successfully');
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error('Error updating paper approval status:', error);
+        this.toastService.error('Failed to update paper approval status');
+        this.isSaving = false;
+      },
+    });
+  }
+
+  private updateJournalApproval() {
+    this.isSaving = true;
+    let formData = this.approveFrom.getRawValue();
+    formData.JournalId = this.datajournal?.JournalId;
+
+    this.paperApprovalConfirmation.updateJournalApprovalStatus(formData).subscribe({
+      next: (_) => {
+        this.toastService.success('Journal approval status updated successfully');
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error('Error updating journal approval status:', error);
+        this.toastService.error('Failed to update journal approval status');
+        this.isSaving = false;
+      },
+    });
+  }
+
+
+
+
 }
