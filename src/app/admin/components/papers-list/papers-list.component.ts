@@ -16,6 +16,8 @@ import { Table } from 'primeng/table';
 import { PaperApprovalConfirmationComponent } from '../../../shared/components/paper-approval-confirmation/paper-approval-confirmation.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { Journals } from '../../../fds-config/entity-models/journals';
+import { JournalService } from '../../services/journal-service';
 
 @Component({
   selector: 'app-papers-list',
@@ -26,6 +28,7 @@ import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-
 })
 export class PapersListComponent implements OnInit {
   papers: Papers[] = [];
+  journal: Journals[] = []
   loading: boolean = false;
   categories: Category[] = [];
   subCategories: SubCategory[] = [];
@@ -43,10 +46,12 @@ export class PapersListComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly batchService: BatchService,
     private readonly toastService: ToastService,
+    private readonly journalService: JournalService
   ) { }
 
   ngOnInit(): void {
     this.getPapers();
+    this.getJournal()
     this.getCategory();
     this.getSubCategory();
     this.getDepartment();
@@ -59,6 +64,13 @@ export class PapersListComponent implements OnInit {
       this.years = Array.from(
         new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
       ).sort();
+      this.cdr.markForCheck();
+    });
+  }
+
+  getJournal() {
+    this.journalService.getJournals().subscribe((res: AppQuery<Journals[]>) => {
+      this.journal = res.data;
       this.cdr.markForCheck();
     });
   }
@@ -149,6 +161,26 @@ export class PapersListComponent implements OnInit {
     } else {
       console.warn('No PDF file URL found.');
     }
+  }
+
+  viewJournal(id: number) {
+    if (!id) return;
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.FileUrl;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+
   }
 
   clear(table: Table) {

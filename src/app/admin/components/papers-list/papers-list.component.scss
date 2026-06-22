@@ -20,3 +20,7 @@
 // :host ::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
 //   max-width: 1000px !important;
 // }
+
+:host ::ng-deep .p-tabpanels {
+  padding: 0;
+}

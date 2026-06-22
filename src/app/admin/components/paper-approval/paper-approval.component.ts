@@ -13,6 +13,7 @@ import { AppQuery } from '../../../shared/app-query';
 import { Journals } from '../../../fds-config/entity-models/journals';
 import { privateDecrypt } from 'crypto';
 import { JournalService } from '../../services/journal-service';
+import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
 
 @Component({
   selector: 'app-paper-approval',
@@ -50,8 +51,9 @@ export class PaperApprovalComponent implements OnInit {
 
     } else {
       this.getApprovalList();
-      this.getJounals()
+
     }
+    this.getJounals()
   }
 
   public getApprovalList() {
@@ -174,6 +176,33 @@ export class PaperApprovalComponent implements OnInit {
     });
   }
 
+  editJournal(id: number) {
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const journal = res?.data;
+
+        const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+          width: '900px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: journal,
+        });
+
+        dialogRef.afterClosed().subscribe((res: any) => {
+          if (res) {
+            this.toastService.success('Journal updated successfully!');
+            this.getJounals();
+          }
+        })
+      },
+      error: (error: any) => {
+        console.error('Error fetching journal:', error);
+        this.toastService.error('Failed to fetch journal details.');
+      },
+    })
+  }
+
   isUserAllowedToApproveOrEdit(paper: any) {
     const [paperAproval] = paper?.PaperApprovals;
 
@@ -218,6 +247,19 @@ export class PaperApprovalComponent implements OnInit {
     });
   }
 
+  onApproveJournal(journalId: number) {
+    const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: { JournalId: journalId },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getJounals();
+      }
+    });
+  }
   viewPaper(paperId: number) {
     if (!paperId) return;
     this.papersService.getPaperById(paperId).subscribe({
@@ -235,5 +277,25 @@ export class PaperApprovalComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  viewJournal(id: number) {
+    if (!id) return;
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.FileUrl;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+
   }
 }

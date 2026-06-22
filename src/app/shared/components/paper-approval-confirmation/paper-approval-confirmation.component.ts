@@ -30,8 +30,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { PaperId: number } | null,
-    @Inject(MAT_DIALOG_DATA) public datajournal: { JournalId: number } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
@@ -110,7 +109,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
 
     if (this.data?.PaperId) {
       this.updatePaperApproval();
-    } else if (this.datajournal?.JournalId) {
+    } else if (this.data?.JournalId) {
       this.updateJournalApproval();
     } else {
       this.toastService.error('Paper ID or Journal ID could not be empty');
@@ -138,7 +137,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   private updateJournalApproval() {
     this.isSaving = true;
     let formData = this.approveFrom.getRawValue();
-    formData.JournalId = this.datajournal?.JournalId;
+    formData.JournalId = this.data?.JournalId;
 
     this.paperApprovalConfirmation.updateJournalApprovalStatus(formData).subscribe({
       next: (_) => {

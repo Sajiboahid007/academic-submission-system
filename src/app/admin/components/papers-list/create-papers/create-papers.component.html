@@ -1,7 +1,7 @@
 <div fxLayout="row" fxLayoutAlign="space-between center" style="
     margin-bottom: 10px;
     background-color: #ffffff;
-    padding: 16px 24px;
+    padding: 10px 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     border: 1px solid #eaeaea;
@@ -201,19 +201,14 @@
                                     styleClass="p-button-sm p-button-outlined m-2" (click)="editJournal(journal.Id)" />
 
                                 <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton size="small"
-                                    icon="pi pi-verified" class="p-button-sm" (click)="onApprove(journal.Id)"></button>
+                                    icon="pi pi-verified" class="p-button-sm"
+                                    (click)="onApproveJournal(journal.Id)"></button>
                                 <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" size="small" icon="pi pi-trash"
                                     class="p-button-sm" severity="danger"
                                     (click)="deleteJournal(journal.Id)"></p-button>
                             </td>
                         </tr>
                     </ng-template>
-
-
-
-
-
-
                 </p-table>
             </div>
         </p-tabpanel>

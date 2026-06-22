@@ -70,9 +70,9 @@ export class CreatePapersComponent {
   }
 
   getJournals() {
-    this.journalService.getJournals().subscribe({
+    this.journalService.getJournalByUserId(this.userTokenInfo.userId).subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = res.data;
+        this.journal = res?.data;
         this.cdr.markForCheck();
       },
       error: (error: any) => {
@@ -228,6 +228,20 @@ export class CreatePapersComponent {
       default:
         return 'secondary';
     }
+  }
+
+  onApproveJournal(journalId: number) {
+    const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
+      width: '500px',
+      autoFocus: true,
+      data: { JournalId: journalId },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getJournals();
+      }
+    });
   }
 
   onApprove(paperId: any) {

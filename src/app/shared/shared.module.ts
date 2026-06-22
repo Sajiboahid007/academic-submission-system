@@ -37,6 +37,7 @@ import { PaperApprovalConfirmationComponent } from './components/paper-approval-
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { TooltipModule } from 'primeng/tooltip';
 import { TabsModule } from 'primeng/tabs';
+import { PaginatorModule } from 'primeng/paginator';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -73,7 +74,8 @@ const primeNgModules = [
   RadioButtonModule,
   ReactiveFormsModule,
   TooltipModule,
-  TabsModule
+  TabsModule,
+  PaginatorModule
 ];
 
 @NgModule({

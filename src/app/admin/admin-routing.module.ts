@@ -13,6 +13,7 @@ import { RoleListComponent } from './components/role-list/role-list.component';
 import { PapersListComponent } from './components/papers-list/papers-list.component';
 import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
 import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
+import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -59,6 +60,10 @@ const routes: Routes = [
       {
         path: 'papers',
         component: PapersListComponent,
+      },
+      {
+        path: 'journal',
+        component: JournalListComponent,
       },
 
       {
