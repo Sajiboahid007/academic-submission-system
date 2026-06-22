@@ -17,8 +17,8 @@ export class JournalService {
   getJournals(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/get`);
   }
-  getJournalByUserId(id: number): Observable<AppQuery<Journals>> {
-    return this.http.get<AppQuery<Journals>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);
+  getJournalByUserId(id: number): Observable<AppQuery<Journals[]>> {
+    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);
   }
 
   getById(id: number): Observable<AppQuery<Journals>> {

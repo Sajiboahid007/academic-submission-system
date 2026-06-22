@@ -146,7 +146,6 @@ export class JournalInsertUpdateComponent implements OnInit {
     this.journalService.updateJournal(journalData).subscribe({
       next: (res) => {
         this.dialogRef.close(res);
-        this.toastService.success('Journal updated successfully!');
       },
       error: (err) => {
         console.log(err);

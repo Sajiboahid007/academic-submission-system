@@ -132,6 +132,13 @@ export class DashboardComponent implements OnInit {
       roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {
+      label: 'Journals',
+      route: '/dashboard/journal',
+      icon: '🗃️',
+      description: 'Manage Journals',
+      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+    },
+    {
       label: 'Papers Approval',
       route: '/dashboard/papers-approval',
       icon: '📃',

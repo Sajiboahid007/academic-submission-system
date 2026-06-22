@@ -1,0 +1,66 @@
+<div class="papers-cards-container" style="height: 100vh; overflow-y: scroll" *ngIf="journal.length > 0">
+    <article class="paper-card" *ngFor="let journalData of pagedData">
+        <!-- Header row (Title & Status) -->
+        <div class="paper-card-header">
+            <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
+            <p-badge *ngIf="journalData.PaperApprovals[0]?.Status" [value]="journalData?.PaperApprovals[0]?.Status"
+                [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
+            </p-badge>
+        </div>
+
+        <!-- Abstract Description -->
+        <p class="paper-card-abstract">
+            {{ journalData?.Abstract || 'No abstract/description provided.' }}
+        </p>
+
+        <!-- Keywords Section -->
+        <div class="paper-card-keywords" *ngIf="journalData?.Keywords">
+            <strong>Keywords:</strong> {{ journalData.Keywords }}
+            <div *ngIf="journalData?.Volume">
+                <strong>Volume:</strong> {{ journalData.Volume }}
+            </div>
+            <div *ngIf="journalData?.IssueNumber">
+                <strong>Issue:</strong> {{ journalData.IssueNumber }}
+            </div>
+        </div>
+
+        <!-- Metadata items with Icons -->
+        <div class="paper-card-metadata">
+
+            <div class="meta-item author-meta" *ngFor="let teacher of journalData.PaperGroups">
+                <i class="pi pi-user"></i>
+                <span> {{ teacher?.Users?.Name }}</span>
+            </div>
+
+            <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
+                <i class="pi pi-calendar"></i>
+                <span>{{ journalData.CreatedDate | date: 'M/d/yyyy' }}</span>
+            </div>
+
+            <div class="meta-item tag-meta" *ngIf="journalData?.Category?.Name">
+                <i class="pi pi-tag"></i>
+                <span>{{ journalData.Category.Name }}</span>
+            </div>
+
+            <div class="meta-item subcategory-meta" *ngIf="journalData?.SubCategory?.Name">
+                <i class="pi pi-th-large"></i>
+                <span>{{ journalData.SubCategory.Name }}</span>
+            </div>
+
+            <div class="meta-item year-meta" *ngIf="journalData?.Year">
+                <i class="pi pi-calendar"></i>
+                <span>Publication Year: {{ journalData.Year }}</span>
+            </div>
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="paper-card-actions">
+            <button pButton type="button" label="View" icon="pi pi-eye"
+                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!journalData?.FileUrl"
+                (click)="viewJournal(journalData.Id)"
+                [title]="journalData?.FileUrl ? 'View journal' : 'No file available'"></button>
+        </div>
+    </article>
+    <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)">
+    </p-paginator>
+</div>

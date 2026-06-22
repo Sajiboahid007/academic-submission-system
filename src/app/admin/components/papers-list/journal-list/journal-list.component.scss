@@ -1,0 +1,422 @@
+.profile-main-content {
+    flex: 1;
+}
+
+// Header Row
+.papers-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 576px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-icon {
+    font-size: 1.75rem;
+}
+
+.papers-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.upload-paper-btn {
+    background: #10b981;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #059669 !important;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3) !important;
+    }
+}
+
+// Search & Filter Row
+.filter-controls-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1rem;
+}
+
+.search-input-field {
+    width: 100%;
+    padding: 0.75rem 1.25rem 0.75rem 2.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 0.925rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+
+    &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+}
+
+.status-dropdown-wrapper {
+    width: 180px;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+}
+
+.status-select-control {
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 0.925rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1.125rem;
+    padding-right: 2.5rem;
+
+    &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+}
+
+// Paper Cards container
+.papers-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+// Individual Paper Card
+.paper-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+}
+
+.paper-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.paper-card-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+}
+
+// Status Badges
+.status-badge {
+    padding: 0.325rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.025em;
+
+    &.status-approved {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #a7f3d0;
+    }
+
+    &.status-submitted {
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    &.status-draft {
+        background: #fffbeb;
+        color: #d97706;
+        border: 1px solid #fef3c7;
+    }
+
+    &.status-pending {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fde68a;
+    }
+
+    &.status-rejected {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+}
+
+.paper-card-abstract {
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 0.25rem;
+}
+
+// Metadata Row
+.paper-card-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f3f4f6;
+    margin-bottom: 0.25rem;
+
+    @media (max-width: 576px) {
+        gap: 1rem;
+    }
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+
+    i {
+        font-size: 0.9rem;
+        color: #9ca3af;
+    }
+
+    &.author-meta i {
+        color: #6366f1;
+    }
+
+    &.date-meta i {
+        color: #ec4899;
+    }
+
+    &.tag-meta i {
+        color: #eab308;
+    }
+
+    &.view-meta i {
+        color: #06b6d4;
+    }
+
+    &.subcategory-meta i {
+        color: #8b5cf6;
+    }
+
+    &.year-meta i {
+        color: #f59e0b;
+    }
+}
+
+// Keywords Section
+.paper-card-keywords {
+    font-size: 0.85rem;
+    color: #6b7280;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+
+    strong {
+        color: #374151;
+        font-weight: 600;
+    }
+}
+
+// Journal Details Section
+.paper-card-details {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.detail-row {
+    font-size: 0.825rem;
+    color: #6b7280;
+    padding: 0.325rem 0;
+
+    strong {
+        color: #374151;
+        font-weight: 600;
+    }
+}
+
+// Teachers/Reviewers Section
+.paper-card-teachers {
+    background: #fef3c7;
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid #f59e0b;
+
+    strong {
+        color: #92400e;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.teacher-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+
+// Action buttons
+.paper-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-start;
+}
+
+.action-btn {
+    background: transparent;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+
+    &.btn-view {
+        border-color: #d1d5db;
+        color: #4b5563;
+
+        &:hover:not(:disabled) {
+            background: #f3f4f6 !important;
+            border-color: #9ca3af !important;
+            color: #111827 !important;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: #9ca3af;
+            border-color: #e5e7eb;
+        }
+    }
+
+    &.btn-edit {
+        border-color: #fef3c7;
+        color: #d97706;
+
+        &:hover {
+            background: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #b45309 !important;
+        }
+    }
+
+    &.btn-delete {
+        border-color: #fee2e2;
+        color: #dc2626;
+
+        &:hover {
+            background: #fdf2f2 !important;
+            border-color: #fca5a5 !important;
+            color: #b91c1c !important;
+        }
+    }
+}
+
+// Empty State Card
+.empty-state-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px dashed #cbd5e1;
+    padding: 3rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.empty-icon {
+    font-size: 1.75rem;
+    color: #94a3b8;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #334155;
+    margin: 0 0 0.5rem;
+}
+
+.empty-description {
+    font-size: 0.925rem;
+    color: #64748b;
+    max-width: 320px;
+    line-height: 1.5;
+    margin: 0;
+}
