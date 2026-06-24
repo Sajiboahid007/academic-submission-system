@@ -205,7 +205,23 @@ export class CreatePapersComponent {
   }
 
   deleteJournal(id: number) {
-
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete this journal?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.journalService.deleteJournal(id).subscribe({
+          next: () => {
+            this.toastService.success('Journal deleted successfully');
+            this.getJournals();
+          },
+          error: (err) => {
+            console.error('Error deleting journal:', err);
+            this.toastService.error('Failed to delete journal');
+          },
+        });
+      },
+    });
   }
 
   clear(table: Table) {
@@ -300,6 +316,12 @@ export class CreatePapersComponent {
     return false;
   }
 
+  journalButton() {
+    {
+      return this.userTokenInfo.role !== AcademicSubmissionConfig.UserRole.Student;
+    }
+
+  }
 
   deletePaper(id: number): void {
     this.confirmationService.confirm({

@@ -14,6 +14,7 @@ import { Journals } from '../../../fds-config/entity-models/journals';
 import { privateDecrypt } from 'crypto';
 import { JournalService } from '../../services/journal-service';
 import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-paper-approval',
@@ -37,7 +38,8 @@ export class PaperApprovalComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly userInfoService: UserInfoService,
     private readonly papersService: PapersService,
-    private readonly journalService: JournalService
+    private readonly journalService: JournalService,
+    private readonly confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -203,6 +205,8 @@ export class PaperApprovalComponent implements OnInit {
     })
   }
 
+
+
   isUserAllowedToApproveOrEdit(paper: any) {
     const [paperAproval] = paper?.PaperApprovals;
 
@@ -297,5 +301,57 @@ export class PaperApprovalComponent implements OnInit {
       }
     });
 
+  }
+
+  isUserAllowedToDelete(): boolean {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
+  }
+
+  onDeletePaper(paperId: number) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this paper?',
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.papersService.deletePaper(paperId).subscribe({
+          next: () => {
+            this.toastService.success('Paper deleted successfully!');
+            this.getApprovalList();
+          },
+          error: (error: any) => {
+            console.error('Error deleting paper:', error);
+            this.toastService.error('Failed to delete paper.');
+          },
+        });
+      },
+    });
+  }
+
+  onDeleteJournal(journalId: number) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this journal?',
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.journalService.deleteJournal(journalId).subscribe({
+          next: () => {
+            this.toastService.success('Journal deleted successfully!');
+            this.getJounals();
+          },
+          error: (error: any) => {
+            console.error('Error deleting journal:', error);
+            this.toastService.error('Failed to delete journal.');
+          },
+        });
+      },
+    });
   }
 }

@@ -13,6 +13,7 @@ import { InsertUpdateUserComponent } from './insert-update-user/insert-update-us
 import { AppQuery } from '../../../shared/app-query';
 import { ConfirmationService } from 'primeng/api';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 
 @Component({
   selector: 'app-user-list',
@@ -23,7 +24,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 })
 export class UserListComponent implements OnInit {
   users: Users[] = [];
-
+  userTokenInfo: any = {};
   private dialogRef!: MatDialogRef<any>;
   @ViewChild('userModal') userModal!: TemplateRef<any>;
 
@@ -38,6 +39,7 @@ export class UserListComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
+    this.userTokenInfo = this.usersService.getUserInfo();
     this.getUsers();
   }
 
@@ -111,5 +113,18 @@ export class UserListComponent implements OnInit {
         });
       },
     });
+  }
+
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
   }
 }

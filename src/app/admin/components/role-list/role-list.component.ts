@@ -6,6 +6,8 @@ import { ConfirmationService } from 'primeng/api';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AppQuery } from '../../../shared/app-query';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-role-list',
@@ -17,6 +19,7 @@ import { AppQuery } from '../../../shared/app-query';
 export class RoleListComponent implements OnInit {
 
   roles: Role[] = [];
+  userTokenInfo: any = {};
 
   constructor(
     private readonly roleService: RoleService,
@@ -24,9 +27,12 @@ export class RoleListComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService,
+    private readonly userInfoService: UserInfoService,
   ) { }
 
   ngOnInit(): void {
+
+    this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getRoles();
   }
 
@@ -96,6 +102,18 @@ export class RoleListComponent implements OnInit {
         });
       },
     });
+  }
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin) {
+      return true;
+    }
+
+    return false;
   }
 
 }

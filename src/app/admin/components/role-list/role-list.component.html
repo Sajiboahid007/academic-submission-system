@@ -7,7 +7,7 @@
     border: 1px solid #eaeaea;
   ">
     <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Role List</h2>
-    <button pButton label="Add" icon="pi pi-plus" class="p-button-rounded p-button-success"
+    <button *ngIf="onApprove()" pButton label="Add" icon="pi pi-plus" class="p-button-rounded p-button-success"
         (click)="AddRole()"></button>
 </div>
 
@@ -22,7 +22,7 @@
     <ng-template pTemplate="body" let-role>
         <tr>
             <td>{{ role.Name }}</td>
-            <td>
+            <td *ngIf="onApprove()">
                 <button pButton icon="pi pi-pencil" class="p-button-success btn-save"
                     (click)="onEditRole(role.Id)"></button>
                 <button pButton icon="pi pi-trash" class="p-button-danger btn-save"

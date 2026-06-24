@@ -20,7 +20,7 @@
     <p-tabpanel value="0">
       <div class="card">
         <p-table [value]="papers" #dt2 dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [paginator]="true"
-          [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals.Status']"
+          [globalFilterFields]="['Title', 'Category.Name', 'Department.Name','PaperApprovals?.Status']"
           [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
           <ng-template pTemplate="caption">
             <app-table-caption [table]="dt2"></app-table-caption>
@@ -67,6 +67,9 @@
                 <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit"
                   size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
                   (click)="editPaper(paper.Id)" />
+
+                <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
+                  severity="danger" (click)="onDeletePaper(paper.Id)" />
 
               </td>
             </tr>
@@ -152,15 +155,12 @@
                 <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit"
                   size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
                   (click)="editJournal(journal.Id)" />
+
+                <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
+                  severity="danger" (click)="onDeleteJournal(journal.Id)" />
               </td>
             </tr>
           </ng-template>
-
-
-
-
-
-
         </p-table>
       </div>
     </p-tabpanel>
