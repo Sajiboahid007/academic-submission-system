@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
     private readonly localStorageService: LocalStorageService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.loginService.getLoginForm();
@@ -135,8 +135,9 @@ export class LoginComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.registerError =
-            err?.error?.message ?? err?.message ?? 'Registration failed. Try a different Email.';
+          this.registerError = 'Registration failed. Try a different Email.';
+
+          console.error('Sign in failed. Check your Email and password.');
         },
       });
   }
