@@ -1,66 +1,157 @@
-<div class="papers-cards-container" style="height: 100vh; overflow-y: scroll" *ngIf="journal.length > 0">
-    <article class="paper-card" *ngFor="let journalData of pagedData">
-        <!-- Header row (Title & Status) -->
-        <div class="paper-card-header">
-            <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
-            <p-badge *ngIf="journalData.PaperApprovals[0]?.Status" [value]="journalData?.PaperApprovals[0]?.Status"
-                [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
-            </p-badge>
-        </div>
-
-        <!-- Abstract Description -->
-        <p class="paper-card-abstract">
-            {{ journalData?.Abstract || 'No abstract/description provided.' }}
-        </p>
-
-        <!-- Keywords Section -->
-        <div class="paper-card-keywords" *ngIf="journalData?.Keywords">
-            <strong>Keywords:</strong> {{ journalData.Keywords }}
-            <div *ngIf="journalData?.Volume">
-                <strong>Volume:</strong> {{ journalData.Volume }}
-            </div>
-            <div *ngIf="journalData?.IssueNumber">
-                <strong>Issue:</strong> {{ journalData.IssueNumber }}
+<div class="journal-list-layout-wrapper">
+    <!-- Header with title & filter controls -->
+    <div class="card filter-card p-4 mb-3">
+        <div class="filter-header-row">
+            <h2 class="title-text">Journal Papers</h2>
+            <div class="global-search-container">
+                <p-iconfield iconPosition="left">
+                    <p-inputicon><i class="pi pi-search"></i></p-inputicon>
+                    <input pInputText type="text" [(ngModel)]="searchValue" (input)="applyFilters()"
+                        placeholder="Search title or abstract..." class="search-input" />
+                </p-iconfield>
             </div>
         </div>
 
-        <!-- Metadata items with Icons -->
-        <div class="paper-card-metadata">
-
-            <div class="meta-item author-meta" *ngFor="let teacher of journalData.PaperGroups">
-                <i class="pi pi-user"></i>
-                <span> {{ teacher?.Users?.Name }}</span>
+        <div class="filter-controls-row">
+            <div class="filter-item">
+                <p-select [options]="categories" [(ngModel)]="selectedCategory" optionLabel="Name" optionValue="Name"
+                    placeholder="Category" [showClear]="true" (onChange)="applyFilters()">
+                </p-select>
             </div>
-
-            <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
-                <i class="pi pi-calendar"></i>
-                <span>{{ journalData.CreatedDate | date: 'M/d/yyyy' }}</span>
+            <div class="filter-item">
+                <p-select [options]="subCategories" [(ngModel)]="selectedSubCategory" optionLabel="Name"
+                    optionValue="Name" placeholder="Sub Category" [showClear]="true" (onChange)="applyFilters()">
+                </p-select>
             </div>
-
-            <div class="meta-item tag-meta" *ngIf="journalData?.Category?.Name">
-                <i class="pi pi-tag"></i>
-                <span>{{ journalData.Category.Name }}</span>
+            <div class="filter-item">
+                <p-select [options]="uniqueKeywords" [(ngModel)]="selectedKeyword"
+                    placeholder="Keyword" [showClear]="true" (onChange)="applyFilters()">
+                </p-select>
             </div>
-
-            <div class="meta-item subcategory-meta" *ngIf="journalData?.SubCategory?.Name">
-                <i class="pi pi-th-large"></i>
-                <span>{{ journalData.SubCategory.Name }}</span>
+            <div class="filter-item">
+                <p-select [options]="years" [(ngModel)]="selectedYear" placeholder="Year" [showClear]="true"
+                    (onChange)="applyFilters()">
+                </p-select>
             </div>
-
-            <div class="meta-item year-meta" *ngIf="journalData?.Year">
-                <i class="pi pi-calendar"></i>
-                <span>Publication Year: {{ journalData.Year }}</span>
+            <div class="filter-item btn-clear">
+                <button pButton type="button" label="Clear" icon="pi pi-filter-slash"
+                    class="p-button-outlined p-button-secondary" (click)="clearFilters()"></button>
             </div>
         </div>
+    </div>
 
-        <!-- Action Control Buttons -->
-        <div class="paper-card-actions">
-            <button pButton type="button" label="View" icon="pi pi-eye"
-                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!journalData?.FileUrl"
-                (click)="viewJournal(journalData.Id)"
-                [title]="journalData?.FileUrl ? 'View journal' : 'No file available'"></button>
+    <!-- Loading State -->
+    <div class="papers-loading-container" *ngIf="loading">
+        <p-progressSpinner ariaLabel="loading" styleClass="w-4rem h-4rem" strokeWidth="4" fill="transparent"
+            animationDuration=".5s"></p-progressSpinner>
+        <span class="loading-text">Loading journals...</span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state-card" *ngIf="!loading && journal.length === 0">
+        <div class="empty-icon-wrapper">
+            <i class="pi pi-folder-open empty-icon"></i>
         </div>
-    </article>
-    <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)">
-    </p-paginator>
+        <h3 class="empty-title">No Journals Found</h3>
+        <p class="empty-description">There are no journal papers matching the selected criteria.</p>
+    </div>
+
+    <!-- Cards Container -->
+    <div class="papers-cards-container" *ngIf="!loading && journal.length > 0">
+        <article class="paper-card" *ngFor="let journalData of pagedData">
+            <!-- PDF Preview Side Column (Left Side) -->
+            <div class="paper-card-pdf-preview" [class.no-file]="!journalData?.FileUrl"
+                (click)="journalData?.FileUrl && viewJournal(journalData.Id)"
+                [title]="journalData?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+
+                <pdf-viewer *ngIf="journalData?.FileUrl; else pdfPlaceholder" [src]="journalData?.FileUrl" [page]="1"
+                    [show-all]="false" [fit-to-page]="true">
+                </pdf-viewer>
+
+                <ng-template #pdfPlaceholder>
+                    <div class="pdf-placeholder-icon">
+                        <i class="pi pi-file-pdf"></i>
+                        <span class="no-file-text">No File</span>
+                    </div>
+                </ng-template>
+
+                <div class="preview-label">
+                    <i class="pi pi-eye" *ngIf="!journalData?.FileUrl"></i>
+                    <i class="pi pi-search-plus" *ngIf="journalData?.FileUrl"></i>
+                    <span>{{ journalData?.FileUrl ? 'Preview' : 'No PDF' }}</span>
+                </div>
+            </div>
+
+            <!-- Main Content Column (Right Side) -->
+            <div class="paper-card-main-content">
+                <!-- Header row (Title & Status) -->
+                <div class="paper-card-header">
+                    <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
+                    <p-badge *ngIf="journalData.PaperApprovals && journalData.PaperApprovals[0]?.Status"
+                        [value]="journalData?.PaperApprovals[0]?.Status"
+                        [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
+                    </p-badge>
+                </div>
+
+                <!-- Abstract Description -->
+                <p class="paper-card-abstract">
+                    {{ journalData?.Abstract || 'No abstract/description provided.' }}
+                </p>
+
+                <!-- Keywords Section -->
+                <div class="paper-card-keywords" *ngIf="journalData?.Keywords">
+                    <strong>Keywords:</strong> {{ journalData?.Keywords }}
+                    <div *ngIf="journalData?.Volume" style="display: inline-block; margin-left: 0.75rem;">
+                        <strong>Volume:</strong> {{ journalData?.Volume }}
+                    </div>
+                    <div *ngIf="journalData?.IssueNumber" style="display: inline-block; margin-left: 0.75rem;">
+                        <strong>Issue:</strong> {{ journalData?.IssueNumber }}
+                    </div>
+                </div>
+
+                <!-- Metadata items with Icons -->
+                <div class="paper-card-metadata">
+                    <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
+                        <i class="pi pi-user"></i>
+                        <span> {{ teacher?.Users?.Name }}</span>
+                    </div>
+
+                    <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
+                        <i class="pi pi-calendar"></i>
+                        <span>{{ journalData?.CreatedDate | date: 'M/d/yyyy' }}</span>
+                    </div>
+
+                    <div class="meta-item tag-meta" *ngIf="journalData?.Category?.Name">
+                        <i class="pi pi-tag"></i>
+                        <span>{{ journalData?.Category?.Name }}</span>
+                    </div>
+
+                    <div class="meta-item subcategory-meta" *ngIf="journalData?.SubCategory?.Name">
+                        <i class="pi pi-th-large"></i>
+                        <span>{{ journalData?.SubCategory?.Name }}</span>
+                    </div>
+
+                    <div class="meta-item year-meta" *ngIf="journalData?.Year">
+                        <i class="pi pi-calendar"></i>
+                        <span>Publication Year: {{ journalData?.Year }}</span>
+                    </div>
+                </div>
+
+                <!-- Action Control Buttons -->
+                <div class="paper-card-actions">
+                    <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
+                        class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!journalData?.FileUrl"
+                        (click)="viewJournal(journalData.Id)"
+                        [title]="journalData?.FileUrl ? 'View journal' : 'No file available'"></button>
+                </div>
+            </div>
+        </article>
+
+        <!-- Pagination -->
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords" (onPageChange)="onPageChange($event)">
+        </p-paginator>
+    </div>
+
+    <!-- Page Footer -->
+    <app-footer></app-footer>
 </div>

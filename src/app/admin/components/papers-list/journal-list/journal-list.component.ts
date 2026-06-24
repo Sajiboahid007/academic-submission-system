@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { AppQuery } from '../../../../shared/app-query';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
@@ -8,7 +8,6 @@ import { CategoriesService } from '../../../services/categories-service';
 import { SubcategoryService } from '../../../services/subcategory-service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { JournalService } from '../../../services/journal-service';
-import { Journals } from '../../../../fds-config/entity-models/journals';
 
 @Component({
   selector: 'app-journal-list',
@@ -17,17 +16,23 @@ import { Journals } from '../../../../fds-config/entity-models/journals';
   styleUrl: './journal-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JournalListComponent {
+export class JournalListComponent implements OnInit {
   journal: any[] = [];
   loading: boolean = false;
   categories: Category[] = [];
   subCategories: SubCategory[] = [];
   years: string[] = [];
   searchValue = '';
+  uniqueKeywords: any[] = [];
+
+  // Filter selections (Name-based)
+  selectedCategory: string | null = null;
+  selectedSubCategory: string | null = null;
+  selectedKeyword: string | null = null;
+  selectedYear: string | null = null;
 
   first: number = 0;
   rows: number = 10;
-
   totalRecords: number = 0;
 
   allData: any[] = [];      // full list from API
@@ -46,28 +51,53 @@ export class JournalListComponent {
     this.getJournal();
     this.getCategory();
     this.getSubCategory();
+    this.getKeyword();
   }
 
   getJournal() {
-    this.journalService.getJournals().subscribe((res) => {
-      this.journal = res.data;
-      this.allData = res.data;
-      this.totalRecords = res.data.length;
-      this.updatePagedData();
+    this.loading = true;
+    this.cdr.markForCheck();
+
+    this.journalService.getJournals().subscribe({
+      next: (res) => {
+        this.allData = res.data || [];
+        this.journal = [...this.allData];
+        this.totalRecords = this.journal.length;
+        
+        // Extract unique years from journals
+        this.years = Array.from(
+          new Set(this.allData.map((j) => j.Year).filter((year): year is string => !!year)),
+        ).sort();
+
+        this.applyFilters();
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error fetching journals:', err);
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  getKeyword() {
+    this.journalService.getKeyword().subscribe((res) => {
+      this.uniqueKeywords = res.data || [];
       this.cdr.markForCheck();
     });
   }
 
   getCategory() {
     this.categoryService.getCategories().subscribe((res: AppQuery<Category[]>) => {
-      this.categories = res.data;
+      this.categories = res?.data || [];
       this.cdr.markForCheck();
     });
   }
 
   getSubCategory() {
     this.subCategoryService.getSubcategories().subscribe((res: AppQuery<SubCategory[]>) => {
-      this.subCategories = res.data;
+      this.subCategories = res?.data || [];
       this.cdr.markForCheck();
     });
   }
@@ -92,9 +122,76 @@ export class JournalListComponent {
     });
   }
 
-  clear(table: Table) {
-    table.clear();
+  applyFilters() {
+    let temp = [...this.allData];
+
+    // Global Search (Title, Abstract, Keywords)
+    if (this.searchValue && this.searchValue.trim() !== '') {
+      const query = this.searchValue.toLowerCase().trim();
+      temp = temp.filter(
+        (j) =>
+          (j.Title && j.Title.toLowerCase().includes(query)) ||
+          (j.Abstract && j.Abstract.toLowerCase().includes(query)) ||
+          (j.Keywords && j.Keywords.toLowerCase().includes(query))
+      );
+    }
+
+    // Dropdown filters
+    if (this.selectedCategory) {
+      temp = temp.filter((j) => {
+        const name = j.Category?.Name || j.category?.Name || j.Category?.name || j.category?.name;
+        return name === this.selectedCategory;
+      });
+    }
+    if (this.selectedSubCategory) {
+      temp = temp.filter((j) => {
+        const name = j.SubCategory?.Name || j.subCategory?.Name || j.SubCategory?.name || j.subCategory?.name ||
+                     j.Subcategory?.Name || j.subcategory?.Name || j.Subcategory?.name || j.subcategory?.name;
+        return name === this.selectedSubCategory;
+      });
+    }
+    if (this.selectedKeyword) {
+      temp = temp.filter((j) => {
+        const kStr = j.Keywords || j.keywords || '';
+        return kStr.toLowerCase().includes(this.selectedKeyword!.toLowerCase());
+      });
+    }
+    if (this.selectedYear) {
+      temp = temp.filter((j) => j.Year === this.selectedYear);
+    }
+
+    this.journal = temp;
+    this.totalRecords = temp.length;
+    this.first = 0; // Reset page to first
+    this.updatePagedData();
+  }
+
+  updatePagedData() {
+    const start = this.first;
+    const end = start + this.rows;
+    this.pagedData = this.journal.slice(start, end);
+    this.cdr.markForCheck();
+  }
+
+  onPageChange(event: any) {
+    this.first = event.first;
+    this.rows = event.rows;
+    this.updatePagedData();
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const element = document.querySelector('.journal-list-layout-wrapper');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  clearFilters() {
     this.searchValue = '';
+    this.selectedCategory = null;
+    this.selectedSubCategory = null;
+    this.selectedKeyword = null;
+    this.selectedYear = null;
+    this.applyFilters();
   }
 
   public getSeverity(
@@ -113,21 +210,4 @@ export class JournalListComponent {
         return 'secondary';
     }
   }
-
-  onPageChange(event: any) {
-    this.first = event.first;
-    this.rows = event.rows;
-
-    this.updatePagedData();
-  }
-
-  updatePagedData() {
-    const start = this.first;
-    const end = start + this.rows;
-
-    this.pagedData = this.journal.slice(start, end);
-
-    this.cdr.markForCheck();
-  }
-
 }

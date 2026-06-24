@@ -17,6 +17,9 @@ export class JournalService {
   getJournals(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/get`);
   }
+  getKeyword(): Observable<AppQuery<Journals[]>> {
+    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/keyword/get`);
+  }
   getJournalByUserId(id: number): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);
   }
@@ -36,8 +39,8 @@ export class JournalService {
     return this.http.put<AppQuery<Journals>>(`${this.baseUrl}/api/journal/update/${journal.Id}`, journal);
   }
 
-  deleteJournal(journal: Journals): Observable<AppQuery<Journals>> {
-    return this.http.delete<AppQuery<Journals>>(`${this.baseUrl}/api/journal/delete/${journal.Id}`);
+  deleteJournal(journalId: number): Observable<AppQuery<void>> {
+    return this.http.put<AppQuery<void>>(`${this.baseUrl}/api/journal/delete/${journalId}`, null);
   }
 
 

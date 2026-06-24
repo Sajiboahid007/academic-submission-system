@@ -1,5 +1,13 @@
+@use '../../../theme/variables' as *;
+
 .profile-main-content {
     flex: 1;
+}
+
+.journal-list-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - #{$navbar-height} - (2 * #{$spacing-xl}));
 }
 
 // Header Row
@@ -143,10 +151,93 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    // Flexbox layout side-by-side
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+    align-items: stretch;
+
     &:hover {
         transform: translateY(-3px);
         box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
         border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.25rem;
+    }
+}
+
+.paper-card-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.paper-card-pdf-preview {
+    flex: 0 0 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0.5rem;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.02);
+    min-height: 180px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+
+        pdf-viewer {
+            transform: scale(1.02);
+        }
+    }
+
+    pdf-viewer {
+        width: 120px;
+        height: 160px;
+        display: block;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        pointer-events: none;
+        transition: transform 0.2s ease;
+    }
+
+    .preview-label {
+        font-size: 0.725rem;
+        color: #64748b;
+        margin-top: 0.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        i {
+            font-size: 0.75rem;
+            color: #4b5563;
+        }
+    }
+
+    @media (max-width: 768px) {
+        flex: 1 0 auto;
+        min-height: 200px;
+
+        pdf-viewer {
+            width: 150px;
+            height: 200px;
+            margin: 0 auto;
+        }
     }
 }
 
@@ -212,6 +303,7 @@
     color: #4b5563;
     line-height: 1.6;
     margin: 0 0 0.25rem;
+
 }
 
 // Metadata Row
@@ -220,7 +312,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid #f3f4f6;
     margin-bottom: 0.25rem;
 
     @media (max-width: 576px) {
@@ -271,7 +362,6 @@
     font-size: 0.85rem;
     color: #6b7280;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #f3f4f6;
 
     strong {
         color: #374151;
@@ -420,3 +510,295 @@
     line-height: 1.5;
     margin: 0;
 }
+
+.p-select {
+    width: 200px !important;
+}
+
+
+
+
+//footer  
+.academic-footer {
+    background: #0b1e2e;
+    color: #e2e8f0;
+    padding: 3rem 2rem 1.5rem;
+    border-top: 4px solid #2563eb;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
+    margin-top: auto;
+
+    // Helper classes for flex/alignment
+    .flex {
+        display: flex;
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    // Grid layout mapping
+    .grid {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -1rem;
+        margin-right: -1rem;
+
+        &.grid-nogutter {
+            margin-left: 0;
+            margin-right: 0;
+
+            >[class*="col-"] {
+                padding: 0.75rem 0;
+            }
+        }
+    }
+
+    [class*="col-"] {
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+
+    .col-12 {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    @media (min-width: 768px) {
+        .md\:col-4 {
+            width: 33.3333%;
+            flex: 0 0 33.3333%;
+        }
+
+        .md\:col-6 {
+            width: 50%;
+            flex: 0 0 50%;
+        }
+
+        .md\:col-8 {
+            width: 66.6667%;
+            flex: 0 0 66.6667%;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .lg\:col-3 {
+            width: 25%;
+            flex: 0 0 25%;
+        }
+    }
+}
+
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* headings & text */
+.footer-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.3px;
+    color: #f1f5f9;
+    margin-bottom: 1.2rem;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.footer-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    padding: 0.2rem 0;
+}
+
+.footer-link:hover {
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+.footer-link i {
+    font-size: 0.9rem;
+    color: #60a5fa;
+}
+
+.footer-text {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.footer-divider {
+    border-color: #334155;
+    opacity: 0.4;
+    margin: 1.2rem 0;
+}
+
+.copy-badge {
+    background: #1e293b;
+    padding: 0.2rem 0.9rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    border: 1px solid #334155;
+}
+
+.social-icon {
+    background: #1e293b;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    transition: 0.2s;
+    border: 1px solid #334155;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.team-badge {
+    background: #1e293b;
+    border-radius: 40px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.85rem;
+    border: 1px solid #2d3a4f;
+    color: #e2e8f0;
+}
+
+.team-badge i {
+    color: #facc15;
+}
+
+/* responsive tweaks */
+@media (max-width: 640px) {
+    .footer-container .grid {
+        row-gap: 2rem;
+    }
+
+    .page-content .card {
+        padding: 2rem 1.5rem;
+    }
+}
+
+// Filter Card Section
+.filter-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    padding: 1.5rem;
+}
+
+.filter-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    .title-text {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .global-search-container {
+        flex: 0 1 350px;
+        width: 100%;
+
+        @media (max-width: 576px) {
+            flex: 1 1 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            border-radius: 8px;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border-color: #e2e8f0;
+            font-size: 0.925rem;
+
+            &:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            }
+        }
+    }
+}
+
+.filter-controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+
+    .filter-item {
+        flex: 1 1 180px;
+
+        p-select {
+            width: 100% !important;
+            
+            ::ng-deep .p-select {
+                width: 100% !important;
+            }
+        }
+    }
+
+    .btn-clear {
+        flex: 0 0 auto;
+
+        button {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.625rem 1.25rem;
+        }
+    }
+}
+
+// Loading Spinner Container
+.papers-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem;
+    gap: 1.5rem;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    min-height: 400px;
+
+    .loading-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #4b5563;
+        letter-spacing: -0.01em;
+    }
+}
