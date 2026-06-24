@@ -13,7 +13,7 @@
     <div>
         <button pButton type="button" label="Add Paper" icon="pi pi-plus" class="p-button-rounded p-button-success m-1"
             (click)="AddPapers()"></button>
-        <button pButton type="button" label="Add Journal" icon="pi pi-file"
+        <button *ngIf="journalButton()" pButton type="button" label="Add Journal" icon="pi pi-file"
             class="p-button-rounded p-button-success m-1" (click)="AddJournal()"></button>
     </div>
 
@@ -21,7 +21,7 @@
 <p-tabs value="0">
     <p-tablist>
         <p-tab value="0">Papers</p-tab>
-        <p-tab value="1">Journals</p-tab>
+        <p-tab *ngIf="journalButton()" value="1">Journals</p-tab>
     </p-tablist>
     <p-tabpanels>
         <p-tabpanel value="0">
