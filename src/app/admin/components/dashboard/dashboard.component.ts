@@ -129,6 +129,13 @@ export class DashboardComponent implements OnInit {
       route: '/dashboard/papers',
       icon: '📄',
       description: 'Manage Papers',
+      roles: ['Admin', 'Super-Admin'],
+    },
+    {
+      label: 'Thesis and Research',
+      route: '/dashboard/paper-detail',
+      icon: '🎓',
+      description: 'Paper Details',
       roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
     },
     {

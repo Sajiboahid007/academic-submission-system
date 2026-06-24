@@ -14,6 +14,7 @@ import { PapersListComponent } from './components/papers-list/papers-list.compon
 import { PaperApprovalComponent } from './components/paper-approval/paper-approval.component';
 import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
 import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
+import { PaperDetailComponent } from './components/papers-list/paper-detail/paper-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -60,6 +61,10 @@ const routes: Routes = [
       {
         path: 'papers',
         component: PapersListComponent,
+      },
+      {
+        path: 'paper-detail',
+        component: PaperDetailComponent
       },
       {
         path: 'journal',

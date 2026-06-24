@@ -38,6 +38,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TooltipModule } from 'primeng/tooltip';
 import { TabsModule } from 'primeng/tabs';
 import { PaginatorModule } from 'primeng/paginator';
+import { MenubarModule } from 'primeng/menubar';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { FooterComponent } from './components/footer/footer.component';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -47,6 +50,7 @@ const materialNgModule = [
   MatPaginatorModule,
   MatTableModule,
   FormsModule,
+  PdfViewerModule
 ];
 
 const primeNgModules = [
@@ -75,7 +79,8 @@ const primeNgModules = [
   ReactiveFormsModule,
   TooltipModule,
   TabsModule,
-  PaginatorModule
+  PaginatorModule,
+  MenubarModule
 ];
 
 @NgModule({
@@ -84,6 +89,7 @@ const primeNgModules = [
     PageHeaderComponent,
     TruncateTextPipe,
     PaperApprovalConfirmationComponent,
+    FooterComponent,
   ],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
@@ -95,6 +101,7 @@ const primeNgModules = [
     PageHeaderComponent,
     TruncateTextPipe,
     PaperApprovalConfirmationComponent,
+    FooterComponent,
   ],
 })
 export class SharedModule { }
