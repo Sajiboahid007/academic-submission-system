@@ -6,8 +6,13 @@ export class AcademicSubmissionConfig {
   // login and refresh token url
   public static readonly RefreshTokenUrl = '/api/getToken/' as const;
   public static readonly LoginUrl = '/api/login' as const;
+  public static readonly RegisterUrl = '/api/register' as const;
 
-  public static readonly AnonymousUrls: string[] = [this.RefreshTokenUrl, this.LoginUrl] as const;
+  public static readonly AnonymousUrls: string[] = [
+    this.RefreshTokenUrl,
+    this.LoginUrl,
+    this.RegisterUrl,
+  ] as const;
 
   public static readonly UserRole = {
     SuperAdmin: 'Super-Admin',
