@@ -52,11 +52,11 @@ export class LoginService {
   }
 
   login(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/login`, data);
+    return this.http.post(`${this.baseUrl}${AcademicSubmissionConfig.LoginUrl}`, data);
   }
 
   register(data: { StudentId: any; Name: string; Email: string; Password: any }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/register`, data);
+    return this.http.post(`${this.baseUrl}${AcademicSubmissionConfig.RegisterUrl}`, data);
   }
 
   refreshToken(refreshToken: string): Observable<any> {
