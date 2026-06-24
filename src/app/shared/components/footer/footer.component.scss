@@ -1,0 +1,252 @@
+/* academic-footer.component.scss */
+.academic-footer {
+    background: #0b1120;
+    /* deep navy */
+    color: #e2e8f0;
+    padding: 2.5rem 1.5rem 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* grid – two columns, responsive */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 3rem;
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.footer-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(2px);
+    padding: 1.5rem 1.8rem;
+    border-radius: 1.2rem;
+    border: 1px solid #1e293b;
+    transition: border-color 0.2s;
+    height: 100%;
+}
+
+.footer-card:hover {
+    border-color: #334155;
+}
+
+.footer-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #f1f5f9;
+    margin: 0 0 1.2rem 0;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px dashed #2d3a4f;
+}
+
+.footer-title i {
+    color: #60a5fa;
+    font-size: 1.2rem;
+}
+
+.footer-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+    margin: 0 0 1.2rem 0;
+}
+
+.footer-text strong {
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+.footer-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #1e293b;
+    padding: 0.3rem 1rem;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #cbd5e1;
+    letter-spacing: 0.2px;
+    border: 1px solid #2d3a4f;
+}
+
+.badge i {
+    font-size: 0.8rem;
+    color: #4ade80;
+}
+
+.badge i.pi-shield {
+    color: #60a5fa;
+}
+
+/* dev team */
+.dev-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.dev-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.6rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.dev-item:last-child {
+    border-bottom: none;
+}
+
+.name {
+    font-weight: 600;
+    color: #f1f5f9;
+    font-size: 0.95rem;
+}
+
+.role {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+/* social row */
+.social-row {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.social-link {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+
+.social-link:hover {
+    color: #f1f5f9;
+    background: #1e293b;
+    border-color: #334155;
+    transform: translateY(-2px);
+}
+
+/* divider */
+.footer-divider {
+    margin: 2rem 0 1.2rem 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, #1e293b, #3b4a62, #1e293b);
+    opacity: 0.6;
+}
+
+/* bottom bar */
+.footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    padding: 0.2rem 0;
+}
+
+.copyright {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.copyright i {
+    font-size: 0.75rem;
+}
+
+.credit {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.3rem 1rem;
+    border-radius: 40px;
+    border: 1px solid #1e293b;
+}
+
+.credit i.pi-star-fill {
+    color: #fbbf24;
+    font-size: 0.7rem;
+}
+
+.heart-pulse {
+    color: #f87171;
+    animation: pulse 1.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.credit strong {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+/* responsive tweaks */
+@media (max-width: 480px) {
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .credit {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .footer-card {
+        padding: 1.2rem;
+    }
+}
