@@ -50,12 +50,12 @@ export class PaperApprovalComponent implements OnInit {
 
     if (userRole === studentRole || userRole === teacherRole) {
       this.userPapers(Number(this.userTokenInfo?.userId));
-
+      this.getJournalByUserId(Number(this.userTokenInfo?.userId));
     } else {
       this.getApprovalList();
-
+      this.getJounals();
     }
-    this.getJounals()
+
   }
 
   public getApprovalList() {
@@ -67,6 +67,18 @@ export class PaperApprovalComponent implements OnInit {
     } catch (error) {
       console.error('Error fetching approval list:', error);
     }
+  }
+
+  getJournalByUserId(id: number) {
+    this.journalService.getJournalByUserId(id).subscribe({
+      next: (res: AppQuery<Journals[]>) => {
+        this.journal = res.data;
+        this.cdr.markForCheck();
+      },
+      error: (error: any) => {
+        this.toastService.error('Failed to load journals.');
+      },
+    });
   }
 
   getJounals() {
@@ -93,6 +105,10 @@ export class PaperApprovalComponent implements OnInit {
         return 'warn';
       case 'Draft':
         return 'info';
+      case 'Review Requested':
+        return 'warn'
+      case 'Editorial Approved':
+        return 'success'
       default:
         return 'secondary';
     }
@@ -114,7 +130,9 @@ export class PaperApprovalComponent implements OnInit {
   isAllowedStatus(paperApproval: any) {
     if (
       paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft ||
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.EditorialApproved ||
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.ReviewRequested
     ) {
       return true;
     }
@@ -206,7 +224,6 @@ export class PaperApprovalComponent implements OnInit {
   }
 
 
-
   isUserAllowedToApproveOrEdit(paper: any) {
     const [paperAproval] = paper?.PaperApprovals;
 
@@ -239,7 +256,8 @@ export class PaperApprovalComponent implements OnInit {
 
   onApprove(paperId: any) {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
-      width: '500px',
+      width: '900px',
+      height: '500px',
       autoFocus: true,
       data: { PaperId: paperId },
     });
@@ -255,12 +273,12 @@ export class PaperApprovalComponent implements OnInit {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
-      data: { JournalId: journalId },
+      data: { JournalId: journalId, Source: 'Journal' },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.getJounals();
+        this.getJournalByUserId(this.userTokenInfo?.userId);
       }
     });
   }
@@ -353,5 +371,17 @@ export class PaperApprovalComponent implements OnInit {
         });
       },
     });
+  }
+
+  onApproved() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin || userRole === role.Teacher) {
+      return true;
+    }
+
+    return false;
   }
 }

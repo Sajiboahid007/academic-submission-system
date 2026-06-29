@@ -28,7 +28,7 @@
           <ng-template #header>
             <tr>
               <th style="width: 30%">Title</th>
-              <th style="width: 10%">Status</th>
+              <th style="width: 15%">Status</th>
               <th style="width: 15%">Type</th>
               <th style="width: 20%">Department</th>
               <th>Action</th>
@@ -57,7 +57,7 @@
               </td>
               <td>{{ paper?.Category?.Name }}</td>
               <td>{{ paper?.Department?.Name }}</td>
-              <td>
+              <td *ngIf="onApproved()">
                 <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
                   (click)="viewPaper(paper?.Id)" />
 
@@ -98,7 +98,7 @@
             <tr style="margin-top: 50px">
 
               <th style="width: 25%">Title</th>
-              <th style="width: 8%">Status</th>
+              <th style="width: 15%">Status</th>
               <th style="width: 10%">Category</th>
               <th style="width: 16%">Name</th>
               <th style="width: 7%">Volume</th>
@@ -145,7 +145,7 @@
                   <div>{{ journal.Year | truncateText: 50 }}</div>
                 </div>
               </td>
-              <td>
+              <td *ngIf="onApproved()">
                 <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
                   (click)="viewJournal(journal?.Id)" />
 

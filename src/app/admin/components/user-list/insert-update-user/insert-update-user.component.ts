@@ -17,6 +17,7 @@ import { Role } from '../../../../fds-config/entity-models/role';
 import { RoleService } from '../../../services/role-service';
 import { BatchService } from '../../../services/batch-service';
 import { Batches } from '../../../../fds-config/entity-models/batch';
+import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
 
 @Component({
   selector: 'app-insert-update-user',
@@ -33,6 +34,8 @@ export class InsertUpdateUserComponent implements OnInit {
   roles: Role[] = [];
   isEditMode = false;
   userId!: number;
+
+  userTokenInfo: any = {};
 
   // Assuming you have a similar structure for roles
 
@@ -68,6 +71,8 @@ export class InsertUpdateUserComponent implements OnInit {
 
       this.userForm.patchValue(this.data);
     }
+
+    this.userTokenInfo = this.usersService.getUserInfo();
 
     this.userForm.markAllAsTouched();
     this.userForm.updateValueAndValidity();
@@ -171,6 +176,18 @@ export class InsertUpdateUserComponent implements OnInit {
         console.error('Error updating user:', error);
       },
     });
+  }
+
+  isAllowEditRole() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
   }
 
 

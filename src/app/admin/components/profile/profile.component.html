@@ -7,17 +7,9 @@
 
       <!-- Avatar & Camera Icon wrapper -->
       <div class="profile-avatar-section">
-        <div
-          class="avatar-circle"
-          [class.uploading]="isUploading"
-          (click)="!isUploading && fileInput.click()"
-        >
-          <img
-            *ngIf="userDetailedData?.ImageUrl"
-            [src]="userDetailedData.ImageUrl"
-            alt="Profile Picture"
-            class="avatar-img"
-          />
+        <div class="avatar-circle" [class.uploading]="isUploading" (click)="!isUploading && fileInput.click()">
+          <img *ngIf="userDetailedData?.ImageUrl" [src]="userDetailedData.ImageUrl" alt="Profile Picture"
+            class="avatar-img" />
           <span *ngIf="!userDetailedData?.ImageUrl">
             {{ userDetailedData?.Name ? (userDetailedData.Name.split(' ').map(n => n[0]).join('').substring(0,
             2).toUpperCase()) : 'SO' }}
@@ -26,13 +18,7 @@
             <i [class]="isUploading ? 'pi pi-spin pi-spinner' : 'pi pi-camera'"></i>
           </div>
         </div>
-        <input
-          type="file"
-          #fileInput
-          style="display: none"
-          accept="image/*"
-          (change)="onFileSelected($event)"
-        />
+        <input type="file" #fileInput style="display: none" accept="image/*" (change)="onFileSelected($event)" />
       </div>
 
       <!-- User Info Details -->
@@ -51,9 +37,9 @@
           <span class="field-title">Department</span>
           <span class="field-value">
             {{
-              userDetailedData?.Department?.Name ||
-                userDetailedData?.Department?.Code ||
-                'Computer Science &
+            userDetailedData?.Department?.Name ||
+            userDetailedData?.Department?.Code ||
+            'Computer Science &
             Engineering'
             }}
           </span>
@@ -90,17 +76,13 @@
 
       <!-- Edit Profile Action Button -->
       <div class="profile-action-btn-container">
-        <button
-          pButton
-          type="button"
-          icon="pi pi-pencil"
-          label="Edit Profile"
-          class="p-button-rounded edit-profile-btn"
-          (click)="editProfile()"
-        ></button>
+        <button pButton type="button" icon="pi pi-pencil" label="Edit Profile" class="p-button-rounded edit-profile-btn"
+          (click)="editProfile()"></button>
       </div>
     </div>
   </aside>
+
+  <app-create-papers></app-create-papers>
 
   <!-- RIGHT MAIN SECTION: PAPERS & ACTIVITIES -->
   <main class="profile-main-content">
@@ -110,26 +92,16 @@
         <span class="header-icon">📚</span>
         <h2 class="papers-title">Papers & Activities</h2>
       </div>
-      <button
-        pButton
-        type="button"
-        icon="pi pi-plus"
-        label="Upload Paper"
-        class="p-button-rounded upload-paper-btn"
-        (click)="uploadPaper()"
-      ></button>
+      <button pButton type="button" icon="pi pi-plus" label="Upload Paper" class="p-button-rounded upload-paper-btn"
+        (click)="uploadPaper()"></button>
     </header>
 
     <!-- Search and Status filter controls -->
     <div class="filter-controls-row">
       <div class="search-input-wrapper">
         <i class="pi pi-search search-icon"></i>
-        <input
-          type="text"
-          [(ngModel)]="searchQuery"
-          placeholder="Search by title, author, keyword..."
-          class="search-input-field"
-        />
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Search by title, author, keyword..."
+          class="search-input-field" />
       </div>
 
       <div class="status-dropdown-wrapper">
@@ -143,11 +115,8 @@
     </div>
 
     <!-- Papers Cards List -->
-    <div
-      class="papers-cards-container"
-      style="height: 100vh; overflow-y: scroll"
-      *ngIf="filteredPapers.length > 0; else emptyState"
-    >
+    <div class="papers-cards-container" style="height: 100vh; overflow-y: scroll"
+      *ngIf="filteredPapers.length > 0; else emptyState">
       <article class="paper-card" *ngFor="let paper of filteredPapers">
         <!-- Header row (Title & Status) -->
 
@@ -174,7 +143,7 @@
             <i class="pi pi-calendar"></i>
             <span>{{
               paper.CreatedDate ? (paper.CreatedDate | date: 'M/d/yyyy') : '3/10/2025'
-            }}</span>
+              }}</span>
           </div>
 
           <div class="meta-item tag-meta">
@@ -190,32 +159,14 @@
 
         <!-- Action Control Buttons -->
         <div class="paper-card-actions">
-          <button
-            pButton
-            type="button"
-            label="View"
-            icon="pi pi-eye"
-            class="p-button-outlined p-button-sm action-btn btn-view"
-            (click)="viewPaper(paper.Id)"
-          ></button>
+          <button pButton type="button" label="View" icon="pi pi-eye"
+            class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewPaper(paper.Id)"></button>
 
-          <button
-            pButton
-            type="button"
-            label="Edit"
-            icon="pi pi-pencil"
-            class="p-button-outlined p-button-sm action-btn btn-edit"
-            (click)="editPaper(paper)"
-          ></button>
+          <button pButton type="button" label="Edit" icon="pi pi-pencil"
+            class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editPaper(paper)"></button>
 
-          <button
-            pButton
-            type="button"
-            label="Delete"
-            icon="pi pi-trash"
-            class="p-button-outlined p-button-sm action-btn btn-delete"
-            (click)="deletePaper(paper.Id)"
-          ></button>
+          <button pButton type="button" label="Delete" icon="pi pi-trash"
+            class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deletePaper(paper.Id)"></button>
         </div>
       </article>
     </div>

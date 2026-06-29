@@ -24,6 +24,8 @@ export class AcademicSubmissionConfig {
   public static readonly ApprovalStatus = {
     Draft: 'Draft',
     Pending: 'Pending',
+    ReviewRequested: 'Review Requested',
+    EditorialApproved: 'Editorial Approved',
     Approved: 'Approved',
     Rejected: 'Rejected',
   } as const;

@@ -317,10 +317,7 @@ export class CreatePapersComponent {
   }
 
   journalButton() {
-    {
-      return this.userTokenInfo.role !== AcademicSubmissionConfig.UserRole.Student;
-    }
-
+    return this.userTokenInfo.role !== AcademicSubmissionConfig.UserRole.Student;
   }
 
   deletePaper(id: number): void {
