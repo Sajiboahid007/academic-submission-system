@@ -66,100 +66,138 @@ export class DashboardComponent implements OnInit {
   peakMonthLabel = signal('');
   topDeptLabel = signal('');
 
-  filteredMenuItems: any[] = [];
+  filteredMenuGroups: any[] = [];
+  openGroups = signal<Set<string>>(new Set(['Academic']));
 
-  menuItems = [
+  menuGroups = [
+    // 1. Dashboard — always flat, always visible
     {
-      label: 'Dashboard',
-      route: '/dashboard',
-      icon: '🏠',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+      groupId: 'main',
+      label: null,
+      items: [
+        {
+          label: 'Dashboard',
+          route: '/dashboard',
+          icon: '🏠',
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+      ],
     },
+
+    // 2. Administration — collapsible, Admin / Super-Admin only
     {
-      label: 'Category',
-      route: '/dashboard/categories',
-      icon: '📚',
-      description: 'Manage Categories',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Subcategory',
-      route: '/dashboard/subcategory',
-      icon: '◽',
-      description: 'Manage Sub Categories',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'User',
-      route: '/dashboard/user',
-      icon: '👥',
-      description: 'Manage Users',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Department',
-      route: '/dashboard/department',
-      icon: '🏢',
-      description: 'Manage Departments',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Batch',
-      route: '/dashboard/batch',
-      icon: '📦',
-      description: 'Manage Batches',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Role',
-      route: '/dashboard/role',
-      icon: '🔑',
-      description: 'Manage Role',
-      roles: ['Admin', 'Super-Admin']
-    },
-    {
-      label: 'Create Papers',
-      route: '/dashboard/create-papers',
-      icon: '📄',
-      description: 'Create Papers',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Papers',
-      route: '/dashboard/papers',
-      icon: '📄',
-      description: 'Manage Papers',
-      roles: ['Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Thesis and Research',
-      route: '/dashboard/paper-detail',
-      icon: '🎓',
-      description: 'Paper Details',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Journals',
-      route: '/dashboard/journal',
-      icon: '🗃️',
-      description: 'Manage Journals',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
-    },
-    {
-      label: 'Papers Approval',
-      route: '/dashboard/papers-approval',
-      icon: '📃',
-      description: 'Manage Papers Approval',
+      groupId: 'Administration',
+      label: 'Administration',
+      icon: '🏛️',
+      collapsible: true,
       roles: ['Teacher', 'Admin', 'Super-Admin'],
+      items: [
+        {
+          label: 'Users',
+          route: '/dashboard/user',
+          icon: '👥',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Role',
+          route: '/dashboard/role',
+          icon: '🔑',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Department',
+          route: '/dashboard/department',
+          icon: '🏢',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Batch',
+          route: '/dashboard/batch',
+          icon: '📦',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Category',
+          route: '/dashboard/categories',
+          icon: '📚',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Subcategory',
+          route: '/dashboard/subcategory',
+          icon: '🗂️',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Papers',
+          route: '/dashboard/papers',
+          icon: '📄',
+          roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Papers Approval',
+          route: '/dashboard/papers-approval',
+          icon: '✅',
+          roles: ['Teacher', 'Admin', 'Super-Admin'],
+        },
+      ],
     },
+
+    // 3–6. Flat items — always visible, always shown
     {
-      label: 'Profile',
-      route: '/dashboard/profile',
-      icon: '👤',
-      description: 'Manage Profile',
-      roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+      groupId: 'flat-academic',
+      label: null,
+      items: [
+        {
+          label: 'Upload Article',
+          route: '/dashboard/create-papers',
+          icon: '📤',
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Thesis / Research',
+          route: '/dashboard/paper-detail',
+          icon: '📝',
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Publication List',
+          route: '/dashboard/journal',
+          icon: '🗃️',
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Profile',
+          route: '/dashboard/profile',
+          icon: '👤',
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+      ],
     },
   ];
+
+
+
+  toggleGroup(groupId: string): void {
+    this.openGroups.update(groups => {
+      const next = new Set(groups);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  }
+
+  isGroupOpen(groupId: string): boolean {
+    return this.openGroups().has(groupId);
+  }
+
+  isChildActive(group: any): boolean {
+    const route = this.currentRoute();
+    return group.items?.some((item: any) => route.startsWith(item.route) && item.route !== '/dashboard');
+  }
 
   constructor(
     private router: Router,
@@ -192,9 +230,16 @@ export class DashboardComponent implements OnInit {
 
     console.log(userInfo)
 
-    this.filteredMenuItems = this.menuItems.filter(item =>
-      item.roles.includes(userInfo.role)
-    );
+    this.filteredMenuGroups = this.menuGroups
+      .map(group => ({
+        ...group,
+        items: group.items.filter((item: any) => item.roles.includes(userInfo.role)),
+      }))
+      .filter(group =>
+        group.label === null
+          ? group.items.length > 0
+          : group.items.length > 0 && (group as any).roles?.includes(userInfo.role)
+      );
 
     this.getUserById(userInfo.userId);
 

@@ -642,6 +642,202 @@
   opacity: 1;
 }
 
+/* ─── Collapsible Menu Groups ─────────────────────────────────────── */
+.nav-group {
+  margin: 0;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+/* Group header – looks like a nav-link but acts as a toggle button */
+.nav-group-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  width: 100%;
+  padding: $spacing-md $spacing-md;
+  background: transparent;
+  border: none;
+  border-radius: $radius-lg;
+  color: $sidebar-text;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all $transition-fast;
+  position: relative;
+  letter-spacing: 0.01em;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 0;
+    background: $primary-400;
+    border-radius: 0 $radius-sm $radius-sm 0;
+    transition: height $transition-base;
+  }
+
+  &:hover {
+    background: $sidebar-bg-hover;
+    color: $sidebar-text-active;
+    transform: translateX(4px);
+
+    &::before {
+      height: 60%;
+    }
+  }
+}
+
+.nav-group-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+/* Chevron rotates when group is open */
+.group-chevron {
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  opacity: 0.7;
+}
+
+.nav-group.group-open .group-chevron {
+  transform: rotate(180deg);
+}
+
+/* Group header highlight when a child route is active */
+.nav-group.group-has-active > .nav-group-header {
+  color: $sidebar-text-active;
+  background: rgba(255, 255, 255, 0.07);
+
+  &::before {
+    height: 50%;
+    background: $primary-400;
+  }
+}
+
+/* Active + open */
+.nav-group.group-open.group-has-active > .nav-group-header {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Sub-menu container – slides open/closed */
+.nav-sub-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s ease;
+  opacity: 0;
+
+  &.open {
+    max-height: 600px; /* large enough for any menu */
+    opacity: 1;
+  }
+}
+
+.nav-sub-item {
+  margin: 0;
+}
+
+.nav-sub-link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: 9px $spacing-md 9px calc($spacing-md + 16px); /* left-indent */
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  border-radius: $radius-md;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all $transition-fast;
+  position: relative;
+
+  /* Vertical connector line */
+  &::before {
+    content: '';
+    position: absolute;
+    left: calc($spacing-md + 4px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Dot indicator */
+  &::after {
+    content: '';
+    position: absolute;
+    left: calc($spacing-md + 0px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    transition: all $transition-fast;
+  }
+
+  &:hover {
+    color: $sidebar-text-active;
+    background: rgba(255, 255, 255, 0.07);
+    padding-left: calc($spacing-md + 20px);
+
+    &::after {
+      border-color: $primary-400;
+      background: $primary-400;
+    }
+  }
+
+  &.active {
+    color: $sidebar-text-active;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+
+    &::after {
+      border-color: $primary-300;
+      background: $primary-300;
+      box-shadow: 0 0 0 3px rgba($primary-400, 0.25);
+    }
+  }
+}
+
+.nav-sub-icon {
+  font-size: 15px;
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-sub-label {
+  white-space: nowrap;
+}
+
+/* When sidebar is collapsed, hide sub-menus entirely and show group tooltips */
+.sidebar.collapsed {
+  .nav-group-header {
+    justify-content: center;
+    transform: none !important;
+
+    &:hover {
+      background: $sidebar-bg-hover;
+    }
+  }
+
+  .nav-sub-menu {
+    display: none;
+  }
+}
+
+
 .sidebar-footer {
   padding: $spacing-md $spacing-lg;
   border-top: 1px solid $sidebar-border;

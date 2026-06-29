@@ -115,17 +115,65 @@
         </div>
 
         <ul class="nav-menu">
-          <li *ngFor="let item of filteredMenuItems" class="nav-item">
-            <a class="nav-link" (click)="navigateTo(item.route)"
-              [routerLink]="item.route"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-              [title]="isSidebarCollapsed() ? item.label : ''">
-              <span class="nav-icon">{{ item.icon }}</span>
-              <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
-              <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
-            </a>
-          </li>
+
+          <!-- Grouped collapsible menu -->
+          <ng-container *ngFor="let group of filteredMenuGroups">
+
+            <!-- Flat items (no group label: Dashboard, Profile) -->
+            <ng-container *ngIf="group.label === null">
+              <li *ngFor="let item of group.items" class="nav-item">
+                <a class="nav-link"
+                  [routerLink]="item.route"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                  (click)="navigateTo(item.route)"
+                  [title]="isSidebarCollapsed() ? item.label : ''">
+                  <span class="nav-icon">{{ item.icon }}</span>
+                  <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
+                  <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
+                </a>
+              </li>
+            </ng-container>
+
+            <!-- Collapsible group (has a label header) -->
+            <li *ngIf="group.label !== null" class="nav-group"
+              [class.group-open]="isGroupOpen(group.groupId)"
+              [class.group-has-active]="isChildActive(group)">
+
+              <!-- Group Header (toggle button) -->
+              <button class="nav-group-header"
+                (click)="!isSidebarCollapsed() && toggleGroup(group.groupId)"
+                [title]="isSidebarCollapsed() ? group.label : ''"
+                type="button">
+                <span class="nav-icon">{{ group.icon }}</span>
+                <ng-container *ngIf="!isSidebarCollapsed()">
+                  <span class="nav-group-label">{{ group.label }}</span>
+                  <svg class="group-chevron" width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </ng-container>
+              </button>
+
+              <!-- Collapsible Children -->
+              <ul class="nav-sub-menu" [class.open]="isGroupOpen(group.groupId) && !isSidebarCollapsed()">
+                <li *ngFor="let item of group.items" class="nav-sub-item">
+                  <a class="nav-sub-link"
+                    [routerLink]="item.route"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: false }"
+                    (click)="navigateTo(item.route)"
+                    [title]="item.label">
+                    <span class="nav-sub-icon">{{ item.icon }}</span>
+                    <span class="nav-sub-label">{{ item.label }}</span>
+                  </a>
+                </li>
+              </ul>
+
+            </li>
+          </ng-container>
+
         </ul>
 
         <div class="sidebar-footer" *ngIf="!isSidebarCollapsed()">
