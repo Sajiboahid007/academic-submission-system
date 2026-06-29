@@ -3,15 +3,15 @@
   <div class="auth-grid">
     <aside class="auth-hero">
       <div class="auth-hero-inner">
-        <span class="auth-badge">Admin portal</span>
-        <h1 class="auth-hero-title">Project & Thesis Approval System</h1>
+        <span class="auth-badge">Articals portal</span>
+        <h1 class="auth-hero-title">Online Research Article Management System</h1>
         <p class="auth-hero-lead">
-          Manage categories, submissions, and academic workflows from one secure place.
+          Manage thesis,Research,Journals and academic workflows from one secure place.
         </p>
         <ul class="auth-hero-list">
           <li>Role-aware access</li>
           <li>Structured submissions</li>
-          <li>Built for academic teams</li>
+          <li>Built for Articles</li>
         </ul>
       </div>
       <div class="auth-hero-glow" aria-hidden="true"></div>
@@ -20,41 +20,20 @@
     <main class="auth-main">
       <div class="auth-card">
         <div class="auth-tabs" role="tablist" aria-label="Authentication">
-          <button
-            type="button"
-            role="tab"
-            class="auth-tab"
-            [class.auth-tab-active]="authMode === 'login'"
-            [attr.aria-selected]="authMode === 'login'"
-            (click)="setMode('login')"
-          >
+          <button type="button" role="tab" class="auth-tab" [class.auth-tab-active]="authMode === 'login'"
+            [attr.aria-selected]="authMode === 'login'" (click)="setMode('login')">
             Sign in
           </button>
-          <button
-            type="button"
-            role="tab"
-            class="auth-tab"
-            [class.auth-tab-active]="authMode === 'register'"
-            [attr.aria-selected]="authMode === 'register'"
-            (click)="setMode('register')"
-          >
+          <button type="button" role="tab" class="auth-tab" [class.auth-tab-active]="authMode === 'register'"
+            [attr.aria-selected]="authMode === 'register'" (click)="setMode('register')">
             Create account
           </button>
         </div>
 
         <ng-container *ngIf="authMode === 'login' && loginForm">
-          <p-message
-            *ngIf="loginError"
-            severity="error"
-            [text]="loginError"
-            styleClass="auth-alert"
-          />
-          <p-message
-            *ngIf="loginBannerSuccess"
-            severity="success"
-            [text]="loginBannerSuccess"
-            styleClass="auth-alert"
-          />
+          <p-message *ngIf="loginError" severity="error" [text]="loginError" styleClass="auth-alert" />
+          <p-message *ngIf="loginBannerSuccess" severity="success" [text]="loginBannerSuccess"
+            styleClass="auth-alert" />
           <div class="auth-panel-head">
             <h2>Welcome back</h2>
             <p>Use your credentials information to continue.</p>
@@ -63,69 +42,34 @@
           <div [formGroup]="loginForm" class="auth-form">
             <div class="field-group">
               <label for="login-Email">Email</label>
-              <input
-                id="login-Email"
-                pInputText
-                class="auth-input"
-                formControlName="Email"
-                type="email"
-                autocomplete="username"
-                placeholder="e.g. user@example.com"
-              />
-              <small
-                class="field-error"
-                *ngIf="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched"
-              >
+              <input id="login-Email" pInputText class="auth-input" formControlName="Email" type="email"
+                autocomplete="username" placeholder="e.g. user@example.com" />
+              <small class="field-error" *ngIf="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched">
                 Email is required
               </small>
             </div>
 
             <div class="field-group">
               <label for="login-password">Password</label>
-              <p-password
-                id="login-password"
-                formControlName="Password"
-                [toggleMask]="true"
-                [feedback]="false"
-                placeholder="Enter your password"
-                styleClass="auth-password"
-                inputStyleClass="auth-input"
-                [inputStyle]="{ width: '100%' }"
-                autocomplete="current-password"
-              />
-              <small
-                class="field-error"
-                *ngIf="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched"
-              >
+              <p-password id="login-password" formControlName="Password" [toggleMask]="true" [feedback]="false"
+                placeholder="Enter your password" styleClass="auth-password" inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }" autocomplete="current-password" />
+              <small class="field-error"
+                *ngIf="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched">
                 Password is required
               </small>
             </div>
           </div>
 
           <div class="auth-actions">
-            <p-button
-              label="Clear"
-              severity="secondary"
-              [outlined]="true"
-              type="button"
-              (onClick)="onCancel()"
-            />
-            <p-button
-              [label]="loginInProgress ? 'Signing in…' : 'Sign in'"
-              [disabled]="loginInProgress"
-              type="button"
-              (onClick)="onLogin()"
-            />
+            <p-button label="Clear" severity="secondary" [outlined]="true" type="button" (onClick)="onCancel()" />
+            <p-button [label]="loginInProgress ? 'Signing in…' : 'Sign in'" [disabled]="loginInProgress" type="button"
+              (onClick)="onLogin()" />
           </div>
         </ng-container>
 
         <ng-container *ngIf="authMode === 'register' && registerForm">
-          <p-message
-            *ngIf="registerError"
-            severity="error"
-            [text]="registerError"
-            styleClass="auth-alert"
-          />
+          <p-message *ngIf="registerError" severity="error" [text]="registerError" styleClass="auth-alert" />
           <div class="auth-panel-head">
             <h2>Create your account</h2>
             <p>Choose a User ID and a strong password to get started.</p>
@@ -135,40 +79,21 @@
             <div class="field-flex">
               <div class="field-group-userId">
                 <label for="reg-StudentId">User ID</label>
-                <input
-                  id="reg-StudentId"
-                  pInputText
-                  class="auth-input"
-                  formControlName="StudentId"
-                  type="text"
-                  autocomplete="username"
-                  placeholder="Unique user ID"
-                />
-                <small
-                  class="field-error"
-                  *ngIf="
+                <input id="reg-StudentId" pInputText class="auth-input" formControlName="StudentId" type="text"
+                  autocomplete="username" placeholder="Unique user ID" />
+                <small class="field-error" *ngIf="
                     registerForm.get('StudentId')?.invalid && registerForm.get('StudentId')?.touched
-                  "
-                >
+                  ">
                   User ID is required
                 </small>
               </div>
 
               <div class="field-group-name">
                 <label for="reg-Name">Name</label>
-                <input
-                  id="reg-Name"
-                  pInputText
-                  class="auth-input"
-                  formControlName="Name"
-                  type="text"
-                  autocomplete="username"
-                  placeholder="Your name.."
-                />
-                <small
-                  class="field-error"
-                  *ngIf="registerForm.get('Name')?.invalid && registerForm.get('Name')?.touched"
-                >
+                <input id="reg-Name" pInputText class="auth-input" formControlName="Name" type="text"
+                  autocomplete="username" placeholder="Your name.." />
+                <small class="field-error"
+                  *ngIf="registerForm.get('Name')?.invalid && registerForm.get('Name')?.touched">
                   Name is required
                 </small>
               </div>
@@ -176,109 +101,59 @@
 
             <div class="field-group">
               <label for="reg-Email">Email</label>
-              <input
-                id="reg-Email"
-                pInputText
-                class="auth-input"
-                formControlName="Email"
-                type="text"
-                autocomplete="username"
-                placeholder="Enter your email..."
-              />
-              <small
-                class="field-error"
-                *ngIf="registerForm.get('Email')?.invalid && registerForm.get('Email')?.touched"
-              >
+              <input id="reg-Email" pInputText class="auth-input" formControlName="Email" type="text"
+                autocomplete="username" placeholder="Enter your email..." />
+              <small class="field-error"
+                *ngIf="registerForm.get('Email')?.invalid && registerForm.get('Email')?.touched">
                 Email is required
               </small>
-              <small
-                class="field-error"
-                *ngIf="
+              <small class="field-error" *ngIf="
                   registerForm.get('Email')?.errors?.['email'] && registerForm.get('Email')?.touched
-                "
-              >
+                ">
                 Please enter a valid email address
               </small>
             </div>
 
             <div class="field-group">
               <label for="reg-password">Password</label>
-              <p-password
-                id="reg-password"
-                formControlName="Password"
-                [toggleMask]="true"
-                [feedback]="true"
-                placeholder="At least 8 characters"
-                styleClass="auth-password"
-                inputStyleClass="auth-input"
-                [inputStyle]="{ width: '100%' }"
-                autocomplete="new-password"
-              />
-              <small
-                class="field-error"
-                *ngIf="
+              <p-password id="reg-password" formControlName="Password" [toggleMask]="true" [feedback]="true"
+                placeholder="At least 8 characters" styleClass="auth-password" inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }" autocomplete="new-password" />
+              <small class="field-error" *ngIf="
                   registerForm.get('Password')?.errors?.['required'] &&
                   registerForm.get('Password')?.touched
-                "
-              >
+                ">
                 Password is required
               </small>
-              <small
-                class="field-error"
-                *ngIf="
+              <small class="field-error" *ngIf="
                   registerForm.get('Password')?.errors?.['minlength'] &&
                   registerForm.get('Password')?.touched
-                "
-              >
+                ">
                 Use at least 8 characters
               </small>
             </div>
 
             <div class="field-group">
               <label for="reg-confirm">Confirm password</label>
-              <p-password
-                id="reg-confirm"
-                formControlName="ConfirmPassword"
-                [toggleMask]="true"
-                [feedback]="false"
-                placeholder="Re-enter password"
-                styleClass="auth-password"
-                inputStyleClass="auth-input"
-                [inputStyle]="{ width: '100%' }"
-                autocomplete="new-password"
-              />
-              <small
-                class="field-error"
-                *ngIf="
+              <p-password id="reg-confirm" formControlName="ConfirmPassword" [toggleMask]="true" [feedback]="false"
+                placeholder="Re-enter password" styleClass="auth-password" inputStyleClass="auth-input"
+                [inputStyle]="{ width: '100%' }" autocomplete="new-password" />
+              <small class="field-error" *ngIf="
                   registerForm.get('ConfirmPassword')?.invalid &&
                   registerForm.get('ConfirmPassword')?.touched
-                "
-              >
+                ">
                 Please confirm your password
               </small>
-              <small
-                class="field-error"
-                *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched"
-              >
+              <small class="field-error" *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched">
                 Passwords do not match
               </small>
             </div>
           </div>
 
           <div class="auth-actions">
-            <p-button
-              label="Clear"
-              severity="secondary"
-              [outlined]="true"
-              type="button"
-              (onClick)="onCancel()"
-            />
-            <p-button
-              [label]="registerInProgress ? 'Creating account…' : 'Create account'"
-              [disabled]="registerInProgress"
-              type="button"
-              (onClick)="onRegister()"
-            />
+            <p-button label="Clear" severity="secondary" [outlined]="true" type="button" (onClick)="onCancel()" />
+            <p-button [label]="registerInProgress ? 'Creating account…' : 'Create account'"
+              [disabled]="registerInProgress" type="button" (onClick)="onRegister()" />
           </div>
         </ng-container>
       </div>
