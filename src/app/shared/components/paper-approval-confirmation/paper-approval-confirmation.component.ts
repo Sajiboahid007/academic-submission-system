@@ -12,6 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import { PaperApprovalConfirmation } from '../../services/paper-approval-confirmation';
 import { ToastService } from '../../services/toast.service';
+import { Users } from '../../../fds-config/entity-models/user';
 
 @Component({
   selector: 'app-paper-approval-confirmation',
@@ -26,25 +27,37 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   currentUserRole: string | null = null;
   statusOptions: any[] = [];
   isSaving: boolean = false;
+  users: Users[] = [];
+  editorial: Users[] = [];
+  userInfo: any = {};
 
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source: 'Journal' | 'Paper' } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
-  ) { }
+    private readonly userService: UserInfoService,
+  ) {
+
+  }
 
   ngOnInit(): void {
-    const userInfo = this.userInfoService.getUserInfo();
+    this.userInfo = this.userInfoService.getUserInfo();
+
+    if (this.data?.Source === 'Journal') {
+      this.getUsers();
+    }
 
     this.approveFrom = new FormGroup({
       Status: new FormControl(''),
       Remarks: new FormControl(''),
+      EditorialId: new FormControl(''),
     });
 
-    if (userInfo && (userInfo.role === AcademicSubmissionConfig.UserRole.Student || userInfo.role === AcademicSubmissionConfig.UserRole.Teacher)) {
+    if (this.userInfo && (this.userInfo.role === AcademicSubmissionConfig.UserRole.Student
+      || this.userInfo.role === AcademicSubmissionConfig.UserRole.Teacher)) {
       this.statusOptions = [
         {
           label: AcademicSubmissionConfig.ApprovalStatus.Draft,
@@ -55,6 +68,21 @@ export class PaperApprovalConfirmationComponent implements OnInit {
           value: AcademicSubmissionConfig.ApprovalStatus.Pending,
         },
       ];
+
+      if (this.data?.Source === 'Journal') {
+        this.statusOptions.push({
+          label: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
+          value: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
+        });
+        this.statusOptions.push({
+          label: AcademicSubmissionConfig.ApprovalStatus.Rejected,
+          value: AcademicSubmissionConfig.ApprovalStatus.Rejected,
+        });
+        this.statusOptions = this.statusOptions.filter(item => {
+          return item.label !== AcademicSubmissionConfig.ApprovalStatus.Pending
+        })
+      }
+
     } else {
       this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
         .filter((status) => status !== AcademicSubmissionConfig.ApprovalStatus.Draft)
@@ -65,6 +93,18 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     }
 
     this.cdr.detectChanges();
+  }
+
+  getUsers() {
+    this.userService.getUsers().subscribe((res) => {
+      this.users = res.data as Users[];
+
+      this.editorial = this.users.filter(
+        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Teacher ||
+          user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Admin ||
+          user?.Roles?.Name === AcademicSubmissionConfig.UserRole.SuperAdmin,
+      );
+    });
   }
 
   onCancel() {
