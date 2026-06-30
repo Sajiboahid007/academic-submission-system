@@ -23,6 +23,7 @@ import { PapersService } from '../../services/papers-service';
 import { DepartmentService } from '../../services/department-service';
 import { Papers } from '../../../fds-config/entity-models/papers';
 import { ToastService } from '../../../shared/services/toast.service';
+import { group } from 'console';
 
 @Component({
   selector: 'dashboard',
@@ -80,6 +81,18 @@ export class DashboardComponent implements OnInit {
           route: '/dashboard',
           icon: '🏠',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        },
+      ],
+    },
+    {
+      groupId: 'main',
+      label: 'Home',
+      icon: '🏠',
+      items: [
+        {
+          label: 'Home',
+          route: '/dashboard/home',
+          icon: '🏠',
         },
       ],
     },

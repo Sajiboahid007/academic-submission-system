@@ -26,6 +26,7 @@ import { PaperDetailComponent } from './components/papers-list/paper-detail/pape
 import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
 import { JournalInsertUpdateComponent } from './components/papers-list/journal-insert-update/journal-insert-update.component';
 import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { JournalListComponent } from './components/papers-list/journal-list/jour
     CreatePapersComponent,
     JournalInsertUpdateComponent,
     JournalListComponent,
+    HomePageComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -78,6 +80,7 @@ import { JournalListComponent } from './components/papers-list/journal-list/jour
     CreatePapersComponent,
     JournalInsertUpdateComponent,
     JournalListComponent,
+    HomePageComponent,
   ],
 })
 export class AdminModule { }
