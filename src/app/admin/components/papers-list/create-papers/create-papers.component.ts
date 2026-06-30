@@ -241,6 +241,10 @@ export class CreatePapersComponent {
         return 'warn';
       case 'Draft':
         return 'info';
+      case 'Review Requested':
+        return 'warn';
+      case 'Editorial Approved':
+        return 'success';
       default:
         return 'secondary';
     }

@@ -63,7 +63,7 @@ export class JournalListComponent implements OnInit {
         this.allData = res.data || [];
         this.journal = [...this.allData];
         this.totalRecords = this.journal.length;
-        
+
         // Extract unique years from journals
         this.years = Array.from(
           new Set(this.allData.map((j) => j.Year).filter((year): year is string => !!year)),
@@ -146,7 +146,7 @@ export class JournalListComponent implements OnInit {
     if (this.selectedSubCategory) {
       temp = temp.filter((j) => {
         const name = j.SubCategory?.Name || j.subCategory?.Name || j.SubCategory?.name || j.subCategory?.name ||
-                     j.Subcategory?.Name || j.subcategory?.Name || j.Subcategory?.name || j.subcategory?.name;
+          j.Subcategory?.Name || j.subcategory?.Name || j.Subcategory?.name || j.subcategory?.name;
         return name === this.selectedSubCategory;
       });
     }
@@ -177,7 +177,7 @@ export class JournalListComponent implements OnInit {
     this.first = event.first;
     this.rows = event.rows;
     this.updatePagedData();
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const element = document.querySelector('.journal-list-layout-wrapper');
     if (element) {
@@ -206,6 +206,10 @@ export class JournalListComponent implements OnInit {
         return 'warn';
       case 'Draft':
         return 'info';
+      case 'Review Requested':
+        return 'warn';
+      case 'Editorial Approved':
+        return 'success';
       default:
         return 'secondary';
     }
