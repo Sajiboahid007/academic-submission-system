@@ -84,18 +84,7 @@ export class DashboardComponent implements OnInit {
         },
       ],
     },
-    {
-      groupId: 'main',
-      label: 'Home',
-      icon: '🏠',
-      items: [
-        {
-          label: 'Home',
-          route: '/dashboard/home',
-          icon: '🏠',
-        },
-      ],
-    },
+
 
     // 2. Administration — collapsible, Admin / Super-Admin only
     {
@@ -167,6 +156,12 @@ export class DashboardComponent implements OnInit {
           icon: '📤',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
+        // {
+        //   label: 'Home',
+        //   route: '/dashboard/home',
+        //   icon: '🏠',
+        //   roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+        // },
         {
           label: 'Thesis / Research',
           route: '/dashboard/paper-detail',

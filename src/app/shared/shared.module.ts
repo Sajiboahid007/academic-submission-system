@@ -39,6 +39,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TabsModule } from 'primeng/tabs';
 import { PaginatorModule } from 'primeng/paginator';
 import { MenubarModule } from 'primeng/menubar';
+import { DrawerModule } from 'primeng/drawer';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FooterComponent } from './components/footer/footer.component';
 const materialNgModule = [
@@ -80,7 +81,8 @@ const primeNgModules = [
   TooltipModule,
   TabsModule,
   PaginatorModule,
-  MenubarModule
+  MenubarModule,
+  DrawerModule
 ];
 
 @NgModule({

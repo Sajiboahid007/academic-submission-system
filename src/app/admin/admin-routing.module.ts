@@ -15,6 +15,7 @@ import { PaperApprovalComponent } from './components/paper-approval/paper-approv
 import { CreatePapersComponent } from './components/papers-list/create-papers/create-papers.component';
 import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
 import { PaperDetailComponent } from './components/papers-list/paper-detail/paper-detail.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -22,6 +23,11 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent,
   },
+  {
+    path: 'home',
+    component: HomePageComponent
+  },
+
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -53,6 +59,10 @@ const routes: Routes = [
       {
         path: 'change-password',
         component: ChangePasswordComponent,
+      },
+      {
+        path: 'home',
+        component: HomePageComponent
       },
       {
         path: 'role',

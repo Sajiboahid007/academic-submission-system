@@ -29,4 +29,16 @@ export class HomeService {
     return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/get`);
   }
 
+  getCategory(): Observable<AppQuery<any[]>> {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/category/get`);
+  }
+
+  getSubCategory(): Observable<AppQuery<any[]>> {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/subcategory/get`);
+  }
+
+  getDepartment(): Observable<AppQuery<any[]>> {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/department/get`);
+  }
+
 }

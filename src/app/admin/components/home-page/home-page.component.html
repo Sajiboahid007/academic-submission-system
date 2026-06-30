@@ -1,1 +1,381 @@
-<p>home-page works!</p>
+<div class="home-layout" [class.sidebar-open]="sidebarVisible">
+
+  <!-- Left PrimeNG Drawer Sidebar -->
+  <p-drawer [(visible)]="sidebarVisible" [modal]="false" [showCloseIcon]="false" [dismissible]="false"
+    styleClass="portal-sidebar-drawer">
+    <div class="sidebar-container">
+
+      <!-- Brand -->
+      <div class="sidebar-brand" (click)="goDashboard()">
+        <i class="pi pi-graduation-cap brand-icon"></i>
+        <span class="brand-text">Papers Hub</span>
+      </div>
+
+      <!-- Scrollable Nav -->
+      <div class="sidebar-scrollable-content">
+
+        <!-- BROWSE -->
+        <div class="nav-section">
+          <h3 class="nav-section-title">Browse</h3>
+          <ul class="nav-menu">
+            <li class="nav-item" [class.active]="selectedBrowse === 'Journals'" (click)="selectBrowseType('Journals')">
+              <i class="pi pi-book nav-icon"></i>
+              <span class="nav-label">Journals</span>
+            </li>
+            <li class="nav-item" [class.active]="selectedBrowse === 'Papers'" (click)="selectBrowseType('Papers')">
+              <i class="pi pi-file nav-icon"></i>
+              <span class="nav-label">Academic Papers</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="nav-section">
+          <div class="nav-section-header">
+            <h3 class="nav-section-title">Categories</h3>
+          </div>
+          <ul class="nav-categories-list">
+            <li class="category-item-wrap" *ngFor="let cat of category" [class.expanded]="expandedCategories[cat.Id]">
+              <div class="category-header-row" [class.active]="selectedCategoryId === cat.Id"
+                (click)="selectCategory(cat.Id)">
+                <div class="category-info">
+                  <span class="category-name">{{ cat.Name }}</span>
+                  <span class="category-count">{{ getCategoryCount(cat.Id) }}</span>
+                </div>
+                <button class="expand-btn" *ngIf="getSubCategoriesForCategory(cat.Id).length > 0"
+                  (click)="toggleCategoryExpand(cat.Id, $event)" type="button">
+                  <i class="pi" [class.pi-chevron-down]="!expandedCategories[cat.Id]"
+                    [class.pi-chevron-up]="expandedCategories[cat.Id]"></i>
+                </button>
+              </div>
+              <ul class="subcategory-menu"
+                *ngIf="expandedCategories[cat.Id] && getSubCategoriesForCategory(cat.Id).length > 0">
+                <li class="subcategory-item" *ngFor="let sub of getSubCategoriesForCategory(cat.Id)"
+                  [class.active]="selectedSubCategoryId === sub.Id" (click)="selectSubCategory(sub.Id, $event)">
+                  <span class="subcategory-name">{{ sub.Name }}</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <!-- DEPARTMENTS -->
+        <div class="nav-section" *ngIf="department.length > 0">
+          <div class="nav-section-header">
+            <h3 class="nav-section-title">Departments</h3>
+          </div>
+          <ul class="nav-categories-list">
+            <li class="category-item-wrap" *ngFor="let dept of department">
+              <div class="category-header-row" [class.active]="selectedDepartmentId === dept.Id"
+                (click)="selectDepartment(dept.Id)">
+                <div class="category-info">
+                  <span class="category-name">{{ dept.Name }}</span>
+                  <span class="category-count">{{ getDepartmentCount(dept.Id) }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <span class="footer-paper-count">
+          <i class="pi pi-file"></i> {{ allCombinedItems.length }} Total Items
+        </span>
+      </div>
+
+    </div>
+  </p-drawer>
+
+  <!-- Sidebar Toggle Button -->
+  <button class="sidebar-toggle-btn" (click)="toggleSidebarCollapse()" aria-label="Toggle sidebar" type="button">
+    <i class="pi pi-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <main class="main-portal-content">
+
+    <!-- Header -->
+    <header class="portal-header">
+      <div class="header-title-container">
+        <h1 class="header-main-title">
+          Explore Archive <span class="title-subtext">. journals &amp; academic papers</span>
+        </h1>
+      </div>
+
+      <div class="header-actions">
+        <!-- Logged in user -->
+        <div class="user-profile-badge" *ngIf="isLoggedIn">
+          <p-avatar [label]="currentUser?.Name?.charAt(0)" shape="circle" size="normal"
+            styleClass="user-avatar-initials"></p-avatar>
+          <div class="user-meta">
+            <span class="user-name">{{ currentUser?.Name }}</span>
+            <span class="user-role">{{ currentUser?.Role }}</span>
+          </div>
+        </div>
+        <!-- Guest -->
+        <div class="user-profile-badge guest-badge" *ngIf="!isLoggedIn">
+          <i class="pi pi-user guest-icon"></i>
+          <span class="guest-text">Guest</span>
+        </div>
+
+        <button pButton type="button" label="Submit" icon="pi pi-upload" class="p-button-rounded submit-btn"
+          (click)="submitPaper()"></button>
+        <button pButton type="button" label="Log In" icon="pi pi-sign-in"
+          class="p-button-rounded login-btn p-button-outlined" *ngIf="!isLoggedIn" (click)="login()"></button>
+        <button pButton type="button" label="Dashboard" icon="pi pi-home"
+          class="p-button-rounded dashboard-btn p-button-outlined" *ngIf="isLoggedIn" (click)="goDashboard()"></button>
+        <button pButton type="button" label="Log Out" icon="pi pi-power-off"
+          class="p-button-rounded logout-btn p-button-outlined p-button-danger" *ngIf="isLoggedIn"
+          (click)="logout()"></button>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="portal-search-section">
+      <div class="search-box-container">
+        <div class="search-input-wrapper">
+          <i class="pi pi-search search-icon-left"></i>
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()"
+            placeholder="Search by title, abstract, keyword..." class="search-bar-input" />
+          <button class="search-submit-btn" (click)="applyFilters()">
+            <span>Search</span>
+            <i class="pi pi-arrow-right search-btn-arrow"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Journal-only sub-filters -->
+      <div class="journal-subfilters-row animate-fade-in" *ngIf="selectedBrowse === 'Journals'">
+        <div class="subfilter-field">
+          <i class="pi pi-user subfilter-icon"></i>
+          <input type="text" [(ngModel)]="journalAuthor" (input)="applyFilters()" placeholder="Filter by Author..."
+            class="subfilter-input" />
+        </div>
+        <div class="subfilter-field">
+          <i class="pi pi-tags subfilter-icon"></i>
+          <input type="text" [(ngModel)]="journalKeyword" (input)="applyFilters()" placeholder="Filter by Keyword..."
+            class="subfilter-input" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Section -->
+    <section class="portal-all-papers-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <ng-container *ngIf="selectedBrowse === 'Journals'">
+            <i class="pi pi-book section-title-icon"></i> Journals
+          </ng-container>
+          <ng-container *ngIf="selectedBrowse === 'Papers'">
+            <i class="pi pi-file section-title-icon"></i> Academic Papers
+          </ng-container>
+        </h2>
+        <span class="showing-records-count" *ngIf="filteredItems.length > 0">
+          Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > filteredItems.length ?
+          filteredItems.length : currentPage * pageSize }} of {{ filteredItems.length }}
+        </span>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-card" *ngIf="pagedItems.length === 0">
+        <i class="pi pi-folder-open empty-icon"></i>
+        <h3 class="empty-title">No Items Found</h3>
+        <p class="empty-desc">We couldn't find any items matching your criteria.</p>
+      </div>
+
+      <!-- Cards List for Journals -->
+      <div class="papers-cards-container" *ngIf="selectedBrowse === 'Journals' && pagedData.length > 0">
+        <article class="paper-card" *ngFor="let journalData of pagedData">
+
+          <!-- PDF Preview Side Column (Left Side) -->
+          <div class="paper-card-pdf-preview" [class.no-file]="!journalData?.FileUrl"
+            (click)="journalData?.FileUrl && viewJournal(journalData.Id)"
+            [title]="journalData?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+
+            <pdf-viewer *ngIf="journalData?.FileUrl; else pdfPlaceholder" [src]="journalData?.FileUrl" [page]="1"
+              [show-all]="false" [fit-to-page]="true">
+            </pdf-viewer>
+
+            <ng-template #pdfPlaceholder>
+              <div class="pdf-placeholder-icon">
+                <i class="pi pi-file-pdf"></i>
+                <span class="no-file-text">No File</span>
+              </div>
+            </ng-template>
+
+            <div class="preview-label">
+              <i class="pi pi-eye" *ngIf="!journalData?.FileUrl"></i>
+              <i class="pi pi-search-plus" *ngIf="journalData?.FileUrl"></i>
+              <span>{{ journalData?.FileUrl ? 'Preview' : 'No PDF' }}</span>
+            </div>
+          </div>
+
+          <!-- Main Content Column (Right Side) -->
+          <div class="paper-card-main-content">
+            <!-- Header row (Title & Status) -->
+            <div class="paper-card-header">
+              <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
+              <p-badge *ngIf="journalData.PaperApprovals && journalData.PaperApprovals[0]?.Status"
+                [value]="journalData?.PaperApprovals[0]?.Status"
+                [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
+              </p-badge>
+            </div>
+
+            <!-- Abstract Description -->
+            <p class="paper-card-abstract">
+              {{ journalData?.Abstract || 'No abstract/description provided.' }}
+            </p>
+
+            <!-- Keywords Section -->
+            <div class="paper-card-keywords" *ngIf="journalData?.Keywords">
+              <strong>Keywords:</strong> {{ journalData?.Keywords }}
+              <div *ngIf="journalData?.Volume" style="display: inline-block; margin-left: 0.75rem;">
+                <strong>Volume:</strong> {{ journalData?.Volume }}
+              </div>
+              <div *ngIf="journalData?.IssueNumber" style="display: inline-block; margin-left: 0.75rem;">
+                <strong>Issue:</strong> {{ journalData?.IssueNumber }}
+              </div>
+            </div>
+
+            <!-- Metadata items with Icons -->
+            <div class="paper-card-metadata">
+              <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
+                <i class="pi pi-user"></i>
+                <span> {{ teacher?.Users?.Name }}</span>
+              </div>
+
+              <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
+                <i class="pi pi-calendar"></i>
+                <span>{{ journalData?.CreatedDate | date: 'M/d/yyyy' }}</span>
+              </div>
+
+              <div class="meta-item tag-meta" *ngIf="journalData?.Category?.Name">
+                <i class="pi pi-tag"></i>
+                <span>{{ journalData?.Category?.Name }}</span>
+              </div>
+
+              <div class="meta-item subcategory-meta" *ngIf="journalData?.SubCategory?.Name">
+                <i class="pi pi-th-large"></i>
+                <span>{{ journalData?.SubCategory?.Name }}</span>
+              </div>
+
+              <div class="meta-item year-meta" *ngIf="journalData?.Year">
+                <i class="pi pi-calendar"></i>
+                <span>Publication Year: {{ journalData?.Year }}</span>
+              </div>
+            </div>
+
+            <!-- Action Control Buttons -->
+            <div class="paper-card-actions">
+              <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
+                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!journalData?.FileUrl"
+                (click)="viewJournal(journalData.Id)"
+                [title]="journalData?.FileUrl ? 'View journal' : 'No file available'"></button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Cards List for Academic Papers -->
+      <div class="papers-cards-container" *ngIf="selectedBrowse === 'Papers' && pagedPapers.length > 0">
+        <article class="paper-card" *ngFor="let paper of pagedPapers">
+
+          <!-- Left Preview Side Column (PDF Preview) -->
+          <div class="paper-card-pdf-preview" [class.no-file]="!paper?.FileUrl"
+            (click)="paper?.FileUrl && viewPaper(paper.Id)"
+            [title]="paper?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+
+            <pdf-viewer *ngIf="paper?.FileUrl; else pdfPlaceholder" [src]="paper?.FileUrl" [page]="1" [show-all]="false"
+              [fit-to-page]="true">
+            </pdf-viewer>
+
+            <ng-template #pdfPlaceholder>
+              <div class="pdf-placeholder-icon">
+                <i class="pi pi-file-pdf"></i>
+                <span class="no-file-text">No File</span>
+              </div>
+            </ng-template>
+
+            <div class="preview-label">
+              <i class="pi pi-eye" *ngIf="!paper?.FileUrl"></i>
+              <i class="pi pi-search-plus" *ngIf="paper?.FileUrl"></i>
+              <span>{{ paper?.FileUrl ? 'Preview' : 'No PDF' }}</span>
+            </div>
+          </div>
+
+          <!-- Right Content Column (Title, Abstract, Badge, Metadata) -->
+          <div class="paper-card-main-content">
+            <!-- Header row (Title & Status) -->
+            <div class="paper-card-header">
+              <h3 class="paper-card-title">{{ paper?.Title }}</h3>
+              <p-badge *ngIf="paper.PaperApprovals && paper.PaperApprovals[0]?.Status"
+                [value]="paper.PaperApprovals[0]?.Status" [severity]="getSeverity(paper.PaperApprovals[0]?.Status)">
+              </p-badge>
+            </div>
+
+            <!-- Abstract Description -->
+            <p class="paper-card-abstract">
+              {{ paper?.Abstract || 'No abstract/description provided.' }}
+            </p>
+
+            <!-- Metadata items with Icons -->
+            <div class="paper-card-metadata">
+              <div class="meta-item tag-meta" *ngIf="paper?.Category?.Name">
+                <i class="pi pi-tag"></i>
+                <span>{{ paper?.Category?.Name }}</span>
+              </div>
+
+              <div class="meta-item subcategory-meta" *ngIf="paper?.SubCategory?.Name">
+                <i class="pi pi-th-large"></i>
+                <span>{{ paper?.SubCategory?.Name }}</span>
+              </div>
+
+              <div class="meta-item dept-meta" *ngIf="paper?.Department?.Name">
+                <i class="pi pi-building"></i>
+                <span>{{ paper?.Department?.Name }}</span>
+              </div>
+
+              <div class="meta-item batch-meta" *ngIf="paper?.Batches?.Name">
+                <i class="pi pi-users"></i>
+                <span>Batch: {{ paper?.Batches?.Name }}</span>
+              </div>
+
+              <div class="meta-item year-meta" *ngIf="paper?.Year">
+                <i class="pi pi-calendar"></i>
+                <span>Publication Year: {{ paper?.Year }}</span>
+              </div>
+            </div>
+
+            <!-- Action Control Buttons -->
+            <div class="paper-card-actions">
+              <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
+                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!paper?.FileUrl"
+                (click)="viewPaper(paper.Id)" [title]="paper?.FileUrl ? 'View paper' : 'No file available'"></button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Pagination -->
+      <div class="portal-pagination-container" *ngIf="totalPages > 1">
+        <button class="paginator-btn nav-btn" [disabled]="currentPage === 1" (click)="prevPage()">
+          <i class="pi pi-angle-left"></i> Prev
+        </button>
+        <button class="paginator-btn num-btn" *ngFor="let p of getPageNumbers()" [class.active]="currentPage === p"
+          (click)="setPage(p)">
+          {{ p }}
+        </button>
+        <button class="paginator-btn nav-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+          Next <i class="pi pi-angle-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+
+  </main>
+</div>

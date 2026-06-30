@@ -65,6 +65,9 @@
             <p-button label="Clear" severity="secondary" [outlined]="true" type="button" (onClick)="onCancel()" />
             <p-button [label]="loginInProgress ? 'Signing in…' : 'Sign in'" [disabled]="loginInProgress" type="button"
               (onClick)="onLogin()" />
+
+            <p-button label="Guest Mode" severity="secondary" [outlined]="true" type="button"
+              (onClick)="onGuestMode()" />
           </div>
         </ng-container>
 

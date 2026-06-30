@@ -59,6 +59,10 @@ export class LoginComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  onGuestMode() {
+    this.router.navigate(['/home']);
+  }
+
   onLogin(): void {
     this.loginError = null;
     this.loginBannerSuccess = null;
