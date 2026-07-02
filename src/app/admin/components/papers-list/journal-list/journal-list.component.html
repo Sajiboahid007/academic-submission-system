@@ -24,8 +24,14 @@
                 </p-select>
             </div>
             <div class="filter-item">
-                <p-select [options]="uniqueKeywords" [(ngModel)]="selectedKeyword"
-                    placeholder="Keyword" [showClear]="true" (onChange)="applyFilters()">
+                <p-select [options]="uniqueKeywords" [(ngModel)]="selectedKeyword" placeholder="Keyword"
+                    [showClear]="true" (onChange)="applyFilters()">
+                </p-select>
+            </div>
+
+            <div class="filter-item">
+                <p-select [options]="authorsName" [(ngModel)]="selectedAuthor" placeholder="Author" [showClear]="true"
+                    (onChange)="applyFilters()">
                 </p-select>
             </div>
             <div class="filter-item">

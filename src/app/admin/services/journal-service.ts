@@ -5,6 +5,7 @@ import { AppQuery } from '../../shared/app-query';
 import { Observable } from 'rxjs';
 import { Journals } from '../../fds-config/entity-models/journals';
 import { AcademicSubmissionConfig } from '../../fds-config/constant/academic-submission-config';
+import { Users } from '../../fds-config/entity-models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,10 @@ export class JournalService {
   }
   getKeyword(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/keyword/get`);
+  }
+
+  getAuthorsName(): Observable<AppQuery<Users[]>> {
+    return this.http.get<AppQuery<Users[]>>(`${this.baseUrl}/api/author/get`);
   }
   getJournalByUserId(id: number): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);

@@ -24,12 +24,14 @@ export class JournalListComponent implements OnInit {
   years: string[] = [];
   searchValue = '';
   uniqueKeywords: any[] = [];
+  authorsName: any[] = []
 
   // Filter selections (Name-based)
   selectedCategory: string | null = null;
   selectedSubCategory: string | null = null;
   selectedKeyword: string | null = null;
   selectedYear: string | null = null;
+  selectedAuthor: string | null = null;
 
   first: number = 0;
   rows: number = 10;
@@ -52,6 +54,7 @@ export class JournalListComponent implements OnInit {
     this.getCategory();
     this.getSubCategory();
     this.getKeyword();
+    this.getAuthorsName();
   }
 
   getJournal() {
@@ -81,6 +84,12 @@ export class JournalListComponent implements OnInit {
     });
   }
 
+  getAuthorsName() {
+    this.journalService.getAuthorsName().subscribe((res) => {
+      this.authorsName = res.data || [];
+      this.cdr.markForCheck();
+    })
+  }
   getKeyword() {
     this.journalService.getKeyword().subscribe((res) => {
       this.uniqueKeywords = res.data || [];
@@ -154,6 +163,14 @@ export class JournalListComponent implements OnInit {
       temp = temp.filter((j) => {
         const kStr = j.Keywords || j.keywords || '';
         return kStr.toLowerCase().includes(this.selectedKeyword!.toLowerCase());
+      });
+    }
+    if (this.selectedAuthor) {
+      temp = temp.filter((j) => {
+        const groups: any[] = j.PaperGroups || [];
+        return groups.some(
+          (g) => g?.Users?.Name?.toLowerCase() === this.selectedAuthor!.toLowerCase()
+        );
       });
     }
     if (this.selectedYear) {
