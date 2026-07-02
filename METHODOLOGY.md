@@ -251,6 +251,125 @@ stateDiagram-v2
     *   **Teacher/Supervisor:** Evaluates pending submissions, adds comments (`Remarks`), and updates the status to `Review Requested` or `Editorial Approved`.
     *   **Admin/Super-Admin:** Performs final checks on editorial-approved submissions and grants final publication authorization (`Approved` or `Rejected`).
 
+### 4.4 End-to-End System Process Workflow
+
+The following comprehensive process diagram traces the entire user journey: starting from authentication, proceeding through role-based routing (Student, Teacher, Admin/Super-Admin), and listing every core feature and sub-action accessible by each role.
+
+```mermaid
+flowchart TD
+    %% Styling definitions
+    classDef auth fill:#efe5ff,stroke:#7c4dff,stroke-width:2px;
+    classDef student fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef teacher fill:#fff8e1,stroke:#f57f17,stroke-width:2px;
+    classDef admin fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    classDef common fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+
+    subgraph Authentication [Authentication & Initialization]
+        Start([Start]) --> Login[User Login Screen]:::auth
+        Login --> Verify{Credentials Valid?}:::auth
+        Verify -- No --> ShowError[Show Error & Retry]:::auth
+        ShowError --> Login
+
+        Verify -- Yes --> GenerateTokens[Generate Access & Refresh Tokens]:::auth
+        GenerateTokens --> FetchRole[Fetch User Role]:::auth
+        FetchRole --> Redirect[Redirect to Dashboard]:::auth
+    end
+
+    Redirect --> RouteRole{User Role?}
+
+    subgraph StudentFlow [Student Portal Features]
+        StudentDash[Student Dashboard]:::student
+        StudentDash --> StudentMenu{Select Feature}:::student
+        
+        StudentMenu --> S_Upload[Upload Article]:::student
+        S_Upload --> S_Cloudinary[Upload PDF to Cloudinary]:::student
+        S_Cloudinary --> S_Form[Fill Metadata, Authors & Supervisors]:::student
+        S_Form --> S_Submit[Submit to DB - Status: Pending]:::student
+        S_Submit --> StudentDash
+        
+        StudentMenu --> S_Thesis[Thesis / Research]:::student
+        S_Thesis --> S_Track[Track Submission Status & Comments]:::student
+        S_Track --> S_Details[View Remarks & PDF Details]:::student
+        S_Details --> S_EditCheck{Is Status Draft/ReviewRequested?}:::student
+        S_EditCheck -- Yes --> S_Edit[Edit Submission & Resubmit]:::student
+        S_Edit --> S_Submit
+        S_EditCheck -- No --> StudentDash
+        
+        StudentMenu --> S_Pub[Publication List]:::student
+        S_Pub --> S_Browse[Browse & Download Approved Journals]:::student
+        S_Browse --> StudentDash
+        
+        StudentMenu --> S_Profile[Profile / Change Password]:::student
+        S_Profile --> S_Update[Update Personal Info & Password]:::student
+        S_Update --> StudentDash
+    end
+
+    subgraph TeacherFlow [Teacher / Supervisor Portal Features]
+        TeacherDash[Teacher Dashboard]:::teacher
+        TeacherDash --> TeacherMenu{Select Feature}:::teacher
+        
+        TeacherMenu --> T_Approval[Papers Approval]:::teacher
+        T_Approval --> T_List[List Assigned Paper Groups]:::teacher
+        T_List --> T_Review[Review Manuscript & Add Remarks]:::teacher
+        T_Review --> T_Action{Review Decision?}:::teacher
+        T_Action -- Request Adjustments --> T_ReqAdj[Status: Review Requested]:::teacher
+        T_Action -- Approve Content --> T_ApprContent[Status: Editorial Approved]:::teacher
+        T_Action -- Reject --> T_Reject[Status: Rejected]:::teacher
+        T_ReqAdj --> T_Notify[Send System Notification]:::teacher
+        T_ApprContent --> T_Notify
+        T_Reject --> T_Notify
+        T_Notify --> TeacherDash
+        
+        TeacherMenu --> T_Common[Common Tools]:::teacher
+        T_Common --> S_Upload
+        T_Common --> S_Thesis
+        T_Common --> S_Pub
+        T_Common --> S_Profile
+    end
+
+    subgraph AdminFlow [Admin & Super-Admin Portal Features]
+        AdminDash[Admin Dashboard]:::admin
+        AdminDash --> AdminMenu{Select Feature}:::admin
+        
+        AdminMenu --> A_Approval[Papers Approval]:::admin
+        A_Approval --> A_List[List Editorial Approved Papers]:::admin
+        A_List --> A_Final[Final Review & Verification]:::admin
+        A_Final --> A_Action{Final Decision?}:::admin
+        A_Action -- Publish --> A_Pub[Status: Approved - Move to Journal]:::admin
+        A_Action -- Send Back --> A_Rev[Status: Review Requested]:::admin
+        A_Action -- Reject --> A_Rej[Status: Rejected]:::admin
+        A_Pub --> A_Notify[Send Notification]:::admin
+        A_Rev --> A_Notify
+        A_Rej --> A_Notify
+        A_Notify --> AdminDash
+        
+        AdminMenu --> A_Manage[Administration Management]:::admin
+        A_Manage --> A_Users[Users: Create/Update/Delete Users]:::admin
+        A_Manage --> A_Roles[Roles: Access Roles List]:::admin
+        A_Manage --> A_Depts[Departments: Manage Departments]:::admin
+        A_Manage --> A_Batches[Batches: Manage Batches]:::admin
+        A_Manage --> A_Cats[Categories & Subcategories]:::admin
+        A_Manage --> A_Papers[Papers: Global Submissions List]:::admin
+        
+        A_Users & A_Roles & A_Depts & A_Batches & A_Cats & A_Papers --> AdminDash
+        
+        AdminMenu --> A_Common[Common Tools]:::admin
+        A_Common --> S_Upload
+        A_Common --> S_Thesis
+        A_Common --> S_Pub
+        A_Common --> S_Profile
+    end
+
+    RouteRole -- Student --> StudentDash
+    RouteRole -- Teacher --> TeacherDash
+    RouteRole -- Admin / Super-Admin --> AdminDash
+```
+
+1. **Authentication & Initialization:** Captures user login, token-based session management, and redirection based on role mappings.
+2. **Student Pathway:** Enables paper draft creation, Cloudinary upload of manuscripts, assignment of co-authors/supervisors, tracking of approval histories, and updating submissions.
+3. **Teacher Pathway:** Allows supervisors to review papers in their group, leave evaluation remarks, and transition approval states.
+4. **Admin/Super-Admin Pathway:** Provides global management of system catalogs (Users, Roles, Departments, Batches, Categories, Subcategories) and the final paper publication approval workflow.
+
 ---
 
 ## 5. Software Development Life Cycle (SDLC) Methodology
