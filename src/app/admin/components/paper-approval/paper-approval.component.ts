@@ -46,7 +46,7 @@ export class PaperApprovalComponent implements OnInit {
     this.userTokenInfo = this.userInfoService.getUserInfo();
 
     const userRole = this.userTokenInfo?.role;
-    const { Student: studentRole, Teacher: teacherRole } = AcademicSubmissionConfig.UserRole;
+    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin } = AcademicSubmissionConfig.UserRole;
 
     if (userRole === studentRole || userRole === teacherRole) {
       this.userPapers(Number(this.userTokenInfo?.userId));
@@ -270,6 +270,7 @@ export class PaperApprovalComponent implements OnInit {
   }
 
   onApproveJournal(journalId: number) {
+    const role = AcademicSubmissionConfig.UserRole;
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
@@ -278,7 +279,12 @@ export class PaperApprovalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.getJournalByUserId(this.userTokenInfo?.userId);
+        if (this.userTokenInfo?.role === role.SuperAdmin) {
+          this.getJounals();
+        } else {
+          this.getJournalByUserId(this.userTokenInfo?.userId);
+        }
+
       }
     });
   }
