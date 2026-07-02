@@ -424,5 +424,5 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  goDashboard() { this.router.navigate(['/dashboard']); }
+
 }

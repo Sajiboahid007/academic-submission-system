@@ -6,7 +6,7 @@
     <div class="sidebar-container">
 
       <!-- Brand -->
-      <div class="sidebar-brand" (click)="goDashboard()">
+      <div class="sidebar-brand">
         <i class="pi pi-graduation-cap brand-icon"></i>
         <span class="brand-text">Papers Hub</span>
       </div>
@@ -106,17 +106,9 @@
       </div>
 
       <div class="header-actions">
-        <!-- Logged in user -->
-        <div class="user-profile-badge" *ngIf="isLoggedIn">
-          <p-avatar [label]="currentUser?.Name?.charAt(0)" shape="circle" size="normal"
-            styleClass="user-avatar-initials"></p-avatar>
-          <div class="user-meta">
-            <span class="user-name">{{ currentUser?.Name }}</span>
-            <span class="user-role">{{ currentUser?.Role }}</span>
-          </div>
-        </div>
+
         <!-- Guest -->
-        <div class="user-profile-badge guest-badge" *ngIf="!isLoggedIn">
+        <div class="user-profile-badge guest-badge">
           <i class="pi pi-user guest-icon"></i>
           <span class="guest-text">Guest</span>
         </div>
@@ -124,12 +116,11 @@
         <button pButton type="button" label="Submit" icon="pi pi-upload" class="p-button-rounded submit-btn"
           (click)="submitPaper()"></button>
         <button pButton type="button" label="Log In" icon="pi pi-sign-in"
-          class="p-button-rounded login-btn p-button-outlined" *ngIf="!isLoggedIn" (click)="login()"></button>
-        <button pButton type="button" label="Dashboard" icon="pi pi-home"
-          class="p-button-rounded dashboard-btn p-button-outlined" *ngIf="isLoggedIn" (click)="goDashboard()"></button>
-        <button pButton type="button" label="Log Out" icon="pi pi-power-off"
+          class="p-button-rounded login-btn p-button-outlined" (click)="login()"></button>
+
+        <!-- <button pButton type="button" label="Log Out" icon="pi pi-power-off"
           class="p-button-rounded logout-btn p-button-outlined p-button-danger" *ngIf="isLoggedIn"
-          (click)="logout()"></button>
+          (click)="logout()"></button> -->
       </div>
     </header>
 
