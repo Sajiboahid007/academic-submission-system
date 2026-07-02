@@ -26,6 +26,20 @@
                 </p-message>
             </div>
 
+            <!-- Journal Name -->
+            <div fxLayout="column" fxLayoutGap="8px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="Name" formControlName="Name" autocomplete="off" class="full-width" />
+                    <label for="Name" class="field-label">
+                        Journal Name<span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+
+                <p-message severity="error" size="small" variant="simple" text="Journal Name is required."
+                    *ngIf="journalForm.get('Name')?.invalid && journalForm.get('Name')?.touched">
+                </p-message>
+            </div>
+
             <!-- Abstract -->
             <div fxLayout="column" fxLayoutGap="8px">
                 <p-floatlabel variant="on" class="float-label-wrapper">
@@ -70,19 +84,7 @@
                 </div>
             </div>
 
-            <!-- Journal Name -->
-            <div fxLayout="column" fxLayoutGap="8px">
-                <p-floatlabel variant="on" class="float-label-wrapper">
-                    <input pInputText id="Name" formControlName="Name" autocomplete="off" class="full-width" />
-                    <label for="Name" class="field-label">
-                        Journal Name<span class="required-asterisk">*</span>
-                    </label>
-                </p-floatlabel>
 
-                <p-message severity="error" size="small" variant="simple" text="Journal Name is required."
-                    *ngIf="journalForm.get('Name')?.invalid && journalForm.get('Name')?.touched">
-                </p-message>
-            </div>
 
             <div fxLayout="row" fxLayoutGap="24px">
                 <!-- Authors-->
@@ -202,7 +204,7 @@
         <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
             [disabled]="isLoading" (click)="onCancel()"></button>
 
-        <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
-            (click)="save()"></button>
+        <button pButton type="button" [label]="isSaving? 'Saving Details...' : 'Save Details'" icon="pi pi-check"
+            class="p-button-success btn-save" (click)="save()"></button>
     </div>
 </div>

@@ -32,6 +32,7 @@ export class JournalInsertUpdateComponent implements OnInit {
 
   isLoading: boolean = false;
   isEditMode = false;
+  isSaving: boolean = false;
   journalId!: number;
 
   constructor(private readonly journalService: JournalService,
@@ -100,6 +101,7 @@ export class JournalInsertUpdateComponent implements OnInit {
       this.journalForm.markAllAsTouched();
       return;
     }
+    this.isSaving = true;
     if (this.isEditMode) {
       this.updateJournal();
     } else {
@@ -113,16 +115,19 @@ export class JournalInsertUpdateComponent implements OnInit {
     if (file) {
       this.fileService.uploadFile(file).subscribe({
         next: (res) => {
+          this.isSaving = false;
           const journal = this.journalForm.getRawValue() as Journals;
           journal.FileUrl = res?.data?.url;
           this.savePaper(journal);
         },
         error: (err) => {
           console.log(err);
+          this.isSaving = false;
           this.toastService.error('Error creating journal');
         },
       });
     } else {
+      this.isSaving = false;
       const journal = this.journalForm.getRawValue() as Journals;
       this.savePaper(journal);
     }
@@ -131,10 +136,12 @@ export class JournalInsertUpdateComponent implements OnInit {
   private savePaper(journal: Journals) {
     this.journalService.createJournal(journal).subscribe({
       next: (res) => {
+        this.isSaving = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
         console.log(err);
+        this.isSaving = false;
         this.toastService.error('Error creating journal');
       },
     });
@@ -145,10 +152,12 @@ export class JournalInsertUpdateComponent implements OnInit {
     journalData.Id = this.journalId
     this.journalService.updateJournal(journalData).subscribe({
       next: (res) => {
+        this.isSaving = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
         console.log(err);
+        this.isSaving = false;
         this.toastService.error('Error updating journal');
       },
     });
