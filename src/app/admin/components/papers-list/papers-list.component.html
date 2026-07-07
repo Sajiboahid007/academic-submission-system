@@ -3,10 +3,11 @@
   <p-tablist>
     <p-tab value="0">Papers</p-tab>
     <p-tab value="1">Journals</p-tab>
+
   </p-tablist>
   <p-tabpanels>
     <p-tabpanel value="0">
-      <div class="card">
+      <div class="card" id="printSection">
         <p-table #dt2 [value]="papers" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
           [paginator]="true" [globalFilterFields]="[
       'Title',
@@ -108,6 +109,7 @@
           </ng-template>
 
           <!-- Header -->
+
           <ng-template #header style="margin-top: 10px">
             <!-- Filter Row -->
 
@@ -122,8 +124,6 @@
               <th style="width: 10%">Action</th>
             </tr>
           </ng-template>
-
-          <!-- Body -->
           <ng-template #body let-paper>
             <tr>
               <td>
@@ -163,15 +163,11 @@
               <td>
                 <p-button [outlined]="true" icon="pi pi-eye" label="View" size="small"
                   styleClass="p-button-sm p-button-outlined" (click)="viewPaper(paper.Id)" />
-
-                <!-- <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit" size="small"
-            severity="danger" styleClass="p-button-sm p-button-outlined" (click)="editPaper(paper.Id)" />
-
-          <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton size="small" icon="pi pi-verified"
-            class="p-button-sm" (click)="onApprove(paper.Id)"></button> -->
               </td>
             </tr>
           </ng-template>
+
+
 
           <!-- Empty Message -->
           <ng-template #emptymessage>
@@ -266,8 +262,8 @@
           <ng-template #header style="margin-top: 10px">
             <tr style="margin-top: 50px">
 
-              <th style="width: 25%">Title</th>
-              <th style="width: 8%">Status</th>
+              <th style="width: 20%">Title</th>
+              <th style="width: 12%">Status</th>
               <th style="width: 10%">Category</th>
               <th style="width: 18%">Name</th>
               <th style="width: 10%">Keywords</th>

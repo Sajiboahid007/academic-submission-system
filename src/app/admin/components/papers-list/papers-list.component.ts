@@ -68,6 +68,17 @@ export class PapersListComponent implements OnInit {
     });
   }
 
+  print() {
+    const printSection = document.getElementById('printSection');
+    if (printSection) {
+      const originalContents = document.body.innerHTML;
+      const printContents = printSection.innerHTML;
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+    }
+  }
+
   getJournal() {
     this.journalService.getJournals().subscribe((res: AppQuery<Journals[]>) => {
       this.journal = res.data;
@@ -200,6 +211,10 @@ export class PapersListComponent implements OnInit {
         return 'warn';
       case 'Draft':
         return 'info';
+      case 'Review Requested':
+        return 'warn';
+      case 'Editorial Approved':
+        return 'success';
       default:
         return 'secondary';
     }
