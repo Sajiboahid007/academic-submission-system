@@ -185,7 +185,12 @@ export class PaperApprovalComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
           if (result) {
             this.toastService.success('Paper updated successfully!');
-            this.getApprovalList();
+            // this.getApprovalList();
+            if (this.userTokenInfo.role == 'Student' || this.userTokenInfo.role == 'Teacher') {
+              this.userPapers(this.userTokenInfo?.userId);
+            } else {
+              this.getApprovalList();
+            }
           }
         });
       },
@@ -212,7 +217,12 @@ export class PaperApprovalComponent implements OnInit {
         dialogRef.afterClosed().subscribe((res: any) => {
           if (res) {
             this.toastService.success('Journal updated successfully!');
-            this.getJounals();
+            // this.getJounals();
+            if (this.userTokenInfo.role == 'Teacher') {
+              this.getJournalByUserId(this.userTokenInfo?.userId);
+            } else {
+              this.getJounals();
+            }
           }
         })
       },
