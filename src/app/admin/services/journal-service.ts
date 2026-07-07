@@ -61,7 +61,7 @@ export class JournalService {
       SubcategoryId: [journals?.SubcategoryId ?? ''],
       UserId: [journals?.UserId ?? null],
       Name: [journals?.Name ?? '', Validators.required],
-      // Authors: [journals?.Authors ?? ''],
+      Authors: [journals?.Authors ?? ''],
       Affiliation: [journals?.Affiliation ?? ''],
       Keywords: [journals?.Keywords ?? ''],
       AuthorDeclaration: [journals?.AuthorDeclaration ?? ''],
