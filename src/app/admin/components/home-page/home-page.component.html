@@ -124,6 +124,7 @@
       </div>
     </header>
 
+
     <!-- Search Section -->
     <section class="portal-search-section">
       <div class="search-box-container">
@@ -151,6 +152,11 @@
             class="subfilter-input" />
         </div>
       </div>
+    </section>
+
+    <!-- Recent Showcase Section -->
+    <section class="portal-recent-section animate-fade-in" *ngIf="currentPage === 1">
+      <app-recent-file-card></app-recent-file-card>
     </section>
 
     <!-- Grid Section -->
@@ -272,6 +278,7 @@
 
       <!-- Cards List for Academic Papers -->
       <div class="papers-cards-container" *ngIf="selectedBrowse === 'Papers' && pagedPapers.length > 0">
+
         <article class="paper-card" *ngFor="let paper of pagedPapers">
 
           <!-- Left Preview Side Column (PDF Preview) -->

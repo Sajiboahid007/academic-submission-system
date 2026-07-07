@@ -1,0 +1,160 @@
+<div class="recent-cards-container">
+
+    <!-- Left Column: Recent Academic Papers -->
+    <div class="carousel-column" *ngIf="paper.length > 0">
+        <h3 class="column-title">
+            <i class="pi pi-file"></i> Recent Academic Papers
+        </h3>
+        <div class="paper-carousel-container">
+            <div class="card-wrapper">
+                <div class="card-track" [style.transform]="'translateX(' + (-currentPaperIndex * 100) + '%)'">
+                    <div class="paper-card-main-content" *ngFor="let p of paper; let i = index">
+                        <div class="paper-card-header">
+                            <h3 class="paper-card-title">{{ p.Title }}</h3>
+                        </div>
+
+                        <p class="paper-card-abstract">
+                            {{ p.Abstract || 'No abstract/description provided.' }}
+                        </p>
+
+                        <div class="paper-card-metadata">
+                            <div class="meta-item tag-meta" *ngIf="p?.Category?.Name">
+                                <i class="pi pi-tag"></i>
+                                <span>{{ p?.Category?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item subcategory-meta" *ngIf="p?.SubCategory?.Name">
+                                <i class="pi pi-th-large"></i>
+                                <span>{{ p?.SubCategory?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item dept-meta" *ngIf="p?.Department?.Name">
+                                <i class="pi pi-building"></i>
+                                <span>{{ p?.Department?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item batch-meta" *ngIf="p?.Batches?.Name">
+                                <i class="pi pi-users"></i>
+                                <span>Batch: {{ p?.Batches?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item year-meta" *ngIf="p?.Year">
+                                <i class="pi pi-calendar"></i>
+                                <span>Year: {{ p?.Year }}</span>
+                            </div>
+                        </div>
+
+                        <div class="paper-card-actions">
+                            <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
+                                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!p?.FileUrl"
+                                (click)="viewPaper(p.Id)"
+                                [title]="p?.FileUrl ? 'View paper' : 'No file available'"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="nav-controls" *ngIf="paper.length > 1">
+                <button class="nav-btn" (click)="prevPaper()" aria-label="Previous paper">
+                    <i class="pi pi-chevron-left"></i>
+                </button>
+
+                <div class="dot-indicator">
+                    <button class="dot" *ngFor="let p of paper; let i = index" [class.active]="i === currentPaperIndex"
+                        (click)="goToPaper(i)" [attr.aria-label]="'Go to paper ' + (i+1)"></button>
+                </div>
+
+                <button class="nav-btn" (click)="nextPaper()" aria-label="Next paper">
+                    <i class="pi pi-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="paper-counter">
+                {{ currentPaperIndex + 1 }} / {{ paper.length }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Recent Journals -->
+    <div class="carousel-column" *ngIf="journals.length > 0">
+        <h3 class="column-title">
+            <i class="pi pi-book"></i> Recent Journals
+        </h3>
+        <div class="paper-carousel-container">
+            <div class="card-wrapper">
+                <div class="card-track" [style.transform]="'translateX(' + (-currentJournalIndex * 100) + '%)'">
+                    <div class="paper-card-main-content" *ngFor="let j of journals; let i = index">
+                        <div class="paper-card-header">
+                            <h3 class="paper-card-title">{{ j.Title }}</h3>
+                        </div>
+
+                        <p class="paper-card-abstract">
+                            {{ j.Abstract || 'No abstract/description provided.' }}
+                        </p>
+
+                        <div class="paper-card-keywords" *ngIf="j?.Keywords || j?.Volume || j?.IssueNumber">
+                            <span *ngIf="j?.Keywords"><strong>Keywords:</strong> {{ j?.Keywords }}</span>
+                            <span *ngIf="j?.Volume" style="display: inline-block; margin-left: 0.5rem;">
+                                <strong>Volume:</strong> {{ j?.Volume }}
+                            </span>
+                            <span *ngIf="j?.IssueNumber" style="display: inline-block; margin-left: 0.5rem;">
+                                <strong>Issue:</strong> {{ j?.IssueNumber }}
+                            </span>
+                        </div>
+
+                        <div class="paper-card-metadata">
+                            <div class="meta-item tag-meta" *ngIf="j?.Category?.Name">
+                                <i class="pi pi-tag"></i>
+                                <span>{{ j?.Category?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item subcategory-meta" *ngIf="j?.SubCategory?.Name">
+                                <i class="pi pi-th-large"></i>
+                                <span>{{ j?.SubCategory?.Name }}</span>
+                            </div>
+
+                            <div class="meta-item year-meta" *ngIf="j?.Year">
+                                <i class="pi pi-calendar"></i>
+                                <span>Year: {{ j?.Year }}</span>
+                            </div>
+
+                            <div class="meta-item author-meta" *ngIf="j?.Authors">
+                                <i class="pi pi-user"></i>
+                                <span>{{ j?.Authors }}</span>
+                            </div>
+                        </div>
+
+                        <div class="paper-card-actions">
+                            <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
+                                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!j?.FileUrl"
+                                (click)="viewJournal(j.Id)"
+                                [title]="j?.FileUrl ? 'View journal' : 'No file available'"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="nav-controls" *ngIf="journals.length > 1">
+                <button class="nav-btn" (click)="prevJournal()" aria-label="Previous journal">
+                    <i class="pi pi-chevron-left"></i>
+                </button>
+
+                <div class="dot-indicator">
+                    <button class="dot" *ngFor="let j of journals; let i = index" [class.active]="i === currentJournalIndex"
+                        (click)="goToJournal(i)" [attr.aria-label]="'Go to journal ' + (i+1)"></button>
+                </div>
+
+                <button class="nav-btn" (click)="nextJournal()" aria-label="Next journal">
+                    <i class="pi pi-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="paper-counter">
+                {{ currentJournalIndex + 1 }} / {{ journals.length }}
+            </div>
+        </div>
+    </div>
+
+</div>

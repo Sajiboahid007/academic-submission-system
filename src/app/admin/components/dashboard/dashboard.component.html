@@ -122,11 +122,8 @@
             <!-- Flat items (no group label: Dashboard, Profile) -->
             <ng-container *ngIf="group.label === null">
               <li *ngFor="let item of group.items" class="nav-item">
-                <a class="nav-link"
-                  [routerLink]="item.route"
-                  routerLinkActive="active"
-                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-                  (click)="navigateTo(item.route)"
+                <a class="nav-link" [routerLink]="item.route" routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }" (click)="navigateTo(item.route)"
                   [title]="isSidebarCollapsed() ? item.label : ''">
                   <span class="nav-icon">{{ item.icon }}</span>
                   <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
@@ -136,21 +133,17 @@
             </ng-container>
 
             <!-- Collapsible group (has a label header) -->
-            <li *ngIf="group.label !== null" class="nav-group"
-              [class.group-open]="isGroupOpen(group.groupId)"
+            <li *ngIf="group.label !== null" class="nav-group" [class.group-open]="isGroupOpen(group.groupId)"
               [class.group-has-active]="isChildActive(group)">
 
               <!-- Group Header (toggle button) -->
-              <button class="nav-group-header"
-                (click)="!isSidebarCollapsed() && toggleGroup(group.groupId)"
-                [title]="isSidebarCollapsed() ? group.label : ''"
-                type="button">
+              <button class="nav-group-header" (click)="!isSidebarCollapsed() && toggleGroup(group.groupId)"
+                [title]="isSidebarCollapsed() ? group.label : ''" type="button">
                 <span class="nav-icon">{{ group.icon }}</span>
                 <ng-container *ngIf="!isSidebarCollapsed()">
                   <span class="nav-group-label">{{ group.label }}</span>
-                  <svg class="group-chevron" width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="group-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </ng-container>
@@ -159,12 +152,8 @@
               <!-- Collapsible Children -->
               <ul class="nav-sub-menu" [class.open]="isGroupOpen(group.groupId) && !isSidebarCollapsed()">
                 <li *ngFor="let item of group.items" class="nav-sub-item">
-                  <a class="nav-sub-link"
-                    [routerLink]="item.route"
-                    routerLinkActive="active"
-                    [routerLinkActiveOptions]="{ exact: false }"
-                    (click)="navigateTo(item.route)"
-                    [title]="item.label">
+                  <a class="nav-sub-link" [routerLink]="item.route" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: false }" (click)="navigateTo(item.route)" [title]="item.label">
                     <span class="nav-sub-icon">{{ item.icon }}</span>
                     <span class="nav-sub-label">{{ item.label }}</span>
                   </a>
@@ -205,7 +194,12 @@
               </div>
               <div class="stat-info">
                 <span class="stat-value">{{ totalFiles() }}</span>
-                <span class="stat-label">Total files (YTD)</span>
+                <span class="stat-label">Total Papers (YTD)</span>
+              </div>
+
+              <div class="stat-info">
+                <span class="stat-value">{{ totalJournal }}</span>
+                <span class="stat-label">Total Journals (YTD)</span>
               </div>
             </div>
 
@@ -334,79 +328,11 @@
 
           <!-- Recent Activity Table -->
           <div class="recent-files-card">
-            <div class="recent-files-header">
-              <div class="recent-title-wrap">
-                <span class="recent-icon">🕒</span>
-                <h3 class="recent-title">Recent Academic Uploads</h3>
-              </div>
-              <span class="recent-badge">Live Submissions</span>
-            </div>
-            <div class="recent-files-body">
+
+            <app-recent-file-card></app-recent-file-card>
+            <!-- <div class="recent-files-body">
               <div class="table-responsive">
-                <!-- <p-table
-                  [value]="recentPapers.slice(0, 5)"
-                  [paginator]="true"
-                  [rows]="paginationRows()"
-                  [first]="paginationFirst()"
-                  [totalRecords]="recentPapers.length"
-                  [rowsPerPageOptions]="[5, 10, 15, 20]"
-                  (onPageChange)="onPaginationChange($event)"
-                >
-                  <ng-template pTemplate="header">
-                    <tr>
-                      <th>Paper</th>
-                      <th>Category</th>
-                      <th>Department</th>
-                      <th>Year</th>
-                      <th>Action</th>
-                    </tr>
-                  </ng-template>
-
-                  <ng-template pTemplate="body" let-paper>
-                    <tr>
-                      <td>
-                        <div>
-                          <div>{{ paper.Title | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ paper.Abstract | truncateText: 80 }}
-                          </small>
-                        </div>
-                      </td>
-
-                      <td>
-                        <div>
-                          <div>{{ paper.Category?.Name | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ paper.SubCategory?.Name | truncateText: 30 }}
-                          </small>
-                        </div>
-                      </td>
-
-                      <td>
-                        <div>
-                          <div>{{ paper.Department?.Name | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ paper.Batches?.Name | truncateText: 30 }}
-                          </small>
-                        </div>
-                      </td>
-
-                      <td>{{ paper.Year }}</td>
-
-                      <td>
-                        <p-button
-                          label="View"
-                          [outlined]="true"
-                          icon="pi pi-eye"
-                          size="small"
-                          styleClass="p-button-sm p-button-outlined"
-                          (click)="viewPaper(file.Id)"
-                        >
-                        </p-button>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table> -->
+                
 
                 <table class="recent-table">
                   <thead>
@@ -453,7 +379,7 @@
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

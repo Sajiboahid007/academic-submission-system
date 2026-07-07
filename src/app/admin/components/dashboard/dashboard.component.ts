@@ -24,6 +24,7 @@ import { DepartmentService } from '../../services/department-service';
 import { Papers } from '../../../fds-config/entity-models/papers';
 import { ToastService } from '../../../shared/services/toast.service';
 import { group } from 'console';
+import { JournalService } from '../../services/journal-service';
 
 @Component({
   selector: 'dashboard',
@@ -207,6 +208,8 @@ export class DashboardComponent implements OnInit {
     return group.items?.some((item: any) => route.startsWith(item.route) && item.route !== '/dashboard');
   }
 
+  totalJournal: any
+
   constructor(
     private router: Router,
     private readonly userInfoService: UserInfoService,
@@ -216,6 +219,7 @@ export class DashboardComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly cdr: ChangeDetectorRef,
     private readonly toastService: ToastService,
+    private readonly journalService: JournalService
   ) {
     // Track current route for active state
     this.router.events
@@ -252,6 +256,16 @@ export class DashboardComponent implements OnInit {
     this.getUserById(userInfo.userId);
 
     this.checkIfUserDataUpdate();
+    this.getTotalJournal();
+  }
+
+  getTotalJournal() {
+    this.journalService.getTotalJournal().subscribe({
+      next: (response) => {
+        this.totalJournal = response.data;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private checkIfUserDataUpdate(): void {

@@ -33,16 +33,13 @@ export class HomePageComponent implements OnInit {
   pagedData: any[] = [];
   pagedPapers: any[] = [];
 
-  // Sidebar browse — 'Journals' | 'Papers'
   selectedBrowse: string = 'Journals';
 
-  // Sidebar category / subcategory / department filters
   selectedCategoryId: number | null = null;
   selectedSubCategoryId: number | null = null;
   selectedDepartmentId: number | null = null;
   expandedCategories: { [id: number]: boolean } = {};
 
-  // Journal-specific search filters (shown only when browse = Journals)
   searchQuery: string = '';
   journalAuthor: string = '';
   journalKeyword: string = '';
@@ -73,15 +70,11 @@ export class HomePageComponent implements OnInit {
     this.loadAllData();
   }
 
-  // ─── Auth ──────────────────────────────────────────────────────────────────
-
   checkAuthentication() {
     const userInfo = this.userInfoService.getUserInfo();
     this.isLoggedIn = !!userInfo;
     this.currentUser = userInfo ?? null;
   }
-
-  // ─── Data loading ──────────────────────────────────────────────────────────
 
   loadAllData() {
     this.homeService.getCategory().subscribe({
@@ -182,7 +175,6 @@ export class HomePageComponent implements OnInit {
     this.applyFilters();
   }
 
-  // ─── Sidebar interactions ──────────────────────────────────────────────────
 
   selectBrowseType(type: string) {
     this.selectedBrowse = type;
@@ -228,34 +220,27 @@ export class HomePageComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // ─── Filtering ─────────────────────────────────────────────────────────────
-
   applyFilters() {
     let items = [...this.allCombinedItems];
 
-    // 1. Browse type
     if (this.selectedBrowse === 'Journals') {
       items = items.filter(i => i.itemType === 'JOURNAL');
     } else if (this.selectedBrowse === 'Papers') {
       items = items.filter(i => i.itemType === 'PAPER');
     }
 
-    // 2. Category
     if (this.selectedCategoryId !== null) {
       items = items.filter(i => i.CategoryId === this.selectedCategoryId);
     }
 
-    // 3. Subcategory
     if (this.selectedSubCategoryId !== null) {
       items = items.filter(i => i.SubcategoryId === this.selectedSubCategoryId);
     }
 
-    // 3b. Department
     if (this.selectedDepartmentId !== null) {
       items = items.filter(i => i.DepartmentId === this.selectedDepartmentId);
     }
 
-    // 4. Global search
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase().trim();
       items = items.filter(i =>
@@ -266,7 +251,6 @@ export class HomePageComponent implements OnInit {
       );
     }
 
-    // 5. Journal-specific filters
     if (this.selectedBrowse === 'Journals') {
       if (this.journalAuthor.trim()) {
         const a = this.journalAuthor.toLowerCase().trim();
@@ -282,8 +266,6 @@ export class HomePageComponent implements OnInit {
     this.currentPage = 1;
     this.updatePagedItems();
   }
-
-  // ─── Pagination ────────────────────────────────────────────────────────────
 
   updatePagedItems() {
     const start = (this.currentPage - 1) * this.pageSize;
@@ -342,8 +324,6 @@ export class HomePageComponent implements OnInit {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  // ─── Sidebar helpers ───────────────────────────────────────────────────────
-
   getCategoryCount(categoryId: number): number {
     const base = this.selectedBrowse === 'Journals'
       ? this.allCombinedItems.filter(i => i.itemType === 'JOURNAL')
@@ -366,7 +346,6 @@ export class HomePageComponent implements OnInit {
     return this.subCategory.filter(sc => sc.CategoryId === categoryId && !sc.IsMarkToDelete);
   }
 
-  // ─── Item actions ──────────────────────────────────────────────────────────
 
   viewItem(item: any) {
     if (item.itemType === 'JOURNAL') {
@@ -386,18 +365,13 @@ export class HomePageComponent implements OnInit {
   }
 
   viewJournal(id: number) {
-    if (!id) return;
-    this.journalService.getById(id).subscribe({
-      next: (res) => {
-        const fileUrl = (res?.data as any)?.FileUrl;
-        if (fileUrl) { window.open(fileUrl, '_blank'); }
-        else { this.toastService.warn('No PDF file found for this journal.'); }
-      },
-      error: () => this.toastService.error('Failed to retrieve journal file.')
-    });
+    const journal = this.journals.find(j => j.Id === id);
+    if (journal?.FileUrl) {
+      window.open(journal.FileUrl, '_blank');
+    } else {
+      this.toastService.warn('No PDF file found for this journal.');
+    }
   }
-
-  // ─── Navigation ────────────────────────────────────────────────────────────
 
   submitPaper() {
     this.toastService.info("Please login to submit a paper")
