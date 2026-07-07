@@ -59,6 +59,11 @@
       <label><b>Remarks</b></label>
       <textarea pInputTextarea rows="4" placeholder="Enter remarks" style="width: 100%"
         formControlName="Remarks"></textarea>
+
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px" *ngIf="data?.Source === 'Journal'">
+        <label>Check Plagarism with Gemini</label>
+        <p-button label="Check Plagarism" icon="pi pi-pencil" class="" (click)="checkPlagarism()"></p-button>
+      </div>
     </div>
   </form>
 

@@ -37,6 +37,7 @@
     "@primeuix/themes": "^2.0.3",
     "bootstrap": "^5.3.3",
     "express": "^5.1.0",
+    "jspdf": "^4.2.1",
     "ng2-pdf-viewer": "^10.4.0",
     "ngx-flexible-layout": "^21.0.1",
     "primeicons": "^7.0.0",

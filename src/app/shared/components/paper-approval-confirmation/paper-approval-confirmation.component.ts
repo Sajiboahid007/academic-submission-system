@@ -7,12 +7,14 @@ import {
   OnInit,
 } from '@angular/core';
 import { UserInfoService } from '../../../admin/services/user-info-service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import { PaperApprovalConfirmation } from '../../services/paper-approval-confirmation';
 import { ToastService } from '../../services/toast.service';
 import { Users } from '../../../fds-config/entity-models/user';
+import { PlagarismComponent } from '../plagarism/plagarism.component';
+import { PlagarismService } from '../../../admin/services/plagarism-service';
 
 @Component({
   selector: 'app-paper-approval-confirmation',
@@ -39,6 +41,8 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
     private readonly userService: UserInfoService,
+    private readonly dialog: MatDialog,
+    private readonly plagarismService: PlagarismService
   ) {
 
   }
@@ -193,6 +197,15 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   }
 
 
+  checkPlagarism() {
+    const dialogRef = this.dialog.open(PlagarismComponent, {
+      width: '900px',
+      height: '600px',
+      autoFocus: true,
+      data: { JournalId: this.data?.JournalId },
+    });
+  }
 
+  sendMail() { }
 
 }

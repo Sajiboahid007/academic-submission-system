@@ -42,6 +42,8 @@ import { MenubarModule } from 'primeng/menubar';
 import { DrawerModule } from 'primeng/drawer';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FooterComponent } from './components/footer/footer.component';
+import { RecentFileCardComponent } from './components/recent-file-card/recent-file-card.component';
+import { PlagarismComponent } from './components/plagarism/plagarism.component';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -92,6 +94,8 @@ const primeNgModules = [
     TruncateTextPipe,
     PaperApprovalConfirmationComponent,
     FooterComponent,
+    RecentFileCardComponent,
+    PlagarismComponent,
   ],
   imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
@@ -104,6 +108,8 @@ const primeNgModules = [
     TruncateTextPipe,
     PaperApprovalConfirmationComponent,
     FooterComponent,
+    RecentFileCardComponent,
+    PlagarismComponent,
   ],
 })
 export class SharedModule { }

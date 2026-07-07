@@ -257,7 +257,7 @@ export class PaperApprovalComponent implements OnInit {
   onApprove(paperId: any) {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '900px',
-      height: '500px',
+      height: '550px',
       autoFocus: true,
       data: { PaperId: paperId },
     });

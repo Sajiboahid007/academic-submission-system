@@ -35,3 +35,22 @@
     gap: 1rem;
     margin-top: 1.5rem;
 }
+
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #printSection,
+    #printSection * {
+        visibility: visible;
+    }
+
+    #printSection {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}

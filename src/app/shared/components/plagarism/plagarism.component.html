@@ -1,0 +1,78 @@
+<div class="modal-form-container">
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+            <div fxLayout="column">
+                <h2 class="header-title">Plagiarism & AI Analysis</h2>
+            </div>
+        </div>
+        <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+            (click)="onCancel()" [disabled]="loading || sending"></button>
+    </div>
+
+    <!-- Spinner Loading State -->
+    <div class="loading-container" *ngIf="loading" fxLayout="column" fxLayoutAlign="center center" style="padding: 40px; text-align: center;">
+        <p-progressspinner ariaLabel="loading" styleClass="w-16 h-16" strokeWidth="4" fill="var(--surface-ground)"></p-progressspinner>
+        <h3 style="margin-top: 20px; font-weight: 600; color: #1e3a8a;">Analyzing Document...</h3>
+        <p style="color: #666; font-size: 0.9rem; max-width: 400px; margin-top: 8px; margin-left: auto; margin-right: auto;">
+            Gemini is currently scanning the PDF for plagiarism likelihood, AI content, grammar, citations, and formatting issues. This might take a few moments.
+        </p>
+    </div>
+
+    <!-- Main Form Content -->
+    <form [formGroup]="plagarsimFrom" *ngIf="!loading">
+        <div fxLayout="column" fxLayoutGap="24px">
+            <div fxLayout="row" fxLayoutGap="12px">
+                <label for="from"><b>From:</b> gono.no.response@gmail.com</label>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="12px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="to" type="email" formControlName="to" autocomplete="email"
+                        placeholder="Email address" class="full-width" />
+                    <label for="to" class="field-label">
+                        To <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="12px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <input pInputText id="subject" type="text" formControlName="subject" autocomplete="subject"
+                        placeholder="Subject" class="full-width" />
+                    <label for="subject" class="field-label">
+                        Subject <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="12px">
+                <p-floatlabel variant="on" class="float-label-wrapper">
+                    <textarea pInputTextarea id="message" type="text" formControlName="message" autocomplete="message"
+                        rows="8" class="full-width" style="resize: vertical;"></textarea>
+                    <label for="message" class="field-label">
+                        Message <span class="required-asterisk">*</span>
+                    </label>
+                </p-floatlabel>
+            </div>
+
+            <div class="card" *ngIf="pdfBase64">
+                <div style="padding: 12px; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+                    <i class="pi pi-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 600; color: #1e3a8a; font-size: 0.9rem;">Plagiarism_and_AI_Review_Report.pdf</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">Auto-generated report will be attached automatically</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section" *ngIf="!loading">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
+            (click)="onCancel()" [disabled]="sending"></button>
+        <button pButton type="button" [label]="sending ? 'Sending...' : 'Send Mail'" 
+            [icon]="sending ? 'pi pi-spinner pi-spin' : 'pi pi-envelope'" 
+            class="p-button-success btn-save" (click)="sendMail()"
+            [disabled]="plagarsimFrom.invalid || sending"></button>
+    </div>
+</div>
