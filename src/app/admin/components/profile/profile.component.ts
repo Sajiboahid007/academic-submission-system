@@ -4,11 +4,16 @@ import { PapersService } from '../../services/papers-service';
 import { MatDialog } from '@angular/material/dialog';
 import { InsertUpdateUserComponent } from '../user-list/insert-update-user/insert-update-user.component';
 import { InsertUpdatePaperComponent } from '../papers-list/insert-update-paper/insert-update-paper.component';
+import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmationService } from 'primeng/api';
 import { FileService } from '../../services/file-service';
 import { Users } from '../../../fds-config/entity-models/user';
 import { BooleanInput } from '@angular/cdk/coercion';
+import { JournalService } from '../../services/journal-service';
+import { AppQuery } from '../../../shared/app-query';
+import { Journals } from '../../../fds-config/entity-models/journals';
+
 @Component({
   selector: 'app-profile',
   standalone: false,
@@ -20,14 +25,17 @@ export class ProfileComponent implements OnInit {
   userId!: number;
   userDetailedData: any = null;
   papers: any[] = [];
+  journal: any[] = [];
   searchQuery = '';
   statusFilter = 'All';
   isUploading = false;
   users: Users = {} as Users;
+  activeTab = '0';
 
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly papersService: PapersService,
+    private readonly journalService: JournalService,
     private readonly dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
     private readonly toastService: ToastService,
@@ -41,6 +49,7 @@ export class ProfileComponent implements OnInit {
       this.userId = userInfo.userId;
       this.fetchUserProfile();
       this.fetchUserPapers();
+      this.getJournalByUserId(this.userId);
     }
   }
 
@@ -60,13 +69,23 @@ export class ProfileComponent implements OnInit {
   fetchUserPapers(): void {
     this.papersService.getPapersByUserId(this.userId).subscribe({
       next: (res: any) => {
-        // Only show papers belonging to the active logged-in user
-        // this.papers = (res.data || []).filter((paper: any) => paper.UserId === this.userId);
         this.papers = res?.data || [];
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error fetching papers:', err);
+      },
+    });
+  }
+
+  getJournalByUserId(id: number) {
+    this.journalService.getJournalByUserId(id).subscribe({
+      next: (res: AppQuery<Journals[]>) => {
+        this.journal = res.data;
+        this.cdr.markForCheck();
+      },
+      error: (error: any) => {
+        this.toastService.error('Failed to load journals.');
       },
     });
   }
@@ -85,12 +104,21 @@ export class ProfileComponent implements OnInit {
         (paper.Title && paper.Title.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
         (paper.Abstract && paper.Abstract.toLowerCase().includes(this.searchQuery.toLowerCase()));
 
-      const paperStatus = paper?.PaperApprovals.Status;
-      const matchesStatus =
-        this.statusFilter === 'All' ||
-        paperStatus.toLowerCase() === this.statusFilter.toLowerCase();
+      return matchesSearch
+    });
+  }
 
-      return matchesSearch && matchesStatus;
+  get filteredJournals(): any[] {
+    return this.journal.filter((j) => {
+      const matchesSearch =
+        !this.searchQuery ||
+        (j.Title && j.Title.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+        (j.Abstract && j.Abstract.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+        (j.Keywords && j.Keywords.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+        (j.Authors && j.Authors.toLowerCase().includes(this.searchQuery.toLowerCase()));
+
+
+      return matchesSearch
     });
   }
 
@@ -123,6 +151,22 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  uploadJournal(): void {
+    const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+      width: '800px',
+      height: '700px',
+      maxWidth: 'none',
+      autoFocus: true,
+      data: null,
+    });
+
+    dialogRef.afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.getJournalByUserId(this.userId);
+      }
+    });
+  }
+
   viewPaper(id: number): void {
     const paper = this.papers.find((p) => p.Id === id);
 
@@ -137,6 +181,23 @@ export class ProfileComponent implements OnInit {
       document.body.removeChild(link);
     } else {
       console.warn('No PDF file URL found.');
+    }
+  }
+
+  viewJournal(id: number): void {
+    const item = this.journal.find((j) => j.Id === id);
+
+    if (item?.FileUrl) {
+      const link = document.createElement('a');
+      link.href = item.FileUrl;
+      link.download = item.FileUrl.split('/').pop() || 'document.pdf';
+      link.target = '_blank';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      this.toastService.warn('No PDF file URL found.');
     }
   }
 
@@ -197,6 +258,22 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  editJournal(journal: any): void {
+    const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+      width: '800px',
+      height: '700px',
+      maxWidth: 'none',
+      autoFocus: true,
+      data: journal,
+    });
+
+    dialogRef.afterClosed().subscribe((res: any) => {
+      if (res) {
+        this.getJournalByUserId(this.userId);
+      }
+    });
+  }
+
   deletePaper(id: number): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete this paper?`,
@@ -217,6 +294,26 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  deleteJournal(id: number): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete this journal?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.journalService.deleteJournal(id).subscribe({
+          next: () => {
+            this.toastService.success('Journal deleted successfully');
+            this.getJournalByUserId(this.userId);
+          },
+          error: (err) => {
+            console.error('Error deleting journal:', err);
+            this.toastService.error('Failed to delete journal');
+          },
+        });
+      },
+    });
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
 
@@ -227,60 +324,25 @@ export class ProfileComponent implements OnInit {
     this.imageUpload(userId, file);
   }
 
-  // onFileSelected(event: any): void {
-  //   const file = event.target.files?.[0];
-  //   if (!file) return;
-
-  //   this.isUploading = true;
-  //   this.cdr.markForCheck();
-  //   this.toastService.info('Uploading profile photo...', 'Uploading');
-
-  //   this.fileService.uploadFile(file).subscribe({
-  //     next: (res: any) => {
-  //       const imageUrl = res?.data?.url;
-  //       if (imageUrl) {
-  //         this.updateProfilePicture(imageUrl);
-  //       } else {
-  //         this.isUploading = false;
-  //         this.cdr.markForCheck();
-  //         this.toastService.error('Failed to get uploaded image URL');
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.isUploading = false;
-  //       this.cdr.markForCheck();
-  //       console.error('Error uploading profile photo:', err);
-  //       this.toastService.error('Failed to upload profile photo');
-  //     },
-  //   });
-  // }
-
-  // private updateProfilePicture(imageUrl: string): void {
-  //   const updatedUser: Users = {
-  //     Id: this.userDetailedData.Id,
-  //     Name: this.userDetailedData.Name,
-  //     Email: this.userDetailedData.Email,
-  //     StudentId: this.userDetailedData.StudentId,
-  //     DepartmentId: this.userDetailedData.DepartmentId,
-  //     RoleId: this.userDetailedData.RoleId,
-  //     BatchId: this.userDetailedData.BatchId,
-  //     Password: this.userDetailedData.Password || '',
-  //     ImageUrl: imageUrl,
-  //   };
-
-  //   this.userInfoService.updateUser(updatedUser).subscribe({
-  //     next: () => {
-  //       this.toastService.success('Profile picture updated successfully');
-  //       this.fetchUserProfile();
-  //       this.isUploading = false;
-  //       this.cdr.markForCheck();
-  //     },
-  //     error: (err) => {
-  //       this.isUploading = false;
-  //       this.cdr.markForCheck();
-  //       console.error('Error updating user profile picture:', err);
-  //       this.toastService.error('Failed to update profile picture in database');
-  //     },
-  //   });
-  // }
+  public getSeverity(
+    status: string | undefined,
+  ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warn';
+      case 'Draft':
+        return 'info';
+      case 'Review Requested':
+        return 'warn';
+      case 'Editorial Approved':
+        return 'success';
+      default:
+        return 'secondary';
+    }
+  }
 }
+

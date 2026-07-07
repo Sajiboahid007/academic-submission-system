@@ -93,7 +93,9 @@
         <h2 class="papers-title">Papers & Activities</h2>
       </div>
       <button pButton type="button" icon="pi pi-plus" label="Upload Paper" class="p-button-rounded upload-paper-btn"
-        (click)="uploadPaper()"></button>
+        *ngIf="activeTab === '0'" (click)="uploadPaper()"></button>
+      <button pButton type="button" icon="pi pi-plus" label="Upload Journal" class="p-button-rounded upload-paper-btn"
+        *ngIf="activeTab === '1'" (click)="uploadJournal()"></button>
     </header>
 
     <!-- Search and Status filter controls -->
@@ -103,73 +105,138 @@
         <input type="text" [(ngModel)]="searchQuery" placeholder="Search by title, author, keyword..."
           class="search-input-field" />
       </div>
-
-      <div class="status-dropdown-wrapper">
-        <select class="status-select-control" [(ngModel)]="statusFilter">
-          <option value="All">All Status</option>
-          <option value="approved">Approved</option>
-          <option value="submitted">Submitted</option>
-          <option value="draft">Draft</option>
-        </select>
-      </div>
     </div>
 
     <!-- Papers Cards List -->
-    <div class="papers-cards-container" style="height: 100vh; overflow-y: scroll"
-      *ngIf="filteredPapers.length > 0; else emptyState">
-      <article class="paper-card" *ngFor="let paper of filteredPapers">
-        <!-- Header row (Title & Status) -->
+    <p-tabs [(value)]="activeTab">
+      <p-tablist>
+        <p-tab value="0">Papers</p-tab>
+        <p-tab value="1" *ngIf="userDetailedData?.Roles?.Name?.toLowerCase() !== 'student'">Journals</p-tab>
+      </p-tablist>
 
-        <div class="paper-card-header">
-          <h3 class="paper-card-title">{{ paper.Title }}</h3>
-          <span class="status-badge" [ngClass]="'status-'">
-            {{ paper?.PaperApprovals?.Status }}
-          </span>
-        </div>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <div class="papers-cards-container" style="overflow-y: scroll; max-height: 100%;"
+            *ngIf="filteredPapers.length > 0; else emptyState">
+            <article class="paper-card" *ngFor="let paper of filteredPapers">
+              <!-- Header row (Title & Status) -->
 
-        <!-- Abstract Description -->
-        <p class="paper-card-abstract">
-          {{ paper.Abstract || 'No abstract/description provided.' }}
-        </p>
+              <div class="paper-card-header">
+                <h3 class="paper-card-title">{{ paper.Title }}</h3>
+                <span class="status-badge" [ngClass]="'status-'">
+                  {{ paper?.PaperApprovals?.Status }}
+                </span>
+              </div>
 
-        <!-- Metadata items with Icons -->
-        <div class="paper-card-metadata">
-          <div class="meta-item author-meta">
-            <i class="pi pi-user"></i>
-            <span>{{ userDetailedData?.Name || 'Sajib Oahid' }}</span>
+              <!-- Abstract Description -->
+              <p class="paper-card-abstract">
+                {{ paper.Abstract || 'No abstract/description provided.' }}
+              </p>
+
+              <!-- Metadata items with Icons -->
+              <div class="paper-card-metadata">
+                <div class="meta-item author-meta">
+                  <i class="pi pi-user"></i>
+                  <span>{{ userDetailedData?.Name || 'Sajib Oahid' }}</span>
+                </div>
+
+                <div class="meta-item date-meta">
+                  <i class="pi pi-calendar"></i>
+                  <span>{{
+                    paper.CreatedDate ? (paper.CreatedDate | date: 'M/d/yyyy') : '3/10/2025'
+                    }}</span>
+                </div>
+
+                <div class="meta-item tag-meta">
+                  <i class="pi pi-tag"></i>
+                  <span>{{ paper.Category?.Name || 'Angular, Node.js, Prisma' }}</span>
+                </div>
+                <div class="meta-item tag-meta">
+                  <i class="pi pi-th-large"></i>
+                  <span>{{ paper.SubCategory.Name }}</span>
+                </div>
+              </div>
+
+              <!-- Action Control Buttons -->
+              <div class="paper-card-actions">
+                <button pButton type="button" label="View" icon="pi pi-eye"
+                  class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewPaper(paper.Id)"></button>
+
+                <button pButton type="button" label="Edit" icon="pi pi-pencil"
+                  class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editPaper(paper)"></button>
+
+                <button pButton type="button" label="Delete" icon="pi pi-trash"
+                  class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deletePaper(paper.Id)"></button>
+              </div>
+            </article>
           </div>
+        </p-tabpanel>
 
-          <div class="meta-item date-meta">
-            <i class="pi pi-calendar"></i>
-            <span>{{
-              paper.CreatedDate ? (paper.CreatedDate | date: 'M/d/yyyy') : '3/10/2025'
-              }}</span>
+        <p-tabpanel value="1" *ngIf="userDetailedData?.Roles?.Name?.toLowerCase() !== 'student'">
+          <div class="papers-cards-container" style="overflow-y: scroll; max-height: 100%;"
+            *ngIf="filteredJournals.length > 0; else emptyJournalState">
+            <article class="paper-card" *ngFor="let j of filteredJournals">
+              <!-- Header row (Title & Status) -->
+
+              <div class="paper-card-header">
+                <h3 class="paper-card-title">{{ j.Title }}</h3>
+                <p-badge [value]="j?.PaperApprovals[0]?.Status" [severity]="getSeverity(j?.PaperApprovals[0]?.Status)">
+                </p-badge>
+              </div>
+
+              <!-- Abstract Description -->
+              <p class="paper-card-abstract">
+                {{ j.Abstract || 'No abstract/description provided.' }}
+              </p>
+
+              <!-- Keywords and Journal Info -->
+              <div class="paper-card-keywords" *ngIf="j?.Keywords || j?.Volume || j?.IssueNumber"
+                style="margin-bottom: 0.5rem; font-size: 0.85rem; color: #4b5563;">
+                <span *ngIf="j?.Keywords"><strong>Keywords:</strong> {{ j.Keywords }}</span>
+                <span *ngIf="j?.Volume" style="margin-left: 0.75rem;"><strong>Volume:</strong> {{ j.Volume }}</span>
+                <span *ngIf="j?.IssueNumber" style="margin-left: 0.75rem;"><strong>Issue:</strong> {{ j.IssueNumber
+                  }}</span>
+              </div>
+
+              <!-- Metadata items with Icons -->
+              <div class="paper-card-metadata">
+                <div class="meta-item author-meta" *ngIf="j?.Authors">
+                  <i class="pi pi-user"></i>
+                  <span>{{ j.Authors }}</span>
+                </div>
+
+                <div class="meta-item date-meta" *ngIf="j?.CreatedDate">
+                  <i class="pi pi-calendar"></i>
+                  <span>{{ j.CreatedDate | date: 'M/d/yyyy' }}</span>
+                </div>
+
+                <div class="meta-item tag-meta" *ngIf="j?.Category?.Name">
+                  <i class="pi pi-tag"></i>
+                  <span>{{ j.Category.Name }}</span>
+                </div>
+                <div class="meta-item tag-meta" *ngIf="j?.Category?.Name">
+                  <i class="pi pi-th-large"></i>
+                  <span>{{ j.SubCategory.Name }}</span>
+                </div>
+              </div>
+
+              <!-- Action Control Buttons -->
+              <div class="paper-card-actions">
+                <button pButton type="button" label="View" icon="pi pi-eye"
+                  class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewJournal(j.Id)"></button>
+
+                <button pButton type="button" label="Edit" icon="pi pi-pencil"
+                  class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editJournal(j)"></button>
+
+                <button pButton type="button" label="Delete" icon="pi pi-trash"
+                  class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deleteJournal(j.Id)"></button>
+              </div>
+            </article>
           </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
 
-          <div class="meta-item tag-meta">
-            <i class="pi pi-tag"></i>
-            <span>{{ paper.Category?.Name || 'Angular, Node.js, Prisma' }}</span>
-          </div>
-
-          <div class="meta-item view-meta">
-            <i class="pi pi-eye"></i>
-            <span>{{ ((paper.Id * 29 + 17) % 180) + 30 }} views</span>
-          </div>
-        </div>
-
-        <!-- Action Control Buttons -->
-        <div class="paper-card-actions">
-          <button pButton type="button" label="View" icon="pi pi-eye"
-            class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewPaper(paper.Id)"></button>
-
-          <button pButton type="button" label="Edit" icon="pi pi-pencil"
-            class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editPaper(paper)"></button>
-
-          <button pButton type="button" label="Delete" icon="pi pi-trash"
-            class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deletePaper(paper.Id)"></button>
-        </div>
-      </article>
-    </div>
 
     <!-- Empty state template -->
     <ng-template #emptyState>
@@ -180,6 +247,19 @@
         <h4 class="empty-title">No papers found</h4>
         <p class="empty-description">
           We couldn't find any papers matching your active filters or search criteria.
+        </p>
+      </div>
+    </ng-template>
+
+    <!-- Empty state template for journals -->
+    <ng-template #emptyJournalState>
+      <div class="empty-state-card">
+        <div class="empty-icon-wrapper">
+          <i class="pi pi-folder-open empty-icon"></i>
+        </div>
+        <h4 class="empty-title">No journals found</h4>
+        <p class="empty-description">
+          We couldn't find any journals matching your active filters or search criteria.
         </p>
       </div>
     </ng-template>
