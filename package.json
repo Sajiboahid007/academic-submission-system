@@ -36,6 +36,7 @@
     "@angular/ssr": "^21.1.2",
     "@primeuix/themes": "^2.0.3",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "jspdf": "^4.2.1",
     "ng2-pdf-viewer": "^10.4.0",

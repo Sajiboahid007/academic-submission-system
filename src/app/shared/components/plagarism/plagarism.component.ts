@@ -42,6 +42,32 @@ export class PlagarismComponent implements OnInit {
     this.runPlagarismCheck();
   }
 
+  /** Pre-fills the email form with an error notification so the admin can
+   *  inform the author even when the plagiarism check could not complete. */
+  private prefillErrorEmail(title: string, authorEmail: string, errorDetail: string): void {
+    const subjectText = `Plagiarism Check Failed – Action Required: ${title || 'Your Submission'}`;
+    const messageText = `Dear Author,
+
+We attempted to run the plagiarism and AI-content review check for your submission${title ? ': "' + title + '"' : ''}, but encountered an issue that prevented the process from completing.
+
+Error Details:
+${errorDetail}
+
+Please take note of the above and contact our support team or re-submit your paper if required.
+
+We apologise for any inconvenience caused.
+
+Best regards,
+Academic Submission System`;
+
+    this.plagarsimFrom.patchValue({
+      to: authorEmail,
+      subject: subjectText,
+      message: messageText,
+    });
+    this.cdr.markForCheck();
+  }
+
   onCancel() {
     this.dialogRef.close();
   }
@@ -65,6 +91,11 @@ export class PlagarismComponent implements OnInit {
             this.processReview(journal.Title, journal.FileUrl, journal.UserId);
           } else {
             this.toastService.error('Failed to fetch journal details.');
+            this.prefillErrorEmail(
+              '',
+              '',
+              'We were unable to retrieve the journal details from the system. The record may be missing or inaccessible.'
+            );
             this.loading = false;
             this.cdr.markForCheck();
           }
@@ -72,12 +103,22 @@ export class PlagarismComponent implements OnInit {
         error: (err) => {
           console.error(err);
           this.toastService.error('Error fetching journal details.');
+          this.prefillErrorEmail(
+            '',
+            '',
+            `A network or server error occurred while fetching the journal details. Error: ${err?.message || err?.statusText || 'Unknown error'}`
+          );
           this.loading = false;
           this.cdr.markForCheck();
         }
       });
     } else {
       this.toastService.error('Invalid journal metadata.');
+      this.prefillErrorEmail(
+        '',
+        '',
+        'The journal identifier provided was invalid or missing. The plagiarism check could not be started.'
+      );
       this.loading = false;
       this.cdr.markForCheck();
     }
@@ -86,6 +127,32 @@ export class PlagarismComponent implements OnInit {
   processReview(title: string, fileUrl: string, userId?: number) {
     if (!fileUrl) {
       this.toastService.error('Document file URL is missing.');
+      // Fetch author email first (if we have userId), then prefill error email
+      if (userId) {
+        this.userService.getUsersById(userId).subscribe({
+          next: (userRes) => {
+            const email = userRes?.data?.Email || '';
+            this.prefillErrorEmail(
+              title,
+              email,
+              'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+            );
+          },
+          error: () => {
+            this.prefillErrorEmail(
+              title,
+              '',
+              'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+            );
+          }
+        });
+      } else {
+        this.prefillErrorEmail(
+          title,
+          '',
+          'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+        );
+      }
       this.loading = false;
       this.cdr.markForCheck();
       return;
@@ -160,6 +227,11 @@ Academic Submission System`;
       error: (err) => {
         console.error('Error checking plagiarism:', err);
         this.toastService.error('Error occurred during plagiarism review.');
+        this.prefillErrorEmail(
+          title,
+          this.plagarsimFrom.getRawValue().to || '',
+          `An error occurred while running the automated plagiarism and AI-content analysis on your submission. This may be due to a temporary service outage or an unsupported file format.\n\nTechnical detail: ${err?.message || err?.statusText || 'Unknown error'}\n\nPlease contact support or re-submit your paper for re-evaluation.`
+        );
         this.loading = false;
         this.cdr.markForCheck();
       }

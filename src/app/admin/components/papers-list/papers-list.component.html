@@ -17,7 +17,7 @@
       'PaperApprovals.Status',
       'Year',
       'Batches.Name',
-    ]" [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+    ]" [tableStyle]="{ 'width': '100%', 'table-layout': 'fixed' }">
           <!-- Search -->
           <ng-template #caption>
             <div class="row">
@@ -105,6 +105,11 @@
               <div class="col-auto">
                 <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
               </div>
+
+              <!-- Export PDF Button -->
+              <div class="col-auto">
+                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf" (click)="exportPapersReport()" />
+              </div>
             </div>
           </ng-template>
 
@@ -114,11 +119,11 @@
             <!-- Filter Row -->
 
             <tr style="margin-top: 50px">
-              <th style="width: 30%">Title</th>
-              <th style="width: 10%">Status</th>
+              <th style="width: 25%">Title</th>
+              <th style="width: 8%">Status</th>
               <th style="width: 10%">Category</th>
               <!-- <th style="width: 10%">Sub Category</th> -->
-              <th style="width: 15%">Department</th>
+              <th style="width: 12%">Department</th>
               <th style="width: 5%">Year</th>
               <!-- <th style="width: 5%">Batch</th> -->
               <th style="width: 10%">Action</th>
@@ -182,7 +187,7 @@
       <div class="card">
         <p-table #dt2 [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
           [paginator]="true" [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Keywords','Year']"
-          [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
+          [tableStyle]="{ 'width': '100%', 'table-layout': 'fixed' }">
 
           <ng-template #caption>
             <div class="row">
@@ -255,6 +260,11 @@
               <div class="col-auto">
                 <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
               </div>
+
+              <!-- Export PDF Button -->
+              <div class="col-auto">
+                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf" (click)="exportJournalsReport()" />
+              </div>
             </div>
           </ng-template>
 
@@ -263,11 +273,12 @@
             <tr style="margin-top: 50px">
 
               <th style="width: 20%">Title</th>
-              <th style="width: 12%">Status</th>
+              <th style="width: 8%">Status</th>
               <th style="width: 10%">Category</th>
               <th style="width: 18%">Name</th>
+              <th style="width: 10%">Authors</th>
               <th style="width: 10%">Keywords</th>
-              <th style="width: 10%">Volume</th>
+              <th style="width: 8%">Volume</th>
               <th style="width: 8%">Year</th>
               <th style="width: 10%">Action</th>
             </tr>
@@ -299,6 +310,11 @@
               <td>
                 <div>
                   <div>{{ journal.Name | truncateText: 50 }}</div>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <div>{{ journal.Authors | truncateText: 50 }}</div>
                 </div>
               </td>
               <td>

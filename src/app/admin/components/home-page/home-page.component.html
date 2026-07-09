@@ -155,7 +155,7 @@
     </section>
 
     <!-- Recent Showcase Section -->
-    <section class="portal-recent-section animate-fade-in" *ngIf="currentPage === 1">
+    <section class="portal-recent-section animate-fade-in" *ngIf="currentPage === 1 && !isFiltered">
       <app-recent-file-card></app-recent-file-card>
     </section>
 

@@ -67,7 +67,7 @@ export class ProfileComponent implements OnInit {
   }
 
   fetchUserPapers(): void {
-    this.papersService.getPapersByUserId(this.userId).subscribe({
+    this.papersService.getPapersByUserIdforProfile(this.userId).subscribe({
       next: (res: any) => {
         this.papers = res?.data || [];
         this.cdr.markForCheck();
@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getJournalByUserId(id: number) {
-    this.journalService.getJournalByUserId(id).subscribe({
+    this.journalService.getByUserIdforProfile(id).subscribe({
       next: (res: AppQuery<Journals[]>) => {
         this.journal = res.data;
         this.cdr.markForCheck();

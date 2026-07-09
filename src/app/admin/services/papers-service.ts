@@ -22,6 +22,10 @@ export class PapersService {
 
   }
 
+  getNonApprovalPapers(): Observable<AppQuery<Papers[]>> {
+    return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/non_approval/get`);
+  }
+
   getPaperApprovalByUserId(): Observable<AppQuery<Papers[]>> {
     return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/getPaperApprovalByUserId`);
 
@@ -35,6 +39,10 @@ export class PapersService {
     return this.http.get<AppQuery<Papers>>(`${this.baseUrl}/api/paper/getById/${id}`);
   }
 
+  getPaperUploadsById(id: number): Observable<AppQuery<Papers[]>> {
+    return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/getPapersById/${id}`);
+  }
+
   updatePaper(paper: Papers): Observable<AppQuery<Papers>> {
     return this.http.put<AppQuery<Papers>>(`${this.baseUrl}/api/paper/update/${paper.Id}`, paper);
   }
@@ -46,6 +54,13 @@ export class PapersService {
   getPapersByUserId(userId: number): Observable<AppQuery<Papers[]>> {
     return this.http.get<AppQuery<Papers[]>>(
       `${this.baseUrl}/api/paper/getPapersByUserId/${userId}`,
+    );
+  }
+
+
+  getPapersByUserIdforProfile(userId: number): Observable<AppQuery<Papers[]>> {
+    return this.http.get<AppQuery<Papers[]>>(
+      `${this.baseUrl}/api/paper/getPapersByUserIdforProfile/${userId}`,
     );
   }
 

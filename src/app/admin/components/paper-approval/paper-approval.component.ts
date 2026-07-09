@@ -60,7 +60,7 @@ export class PaperApprovalComponent implements OnInit {
 
   public getApprovalList() {
     try {
-      this.papersService.getPapers().subscribe((res: AppQuery<Papers[]>) => {
+      this.papersService.getNonApprovalPapers().subscribe((res: AppQuery<Papers[]>) => {
         this.papers = res.data;
         this.cdr.markForCheck();
       });
@@ -82,7 +82,7 @@ export class PaperApprovalComponent implements OnInit {
   }
 
   getJounals() {
-    this.journalService.getJournals().subscribe({
+    this.journalService.getNonApprovedJournals().subscribe({
       next: (res: AppQuery<Journals[]>) => {
         this.journal = res.data;
         this.cdr.markForCheck();

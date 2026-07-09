@@ -265,6 +265,7 @@ export class HomePageComponent implements OnInit {
     this.filteredItems = items;
     this.currentPage = 1;
     this.updatePagedItems();
+    this.scrollToTop();
   }
 
   updatePagedItems() {
@@ -283,6 +284,15 @@ export class HomePageComponent implements OnInit {
     }
 
     this.cdr.markForCheck();
+  }
+
+  get isFiltered(): boolean {
+    return this.selectedCategoryId !== null ||
+      this.selectedSubCategoryId !== null ||
+      this.selectedDepartmentId !== null ||
+      !!this.searchQuery?.trim() ||
+      !!this.journalAuthor?.trim() ||
+      !!this.journalKeyword?.trim();
   }
 
   get totalPages(): number {

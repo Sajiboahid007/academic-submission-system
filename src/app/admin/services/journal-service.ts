@@ -18,6 +18,9 @@ export class JournalService {
   getJournals(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/get`);
   }
+  getNonApprovedJournals(): Observable<AppQuery<Journals[]>> {
+    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/non_approved/get`);
+  }
   getKeyword(): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/keyword/get`);
   }
@@ -27,6 +30,15 @@ export class JournalService {
   }
   getJournalByUserId(id: number): Observable<AppQuery<Journals[]>> {
     return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserId/${id}`);
+  }
+
+  getByUserIdforProfile(id: number): Observable<AppQuery<Journals[]>> {
+    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getByUserIdforProfile/${id}`);
+  }
+
+
+  getJournalUploadId(id: number): Observable<AppQuery<Journals[]>> {
+    return this.http.get<AppQuery<Journals[]>>(`${this.baseUrl}/api/journal/getJournalByUserId/${id}`);
   }
 
   getById(id: number): Observable<AppQuery<Journals>> {

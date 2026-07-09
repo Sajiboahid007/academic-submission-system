@@ -59,9 +59,9 @@ export class CreatePapersComponent {
 
   getPapers() {
     this.papersService
-      .getPapersByUserId(this.userTokenInfo.userId)
+      .getPaperUploadsById(this.userTokenInfo.userId)
       .subscribe((res: AppQuery<Papers[]>) => {
-        this.papers = res.data;
+        this.papers = res?.data;
         this.years = Array.from(
           new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
         ).sort();
@@ -70,7 +70,7 @@ export class CreatePapersComponent {
   }
 
   getJournals() {
-    this.journalService.getJournalByUserId(this.userTokenInfo.userId).subscribe({
+    this.journalService.getJournalUploadId(this.userTokenInfo.userId).subscribe({
       next: (res: AppQuery<Journals[]>) => {
         this.journal = res?.data;
         this.cdr.markForCheck();

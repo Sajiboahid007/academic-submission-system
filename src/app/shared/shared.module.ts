@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -40,6 +41,7 @@ import { TabsModule } from 'primeng/tabs';
 import { PaginatorModule } from 'primeng/paginator';
 import { MenubarModule } from 'primeng/menubar';
 import { DrawerModule } from 'primeng/drawer';
+import { ChartModule } from 'primeng/chart';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FooterComponent } from './components/footer/footer.component';
 import { RecentFileCardComponent } from './components/recent-file-card/recent-file-card.component';
@@ -84,7 +86,8 @@ const primeNgModules = [
   TabsModule,
   PaginatorModule,
   MenubarModule,
-  DrawerModule
+  DrawerModule,
+  ChartModule
 ];
 
 @NgModule({
@@ -97,8 +100,9 @@ const primeNgModules = [
     RecentFileCardComponent,
     PlagarismComponent,
   ],
-  imports: [CommonModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
+  imports: [CommonModule, RouterModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
+    RouterModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     ...materialNgModule,
