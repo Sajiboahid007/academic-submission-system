@@ -213,9 +213,9 @@ export class PapersListComponent implements OnInit {
     y += 10; // Extra space after summary block
 
     // Table Setup
-    const colWidths = [10, 80, 30, 32, 13, 15]; // Total = 180mm
-    const colAlign = ['center', 'left', 'left', 'left', 'center', 'center'];
-    const headers = ['#', 'Title & Abstract', 'Category', 'Department / Batch', 'Year', 'Status'];
+    const colWidths = [10, 60, 30, 25, 27, 13, 15]; // Total = 180mm
+    const colAlign = ['center', 'left', 'left', 'left', 'left', 'center', 'center'];
+    const headers = ['#', 'Title & Abstract', 'Authors', 'Category', 'Department / Batch', 'Year', 'Status'];
 
     const drawTableHeaders = (currentY: number) => {
       doc.setFillColor(241, 245, 249); // #f1f5f9
@@ -264,19 +264,25 @@ export class PapersListComponent implements OnInit {
       const batch = paper.Batches?.Name ? `[Batch: ${paper.Batches.Name}]` : '';
       const year = String(paper.Year || '-');
       const status = paper.PaperApprovals?.[0]?.Status || 'Draft';
+      const teachers = (paper.PaperGroups || [])
+        .filter((group: any) => group.UserType === 'Teacher')
+        .map((group: any) => group.Users?.Name || 'Unknown')
+        .join(', ') || '-';
 
       // Split multiline content
       const titleLines = doc.splitTextToSize(title, colWidths[1] - 4);
       const abstractLines = doc.splitTextToSize(abstract, colWidths[1] - 4).slice(0, 2); // limit abstract to 2 lines
-      const categoryLines = doc.splitTextToSize(`${category} ${subCategory}`, colWidths[2] - 4);
-      const deptLines = doc.splitTextToSize(`${dept} ${batch}`, colWidths[3] - 4);
+      const authorLines = doc.splitTextToSize(teachers, colWidths[2] - 4);
+      const categoryLines = doc.splitTextToSize(`${category} ${subCategory}`, colWidths[3] - 4);
+      const deptLines = doc.splitTextToSize(`${dept} ${batch}`, colWidths[4] - 4);
 
       // Compute row height based on content
       const contentLinesCount = titleLines.length + abstractLines.length + 1; // 1 extra spacer line between title and abstract
+      const authLinesCount = authorLines.length;
       const catLinesCount = categoryLines.length;
       const dLinesCount = deptLines.length;
 
-      const maxLines = Math.max(contentLinesCount, catLinesCount, dLinesCount);
+      const maxLines = Math.max(contentLinesCount, authLinesCount, catLinesCount, dLinesCount);
       const rowHeight = Math.max(maxLines * 4.2 + 4, 12); // minimum height
 
       // Check page break
@@ -331,7 +337,18 @@ export class PapersListComponent implements OnInit {
       });
       curX += colWidths[1];
 
-      // Col 2: Category
+      // Col 2: Authors
+      let authY = y + 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(51, 65, 85);
+      authorLines.forEach((line: any) => {
+        doc.text(line, curX + 2, authY);
+        authY += 4;
+      });
+      curX += colWidths[2];
+
+      // Col 3: Category
       let catY = y + 5;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
@@ -340,9 +357,9 @@ export class PapersListComponent implements OnInit {
         doc.text(line, curX + 2, catY);
         catY += 4;
       });
-      curX += colWidths[2];
+      curX += colWidths[3];
 
-      // Col 3: Department / Batch
+      // Col 4: Department / Batch
       let deptY = y + 5;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
@@ -351,19 +368,19 @@ export class PapersListComponent implements OnInit {
         doc.text(line, curX + 2, deptY);
         deptY += 4;
       });
-      curX += colWidths[3];
+      curX += colWidths[4];
 
-      // Col 4: Year
+      // Col 5: Year
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(51, 65, 85);
-      doc.text(year, curX + colWidths[4] / 2, y + 5, { align: 'center' });
-      curX += colWidths[4];
+      doc.text(year, curX + colWidths[5] / 2, y + 5, { align: 'center' });
+      curX += colWidths[5];
 
-      // Col 5: Status Badge
-      const statusW = colWidths[5] - 2;
+      // Col 6: Status Badge
+      const statusW = colWidths[6] - 2;
       const statusH = 5;
-      const badgeX = curX + (colWidths[5] - statusW) / 2;
+      const badgeX = curX + (colWidths[6] - statusW) / 2;
       const badgeY = y + 2;
 
       let badgeColor = [71, 85, 105]; // Slate

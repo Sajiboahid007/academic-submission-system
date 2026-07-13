@@ -122,11 +122,10 @@
             <tr style="margin-top: 50px">
               <th style="width: 25%">Title</th>
               <th style="width: 8%">Status</th>
+              <th style="width: 8%">Authors</th>
               <th style="width: 10%">Category</th>
-              <!-- <th style="width: 10%">Sub Category</th> -->
               <th style="width: 12%">Department</th>
               <th style="width: 5%">Year</th>
-              <!-- <th style="width: 5%">Batch</th> -->
               <th style="width: 10%">Action</th>
             </tr>
           </ng-template>
@@ -145,6 +144,14 @@
                 <p-badge *ngIf="paper.PaperApprovals[0]?.Status" [value]="paper?.PaperApprovals[0]?.Status"
                   [severity]="getSeverity(paper?.PaperApprovals[0]?.Status)">
                 </p-badge>
+              </td>
+
+              <td>
+                <div *ngFor="let item of paper.PaperGroups">
+                  <div *ngIf="item?.UserType === 'Teacher'">
+                    {{ item?.Users?.Name }}
+                  </div>
+                </div>
               </td>
 
               <td>

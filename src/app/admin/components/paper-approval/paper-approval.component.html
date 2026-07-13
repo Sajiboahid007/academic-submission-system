@@ -28,7 +28,8 @@
           <ng-template #header>
             <tr>
               <th style="width: 30%">Title</th>
-              <th style="width: 15%">Status</th>
+              <th style="width: 10%">Status</th>
+              <th style="width: 8%">Authors</th>
               <th style="width: 15%">Type</th>
               <th style="width: 20%">Department</th>
               <th>Action</th>
@@ -53,7 +54,14 @@
                 : paper?.PaperApprovals[0]?.Status === 'Rejected'
                   ? 'danger'
                   : 'warn'
-            "></p-badge>
+                  "></p-badge>
+              </td>
+              <td>
+                <div *ngFor="let item of paper.PaperGroups">
+                  <div *ngIf="item?.UserType === 'Teacher'">
+                    {{ item?.Users?.Name }}
+                  </div>
+                </div>
               </td>
               <td>{{ paper?.Category?.Name }}</td>
               <td>{{ paper?.Department?.Name }}</td>
