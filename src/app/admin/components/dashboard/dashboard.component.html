@@ -125,7 +125,7 @@
                 <a class="nav-link" [routerLink]="item.route" routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }" (click)="navigateTo(item.route)"
                   [title]="isSidebarCollapsed() ? item.label : ''">
-                  <span class="nav-icon">{{ item.icon }}</span>
+                  <span class="nav-icon"><i [class]="item.icon"></i></span>
                   <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
                   <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
                 </a>
@@ -139,7 +139,7 @@
               <!-- Group Header (toggle button) -->
               <button class="nav-group-header" (click)="!isSidebarCollapsed() && toggleGroup(group.groupId)"
                 [title]="isSidebarCollapsed() ? group.label : ''" type="button">
-                <span class="nav-icon">{{ group.icon }}</span>
+                <span class="nav-icon"><i [class]="group.icon"></i></span>
                 <ng-container *ngIf="!isSidebarCollapsed()">
                   <span class="nav-group-label">{{ group.label }}</span>
                   <svg class="group-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -154,7 +154,7 @@
                 <li *ngFor="let item of group.items" class="nav-sub-item">
                   <a class="nav-sub-link" [routerLink]="item.route" routerLinkActive="active"
                     [routerLinkActiveOptions]="{ exact: false }" (click)="navigateTo(item.route)" [title]="item.label">
-                    <span class="nav-sub-icon">{{ item.icon }}</span>
+                    <span class="nav-sub-icon"><i [class]="item.icon"></i></span>
                     <span class="nav-sub-label">{{ item.label }}</span>
                   </a>
                 </li>
@@ -174,7 +174,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content" [class.sidebar-open]="isSidebarOpen()" [class.sidebar-collapsed]="isSidebarCollapsed()">
+    <main #mainContent class="main-content" [class.sidebar-open]="isSidebarOpen()" [class.sidebar-collapsed]="isSidebarCollapsed()">
       <div class="content-wrapper">
         <router-outlet></router-outlet>
 
@@ -193,7 +193,7 @@
                 </svg>
               </div>
               <div class="stat-info">
-                <span class="stat-value">{{ totalFiles() }}</span>
+                <span class="stat-value">{{ totalPapers }}</span>
                 <span class="stat-label">Total Papers (YTD)</span>
               </div>
 
@@ -240,50 +240,17 @@
 
           <!-- Charts Row -->
           <div class="charts-grid">
-            <!-- Monthly Upload Volume -->
+            <!-- Papers & Journals Monthly Bar Chart -->
             <div class="chart-card">
               <div class="chart-card-header">
                 <div class="chart-title-wrap">
                   <span class="chart-icon">📅</span>
-                  <h3 class="chart-title">Monthly Upload Volume</h3>
+                  <h3 class="chart-title">Monthly Submissions</h3>
                 </div>
-                <span class="chart-badge">Year 2026</span>
+                <span class="chart-badge">Papers &amp; Journals</span>
               </div>
               <div class="chart-card-body">
-                <div class="bar-chart">
-                  <div class="bar-y-axis">
-                    <span>80</span>
-                    <span>60</span>
-                    <span>40</span>
-                    <span>20</span>
-                    <span>0</span>
-                  </div>
-                  <div class="bar-chart-content">
-                    <!-- Grid background lines -->
-                    <div class="chart-grid-lines">
-                      <div class="grid-line"></div>
-                      <div class="grid-line"></div>
-                      <div class="grid-line"></div>
-                      <div class="grid-line"></div>
-                      <div class="grid-line"></div>
-                    </div>
-                    <!-- Bars -->
-                    <div class="bars-container">
-                      <div *ngFor="let item of monthlyUploads()" class="bar-column">
-                        <div class="bar-wrapper">
-                          <div class="bar-fill" [style.height.%]="item.percentage">
-                            <span class="bar-tooltip">{{ item.count }} files</span>
-                          </div>
-                        </div>
-                        <span class="bar-label">{{ item.month }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="chart-card-footer">
-                <span class="footer-icon">📊</span>
-                <span class="footer-text">{{ peakMonthLabel() }}</span>
+                <app-chart></app-chart>
               </div>
             </div>
 
@@ -326,60 +293,9 @@
             </div>
           </div>
 
-          <!-- Recent Activity Table -->
+          <!-- Recent Activity -->
           <div class="recent-files-card">
-
             <app-recent-file-card></app-recent-file-card>
-            <!-- <div class="recent-files-body">
-              <div class="table-responsive">
-                
-
-                <table class="recent-table">
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Department</th>
-                      <th>Category</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let file of recentFiles()">
-                      <td class="file-title-cell">
-                        <div class="file-icon">📄</div>
-                        <div>
-                          <div>{{ file.Title | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ file.Abstract | truncateText: 80 }}
-                          </small>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <div>{{ file.Department?.Name | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ file.Batches?.Name | truncateText: 30 }}
-                          </small>
-                        </div>
-                      </td>
-                      <td>
-                        <div>
-                          <div>{{ file.Category?.Name | truncateText: 50 }}</div>
-                          <small style="font-size: 12px; color: rgb(169, 169, 169)">
-                            {{ file.SubCategory?.Name | truncateText: 30 }}
-                          </small>
-                        </div>
-                      </td>
-                      <td>
-                        <p-button label="View" [outlined]="true" icon="pi pi-eye" size="small"
-                          styleClass="p-button-sm p-button-outlined" (click)="viewPaper(file)">
-                        </p-button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>

@@ -20,9 +20,9 @@
     ]" [tableStyle]="{ 'width': '100%', 'table-layout': 'fixed' }">
           <!-- Search -->
           <ng-template #caption>
-            <div class="row">
+            <div class="filters-container">
               <!-- Search -->
-              <div class="col-auto">
+              <div class="filter-item search-filter">
                 <p-iconfield iconPosition="left">
                   <p-inputicon>
                     <i class="pi pi-search"></i>
@@ -35,7 +35,7 @@
               </div>
 
               <!-- Category Dropdown -->
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="Category.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="categories" optionLabel="Name"
@@ -48,7 +48,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="SubCategory.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="subCategories" optionLabel="Name"
@@ -62,7 +62,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="Department.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="departments" optionLabel="Name"
@@ -76,7 +76,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="years" placeholder="Year" [showClear]="true"
@@ -86,7 +86,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col">
+              <div class="filter-item">
                 <p-columnFilter field="Batches.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="batches" optionLabel="Name"
@@ -102,13 +102,14 @@
               </div>
 
               <!-- Clear Button -->
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
               </div>
 
               <!-- Export PDF Button -->
-              <div class="col-auto">
-                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf" (click)="exportPapersReport()" />
+              <div class="filter-item">
+                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf"
+                  (click)="exportPapersReport(dt2)" />
               </div>
             </div>
           </ng-template>
@@ -185,27 +186,28 @@
     </p-tabpanel>
     <p-tabpanel value="1">
       <div class="card">
-        <p-table #dt2 [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
-          [paginator]="true" [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Keywords','Year']"
+        <p-table #dtJournal [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+          [loading]="loading" [paginator]="true"
+          [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Keywords','Year']"
           [tableStyle]="{ 'width': '100%', 'table-layout': 'fixed' }">
 
           <ng-template #caption>
-            <div class="row">
-
+            <div class="filters-container">
               <!-- Search -->
-              <div class="col-auto">
+              <div class="filter-item search-filter">
                 <p-iconfield iconPosition="left">
                   <p-inputicon>
                     <i class="pi pi-search"></i>
                   </p-inputicon>
 
                   <input pInputText type="text" [(ngModel)]="searchValue" name="search"
-                    (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Search papers"
+                    (input)="dtJournal.filterGlobal($any($event.target).value, 'contains')" placeholder="Search papers"
                     style="width: 250px" />
                 </p-iconfield>
               </div>
+
               <!-- Category Dropdown -->
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="Category.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="categories" optionLabel="Name"
@@ -218,7 +220,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="SubCategory.Name" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="subCategories" optionLabel="Name"
@@ -232,7 +234,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col-auto">
+              <div class="filter-item">
                 <p-columnFilter field="Year" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="years" placeholder="Year" [showClear]="true"
@@ -242,7 +244,7 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
-              <div class="col">
+              <div class="filter-item">
                 <p-columnFilter field="Keywords" matchMode="equals" [showMenu]="false">
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-select appendTo="body" [ngModel]="value" [options]="journal" optionLabel="Keywords"
@@ -256,14 +258,16 @@
                   </ng-template>
                 </p-columnFilter>
               </div>
+
               <!-- Clear Button -->
-              <div class="col-auto">
-                <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
+              <div class="filter-item">
+                <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dtJournal)" />
               </div>
 
               <!-- Export PDF Button -->
-              <div class="col-auto">
-                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf" (click)="exportJournalsReport()" />
+              <div class="filter-item">
+                <p-button label="Export PDF" severity="success" icon="pi pi-file-pdf"
+                  (click)="exportJournalsReport(dtJournal)" />
               </div>
             </div>
           </ng-template>
@@ -289,7 +293,8 @@
               <td>
                 <div>
                   <div>{{ journal.Title | truncateText: 50 }}</div>
-                  <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="journal.Abstract"
+                    tooltipPosition="right">
                     {{ journal.Abstract | truncateText: 80 }}
                   </small>
                 </div>

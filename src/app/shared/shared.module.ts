@@ -46,6 +46,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FooterComponent } from './components/footer/footer.component';
 import { RecentFileCardComponent } from './components/recent-file-card/recent-file-card.component';
 import { PlagarismComponent } from './components/plagarism/plagarism.component';
+import { ChartComponent } from './components/chart/chart.component';
+import { BaseChartDirective } from 'ng2-charts';
 const materialNgModule = [
   MatButtonModule,
   MatCardModule,
@@ -87,7 +89,8 @@ const primeNgModules = [
   PaginatorModule,
   MenubarModule,
   DrawerModule,
-  ChartModule
+  ChartModule,
+  BaseChartDirective
 ];
 
 @NgModule({
@@ -99,6 +102,7 @@ const primeNgModules = [
     FooterComponent,
     RecentFileCardComponent,
     PlagarismComponent,
+    ChartComponent,
   ],
   imports: [CommonModule, RouterModule, FlexLayoutModule, ...materialNgModule, ...primeNgModules],
   exports: [
@@ -114,6 +118,7 @@ const primeNgModules = [
     FooterComponent,
     RecentFileCardComponent,
     PlagarismComponent,
+    ChartComponent,
   ],
 })
 export class SharedModule { }

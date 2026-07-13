@@ -56,6 +56,8 @@ export class PaperApprovalComponent implements OnInit {
       this.getJounals();
     }
 
+
+
   }
 
   public getApprovalList() {
@@ -266,10 +268,10 @@ export class PaperApprovalComponent implements OnInit {
 
   onApprove(paperId: any) {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
-      width: '900px',
-      height: '550px',
+      width: '500px',
+      // height: '500px',
       autoFocus: true,
-      data: { PaperId: paperId },
+      data: { PaperId: paperId, Source: 'Paper' },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

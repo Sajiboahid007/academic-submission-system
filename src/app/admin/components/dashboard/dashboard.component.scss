@@ -991,9 +991,10 @@
 /* Charts Grid */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: $spacing-xl;
-  
+  align-items: stretch;
+
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
@@ -1052,10 +1053,18 @@
 
 .chart-card-body {
   flex: 1;
-  padding: $spacing-xl;
+  padding: $spacing-lg $spacing-xl;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
+  min-height: 280px;
+
+  /* Let the chart canvas fill the body without double padding */
+  app-chart {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .chart-card-footer {

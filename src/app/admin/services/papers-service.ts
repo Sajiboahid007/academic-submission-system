@@ -22,6 +22,10 @@ export class PapersService {
 
   }
 
+  getTotalPapers(): Observable<AppQuery<number>> {
+    return this.http.get<AppQuery<number>>(`${this.baseUrl}/api/papers/getTotal`);
+  }
+
   getNonApprovalPapers(): Observable<AppQuery<Papers[]>> {
     return this.http.get<AppQuery<Papers[]>>(`${this.baseUrl}/api/paper/non_approval/get`);
   }

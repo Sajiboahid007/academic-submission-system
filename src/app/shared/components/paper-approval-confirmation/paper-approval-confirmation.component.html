@@ -11,22 +11,9 @@
 
   <form [formGroup]="approveFrom">
     <div fxLayout="column" fxLayoutGap="24px">
-      <label><b>Status</b></label>
-
-      <!-- <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="24px">
-        <div *ngFor="let option of statusOptions">
-          <p-radiobutton name="Status" [value]="option.value" [inputId]="option.value" formControlName="Status">
-          </p-radiobutton>
-
-          <label [for]="option.value" style="margin-left: 8px; cursor: pointer">
-            {{ option.label }}
-          </label>
-        </div>
-      </div> -->
-
       <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-select [options]="statusOptions" formControlName="Status" optionLabel="label" optionValue="value"
+          <p-select id="Status" [options]="statusOptions" formControlName="Status" optionLabel="label" optionValue="value"
             display="chip" [showClear]="true" styleClass="full-width">
             <ng-template let-item pTemplate="item">
               <div class="flex items-center gap-2">
@@ -34,15 +21,18 @@
               </div>
             </ng-template>
           </p-select>
-          <label for="Status" class="field-label"> Status </label>
+          <label for="Status" class="field-label"> Status<span class="required-asterisk">*</span> </label>
         </p-floatlabel>
+        <small *ngIf="approveFrom.get('Status')?.invalid && approveFrom.get('Status')?.touched" class="error-text">
+          Status is required
+        </small>
       </div>
 
 
       <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto"
         *ngIf="data?.Source === 'Journal' &&  userInfo.role !== 'Teacher'">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-multiselect [options]="editorial" formControlName="EditorialId" optionLabel="Name" optionValue="Id"
+          <p-multiselect id="EditorialId" [options]="editorial" formControlName="EditorialId" optionLabel="Name" optionValue="Id"
             display="chip" [showClear]="true" styleClass="full-width">
             <ng-template let-item pTemplate="item">
               <div class="flex items-center gap-2">
@@ -52,15 +42,22 @@
               </div>
             </ng-template>
           </p-multiselect>
-          <label for=" authorsIds" class="field-label"> Editorial </label>
+          <label for="EditorialId" class="field-label"> Editorial </label>
         </p-floatlabel>
       </div>
 
-      <label><b>Remarks</b></label>
-      <textarea pInputTextarea rows="4" placeholder="Enter remarks" style="width: 100%"
-        formControlName="Remarks"></textarea>
+      <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+        <p-floatlabel variant="on" class="float-label-wrapper">
+          <textarea pInputTextarea id="Remarks" rows="4" placeholder="Enter remarks" style="width: 100%"
+            formControlName="Remarks"></textarea>
+          <label for="Remarks" class="field-label"> Remarks<span class="required-asterisk">*</span> </label>
+        </p-floatlabel>
+        <small *ngIf="approveFrom.get('Remarks')?.invalid && approveFrom.get('Remarks')?.touched" class="error-text">
+          Remarks is required
+        </small>
+      </div>
 
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px" *ngIf="data?.Source === 'Journal'">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px" *ngIf="data?.JournalId || data?.PaperId">
         <label>Check Plagarism with Gemini</label>
         <p-button label="Check Plagarism" icon="pi pi-pencil" class="" (click)="checkPlagarism()"></p-button>
       </div>

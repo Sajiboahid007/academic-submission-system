@@ -39,13 +39,61 @@
         <td>{{ user?.Department?.Name }}</td>
         <td>{{ user?.Batches?.Name }}</td>
         <td>
-          <button *ngIf="onApprove()" pButton icon="pi pi-pencil" class="p-button-success btn-save"
+          <button *ngIf="onApprove()" pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
             (click)="onEditUser(user.Id)"></button>
 
-          <button *ngIf="onApprove()" pButton icon="pi pi-trash" class="p-button-danger btn-save"
+          <button *ngIf="onApprove()" pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
             (click)="onDeleteUser(user.Id)"></button>
+
+          <button *ngIf="isSuperAdmin()" pButton icon="pi pi-envelope" class="p-button-warning btn-save m-1"
+            (click)="onForgotPassword(user)" pTooltip="Reset & Email Password" tooltipPosition="top"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
+
+<ng-template #forgotPasswordModal>
+  <div class="modal-form-container" style="padding: 24px; min-width: 450px;">
+    <div fxLayout="row" fxLayoutAlign="space-between center" class="modal-header-section" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <h2 class="header-title" style="margin: 0; font-weight: 600;">Reset User Password</h2>
+      <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary"
+        (click)="closeForgotPasswordModal()"></button>
+    </div>
+
+    <form [formGroup]="forgotPasswordForm" (ngSubmit)="sendResetPasswordEmail()">
+      <div fxLayout="column" fxLayoutGap="16px" style="display: flex; flex-direction: column; gap: 16px;">
+        
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="reset-email"><b>To (User Email)</b></label>
+          <input id="reset-email" pInputText formControlName="to" type="email" style="width: 100%;" />
+        </div>
+
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="reset-subject"><b>Subject</b></label>
+          <input id="reset-subject" pInputText formControlName="subject" type="text" style="width: 100%;" />
+        </div>
+
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="reset-password"><b>New Plain Password</b></label>
+          <div style="display: flex; gap: 8px;">
+            <input id="reset-password" pInputText formControlName="plainPassword" type="text" style="flex: 1;" (input)="updateMessagePassword()" />
+            <button pButton type="button" label="Regenerate" class="p-button-outlined" (click)="regeneratePassword()"></button>
+          </div>
+        </div>
+
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="reset-message"><b>Message Body</b></label>
+          <textarea id="reset-message" pInputTextarea rows="6" formControlName="message" style="width: 100%; font-family: monospace;"></textarea>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section" style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+        <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
+          (click)="closeForgotPasswordModal()"></button>
+        <button pButton type="submit" label="Send & Reset" [icon]="resetting ? 'pi pi-spinner pi-spin' : 'pi pi-envelope'"
+          class="p-button-success" [disabled]="forgotPasswordForm.invalid || resetting"></button>
+      </div>
+    </form>
+  </div>
+</ng-template>

@@ -55,6 +55,10 @@ export class UserInfoService {
     );
   }
 
+  changePassword(data: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/api/users/change-password`, data);
+  }
+
   deleteUser(id: number): Observable<AppQuery<Users>> {
     return this.http.put<AppQuery<Users>>(`${this.baseUrl}/api/users/delete/${id}`, null);
   }

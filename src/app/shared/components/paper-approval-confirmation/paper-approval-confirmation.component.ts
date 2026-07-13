@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { UserInfoService } from '../../../admin/services/user-info-service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import { PaperApprovalConfirmation } from '../../services/paper-approval-confirmation';
 import { ToastService } from '../../services/toast.service';
@@ -55,9 +55,9 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     }
 
     this.approveFrom = new FormGroup({
-      Status: new FormControl(''),
-      Remarks: new FormControl(''),
-      EditorialId: new FormControl(''),
+      Status: new FormControl('', Validators.required),
+      Remarks: new FormControl('', Validators.required),
+      EditorialId: new FormControl(),
     });
 
     if (this.userInfo && (this.userInfo.role === AcademicSubmissionConfig.UserRole.Student
@@ -202,7 +202,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       width: '900px',
       height: '600px',
       autoFocus: true,
-      data: { JournalId: this.data?.JournalId },
+      data: { JournalId: this.data?.JournalId, PaperId: this.data?.PaperId },
     });
   }
 

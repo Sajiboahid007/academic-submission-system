@@ -79,14 +79,15 @@
     </p-tabpanel>
     <p-tabpanel value="1">
       <div class="card">
-        <p-table #dt2 [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading"
-          [paginator]="true" [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Year']"
+        <p-table #dtJournal [value]="journal" dataKey="Id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+          [loading]="loading" [paginator]="true"
+          [globalFilterFields]="['Title', 'Category.Name','SubCategory.Name','Year']"
           [tableStyle]="{ 'min-width': '75rem', 'table-layout': 'fixed' }">
 
           <ng-template #caption>
             <!-- Search -->
             <div style="display: flex; margin: 2px; justify-content: flex-end; align-items: center;">
-              <app-table-caption [table]="dt2"></app-table-caption>
+              <app-table-caption [table]="dtJournal"></app-table-caption>
               <div class="col-auto">
 
               </div>
@@ -112,7 +113,8 @@
               <td>
                 <div>
                   <div>{{ journal.Title | truncateText: 50 }}</div>
-                  <small style="font-size: 12px; color: rgb(169, 169, 169)">
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="journal.Abstract"
+                    tooltipPosition="right">
                     {{ journal.Abstract | truncateText: 80 }}
                   </small>
                 </div>

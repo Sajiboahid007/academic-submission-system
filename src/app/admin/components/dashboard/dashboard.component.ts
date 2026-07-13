@@ -36,6 +36,7 @@ import { JournalService } from '../../services/journal-service';
 export class DashboardComponent implements OnInit {
   @ViewChild('userMenuWrap', { read: ElementRef }) userMenuWrap?: ElementRef<HTMLElement>;
   @ViewChild('notificationWrap', { read: ElementRef }) notificationWrap?: ElementRef<HTMLElement>;
+  @ViewChild('mainContent', { read: ElementRef }) mainContent?: ElementRef<HTMLElement>;
 
   userMenuOpen = signal(false);
   notificationsOpen = signal(false);
@@ -48,6 +49,9 @@ export class DashboardComponent implements OnInit {
   currentRoute = signal('');
 
   // Dashboard landing page stats
+
+  totalPapers = 0;
+  totalJournal1 = 0;
   totalFiles = signal(0);
   totalUsers = signal(0);
   avgMonthlyUploads = signal(0);
@@ -80,7 +84,7 @@ export class DashboardComponent implements OnInit {
         {
           label: 'Dashboard',
           route: '/dashboard',
-          icon: '🏠',
+          icon: 'pi pi-home',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
       ],
@@ -91,56 +95,56 @@ export class DashboardComponent implements OnInit {
     {
       groupId: 'Administration',
       label: 'Administration',
-      icon: '🏛️',
+      icon: 'pi pi-cog',
       collapsible: true,
       roles: ['Teacher', 'Admin', 'Super-Admin'],
       items: [
         {
           label: 'Users',
           route: '/dashboard/user',
-          icon: '👥',
+          icon: 'pi pi-users',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Role',
           route: '/dashboard/role',
-          icon: '🔑',
+          icon: 'pi pi-shield',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Department',
           route: '/dashboard/department',
-          icon: '🏢',
+          icon: 'pi pi-sitemap',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Batch',
           route: '/dashboard/batch',
-          icon: '📦',
+          icon: 'pi pi-box',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Category',
           route: '/dashboard/categories',
-          icon: '📚',
+          icon: 'pi pi-bookmark',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Subcategory',
           route: '/dashboard/subcategory',
-          icon: '🗂️',
+          icon: 'pi pi-folder-open',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Papers',
           route: '/dashboard/papers',
-          icon: '📄',
+          icon: 'pi pi-file',
           roles: ['Admin', 'Super-Admin'],
         },
         {
           label: 'Papers Approval',
           route: '/dashboard/papers-approval',
-          icon: '✅',
+          icon: 'pi pi-verified',
           roles: ['Teacher', 'Admin', 'Super-Admin'],
         },
       ],
@@ -154,31 +158,31 @@ export class DashboardComponent implements OnInit {
         {
           label: 'Upload Article',
           route: '/dashboard/create-papers',
-          icon: '📤',
+          icon: 'pi pi-upload',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
         // {
         //   label: 'Home',
         //   route: '/dashboard/home',
-        //   icon: '🏠',
+        //   icon: 'pi pi-home',
         //   roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         // },
         {
           label: 'Thesis / Research',
           route: '/dashboard/paper-detail',
-          icon: '📝',
+          icon: 'pi pi-graduation-cap',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
         {
           label: 'Publication List',
           route: '/dashboard/journal',
-          icon: '🗃️',
+          icon: 'pi pi-list',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
         {
           label: 'Profile',
           route: '/dashboard/profile',
-          icon: '👤',
+          icon: 'pi pi-user',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
         },
       ],
@@ -226,6 +230,9 @@ export class DashboardComponent implements OnInit {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentRoute.set(event.url);
+        if (this.mainContent) {
+          this.mainContent.nativeElement.scrollTop = 0;
+        }
       });
     this.currentRoute.set(this.router.url);
   }
@@ -257,6 +264,16 @@ export class DashboardComponent implements OnInit {
 
     this.checkIfUserDataUpdate();
     this.getTotalJournal();
+    this.getTotalpapers();
+  }
+
+  getTotalpapers() {
+    this.papersService.getTotalPapers().subscribe({
+      next: (response) => {
+        this.totalPapers = response.data;
+        this.cdr.markForCheck();
+      }
+    })
   }
 
   getTotalJournal() {
@@ -302,6 +319,9 @@ export class DashboardComponent implements OnInit {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+    if (this.mainContent) {
+      this.mainContent.nativeElement.scrollTop = 0;
+    }
     // Close sidebar on mobile after navigation
     if (window.innerWidth < 768) {
       this.isSidebarOpen.set(false);
@@ -511,38 +531,9 @@ export class DashboardComponent implements OnInit {
                 });
 
                 if (hasNoData || decoratedRecent.length === 0) {
-                  const mockRecent = [
-                    {
-                      Id: 101,
-                      Title: 'Machine Learning Application in Agriculture',
-                      DepartmentName: 'Computer Science',
-                      CreatedDate: new Date('2026-06-05T14:30:00Z'),
-                    },
-                    {
-                      Id: 102,
-                      Title: 'Linear Algebra and Neural Network Weights',
-                      DepartmentName: 'Mathematics',
-                      CreatedDate: new Date('2026-06-04T09:15:00Z'),
-                    },
-                    {
-                      Id: 103,
-                      Title: 'Climatic Change and Regional Impact Study',
-                      DepartmentName: 'Science',
-                      CreatedDate: new Date('2026-06-02T11:45:00Z'),
-                    },
-                    {
-                      Id: 104,
-                      Title: 'A Study on Socio-Economic Development Models',
-                      DepartmentName: 'Social Studies',
-                      CreatedDate: new Date('2026-05-28T16:20:00Z'),
-                    },
-                    {
-                      Id: 105,
-                      Title: 'Comparative Analysis of Classical Literature',
-                      DepartmentName: 'Languages',
-                      CreatedDate: new Date('2026-05-25T10:00:00Z'),
-                    },
-                  ];
+                  const mockRecent = [{
+                    name: 'nothing inside'
+                  },]
                   this.recentFiles.set(mockRecent);
                 } else {
                   this.recentFiles.set(decoratedRecent);

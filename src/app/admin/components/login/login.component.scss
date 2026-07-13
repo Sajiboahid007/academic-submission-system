@@ -237,6 +237,25 @@
     color: #cbd5e1;
   }
 }
+
+.password-label-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-password-link {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #2dd4bf;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+
+  &:hover {
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+  }
+}
 .field-group-userId {
   width: 50%;
   flex-direction: row;

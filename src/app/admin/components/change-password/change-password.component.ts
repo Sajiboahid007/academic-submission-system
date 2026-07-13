@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastService } from '../../../shared/services/toast.service';
+import { UserInfoService } from '../../services/user-info-service';
 
 const confirmMatchesNew: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const next = group.get('newPassword')?.value;
@@ -30,6 +31,7 @@ export class ChangePasswordComponent {
   constructor(
     private readonly fb: FormBuilder,
     private readonly toast: ToastService,
+    private readonly userService: UserInfoService,
   ) {
     this.form = this.fb.group(
       {
@@ -47,10 +49,18 @@ export class ChangePasswordComponent {
       return;
     }
 
-    this.toast.info(
-      'Password change is not connected to the server yet. This form validates your input only.',
-      'Change password',
-    );
-    this.form.reset();
+    const { currentPassword, newPassword } = this.form.value;
+
+    this.userService.changePassword({ currentPassword, newPassword }).subscribe({
+      next: (res) => {
+        this.toast.success('Password updated successfully!', 'Change password');
+        this.form.reset();
+      },
+      error: (err) => {
+        console.error('Error changing password:', err);
+        const errorMsg = err?.error?.message || err?.error?.error || 'Failed to update password. Please check your current password.';
+        this.toast.error(errorMsg, 'Change password');
+      },
+    });
   }
 }

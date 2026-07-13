@@ -80,16 +80,17 @@ export class PapersListComponent implements OnInit {
     }
   }
 
-  exportPapersReport() {
+  exportPapersReport(table?: Table) {
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
 
-    const totalCount = this.papers.length;
-    const approvedCount = this.papers.filter((p: any) => p.PaperApprovals?.[0]?.Status === 'Approved').length;
-    const pendingCount = this.papers.filter((p: any) => p.PaperApprovals?.[0]?.Status === 'Pending' || p.PaperApprovals?.[0]?.Status === 'Review Requested').length;
+    const activePapers = (table && table.filteredValue) ? table.filteredValue : this.papers;
+    const totalCount = activePapers.length;
+    const approvedCount = activePapers.filter((p: any) => p.PaperApprovals?.[0]?.Status === 'Approved').length;
+    const pendingCount = activePapers.filter((p: any) => p.PaperApprovals?.[0]?.Status === 'Pending' || p.PaperApprovals?.[0]?.Status === 'Review Requested').length;
     const draftCount = totalCount - approvedCount - pendingCount;
 
     // Helper: draw page header
@@ -170,6 +171,47 @@ export class PapersListComponent implements OnInit {
 
     y += 22; // Move y past stats cards
 
+    // Calculate department summary from activePapers
+    const deptSummaryMap = new Map<string, number>();
+    activePapers.forEach((paper: any) => {
+      const deptName = paper.Department?.Name || 'Unknown Department';
+      deptSummaryMap.set(deptName, (deptSummaryMap.get(deptName) || 0) + 1);
+    });
+    const deptSummary = Array.from(deptSummaryMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Render Department Summary Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(15, 23, 42);
+    doc.text('DEPARTMENT PAPERS SUMMARY', 15, y);
+    y += 4;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    let deptX = 15;
+    deptSummary.forEach((dept) => {
+      const text = `${dept.name}: ${dept.count}`;
+      const textWidth = doc.getTextWidth(text);
+
+      if (deptX + textWidth + 8 > 195) {
+        deptX = 15;
+        y += 6;
+      }
+
+      doc.setFillColor(241, 245, 249); // #f1f5f9
+      doc.setDrawColor(226, 232, 240); // #e2e8f0
+      doc.setLineWidth(0.2);
+      doc.roundedRect(deptX, y - 3.5, textWidth + 5, 5, 1, 1, 'FD');
+
+      doc.setTextColor(51, 65, 85);
+      doc.text(text, deptX + 2.5, y);
+      deptX += textWidth + 8;
+    });
+
+    y += 10; // Extra space after summary block
+
     // Table Setup
     const colWidths = [10, 80, 30, 32, 13, 15]; // Total = 180mm
     const colAlign = ['center', 'left', 'left', 'left', 'center', 'center'];
@@ -209,11 +251,11 @@ export class PapersListComponent implements OnInit {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184); // #94a3b8
-      doc.text(`Gono University Academic Submission Repository  |  Confidential Internal Use Only`, 15, 287);
+      doc.text(`Gono University Academic Submission Repository  |  dev - Sajib and Teams`, 15, 287);
       doc.text(`Page ${pNum}`, 195, 287, { align: 'right' });
     };
 
-    this.papers.forEach((paper: any, idx) => {
+    activePapers.forEach((paper: any, idx) => {
       const title = paper.Title || 'No Title';
       const abstract = paper.Abstract || 'No Abstract/Description provided.';
       const category = paper.Category?.Name || '-';
@@ -347,16 +389,17 @@ export class PapersListComponent implements OnInit {
     this.toastService.success('Academic Papers Report PDF generated successfully!');
   }
 
-  exportJournalsReport() {
+  exportJournalsReport(table?: Table) {
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
 
-    const totalCount = this.journal.length;
-    const approvedCount = this.journal.filter((j: any) => j.PaperApprovals?.[0]?.Status === 'Approved').length;
-    const pendingCount = this.journal.filter((j: any) => j.PaperApprovals?.[0]?.Status === 'Pending' || j.PaperApprovals?.[0]?.Status === 'Review Requested').length;
+    const activeJournals = (table && table.filteredValue) ? table.filteredValue : this.journal;
+    const totalCount = activeJournals.length;
+    const approvedCount = activeJournals.filter((j: any) => j.PaperApprovals?.[0]?.Status === 'Approved').length;
+    const pendingCount = activeJournals.filter((j: any) => j.PaperApprovals?.[0]?.Status === 'Pending' || j.PaperApprovals?.[0]?.Status === 'Review Requested').length;
     const draftCount = totalCount - approvedCount - pendingCount;
 
     // Helper: draw page header
@@ -437,6 +480,47 @@ export class PapersListComponent implements OnInit {
 
     y += 22; // Move y past stats cards
 
+    // Calculate department summary from this.papers
+    const deptSummaryMap = new Map<string, number>();
+    this.papers.forEach((paper: any) => {
+      const deptName = paper.Department?.Name || 'Unknown Department';
+      deptSummaryMap.set(deptName, (deptSummaryMap.get(deptName) || 0) + 1);
+    });
+    const deptSummary = Array.from(deptSummaryMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Render Department Summary Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(15, 23, 42);
+    doc.text('DEPARTMENT PAPERS SUMMARY', 15, y);
+    y += 4;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    let deptX = 15;
+    deptSummary.forEach((dept) => {
+      const text = `${dept.name}: ${dept.count}`;
+      const textWidth = doc.getTextWidth(text);
+
+      if (deptX + textWidth + 8 > 195) {
+        deptX = 15;
+        y += 6;
+      }
+
+      doc.setFillColor(241, 245, 249); // #f1f5f9
+      doc.setDrawColor(226, 232, 240); // #e2e8f0
+      doc.setLineWidth(0.2);
+      doc.roundedRect(deptX, y - 3.5, textWidth + 5, 5, 1, 1, 'FD');
+
+      doc.setTextColor(51, 65, 85);
+      doc.text(text, deptX + 2.5, y);
+      deptX += textWidth + 8;
+    });
+
+    y += 10; // Extra space after summary block
+
     // Table Setup
     const colWidths = [10, 72, 28, 42, 13, 15]; // Total = 180mm
     const colAlign = ['center', 'left', 'left', 'left', 'center', 'center'];
@@ -476,11 +560,11 @@ export class PapersListComponent implements OnInit {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(148, 163, 184); // #94a3b8
-      doc.text(`Gono University Academic Submission Repository  | dev - Sajib and Team`, 15, 287);
+      doc.text(`Gono University Academic Submission Repository  | dev - Sajib and Teams`, 15, 287);
       doc.text(`Page ${pNum}`, 195, 287, { align: 'right' });
     };
 
-    this.journal.forEach((j: any, idx: any) => {
+    activeJournals.forEach((j: any, idx: any) => {
       const title = j.Title || 'No Title';
       const authors = j.Authors || 'No Authors Specified';
       const category = j.Category?.Name || '-';

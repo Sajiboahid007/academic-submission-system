@@ -23,9 +23,9 @@
         <tr>
             <td>{{ role.Name }}</td>
             <td *ngIf="onApprove()">
-                <button pButton icon="pi pi-pencil" class="p-button-success btn-save"
+                <button pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
                     (click)="onEditRole(role.Id)"></button>
-                <button pButton icon="pi pi-trash" class="p-button-danger btn-save"
+                <button pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
                     (click)="onDeleteRole(role.Id)"></button>
             </td>
         </tr>

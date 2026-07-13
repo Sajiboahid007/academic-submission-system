@@ -39,6 +39,7 @@
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "jspdf": "^4.2.1",
+    "ng2-charts": "^10.0.0",
     "ng2-pdf-viewer": "^10.4.0",
     "ngx-flexible-layout": "^21.0.1",
     "primeicons": "^7.0.0",

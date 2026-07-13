@@ -31,6 +31,10 @@ export class ProfileComponent implements OnInit {
   isUploading = false;
   users: Users = {} as Users;
   activeTab = '0';
+  papersFirst = 0;
+  papersRows = 10;
+  journalsFirst = 0;
+  journalsRows = 10;
 
   constructor(
     private readonly userInfoService: UserInfoService,
@@ -120,6 +124,32 @@ export class ProfileComponent implements OnInit {
 
       return matchesSearch
     });
+  }
+
+  get paginatedPapers(): any[] {
+    return this.filteredPapers.slice(this.papersFirst, this.papersFirst + this.papersRows);
+  }
+
+  get paginatedJournals(): any[] {
+    return this.filteredJournals.slice(this.journalsFirst, this.journalsFirst + this.journalsRows);
+  }
+
+  onPapersPageChange(event: any) {
+    this.papersFirst = event.first;
+    this.papersRows = event.rows;
+    this.cdr.markForCheck();
+  }
+
+  onJournalsPageChange(event: any) {
+    this.journalsFirst = event.first;
+    this.journalsRows = event.rows;
+    this.cdr.markForCheck();
+  }
+
+  onSearchQueryChange() {
+    this.papersFirst = 0;
+    this.journalsFirst = 0;
+    this.cdr.markForCheck();
   }
 
   editProfile(): void {

@@ -6,6 +6,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Users } from '../../../fds-config/entity-models/user';
 import { UserInfoService } from '../../services/user-info-service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -14,6 +15,7 @@ import { AppQuery } from '../../../shared/app-query';
 import { ConfirmationService } from 'primeng/api';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { PlagarismService } from '../../services/plagarism-service';
 
 @Component({
   selector: 'app-user-list',
@@ -27,15 +29,20 @@ export class UserListComponent implements OnInit {
   userTokenInfo: any = {};
   private dialogRef!: MatDialogRef<any>;
   @ViewChild('userModal') userModal!: TemplateRef<any>;
+  @ViewChild('forgotPasswordModal') forgotPasswordModal!: TemplateRef<any>;
 
   userEditId: number = 0;
+  forgotPasswordForm!: FormGroup;
+  selectedUserForPasswordReset: any = null;
+  resetting = false;
 
   constructor(
     private readonly usersService: UserInfoService,
     private dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly plagarismService: PlagarismService,
   ) { }
 
   public ngOnInit(): void {
@@ -126,5 +133,123 @@ export class UserListComponent implements OnInit {
     }
 
     return false;
+  }
+
+  isSuperAdmin(): boolean {
+    return this.userTokenInfo?.role === AcademicSubmissionConfig.UserRole.SuperAdmin;
+  }
+
+  generateRandomPassword(): string {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 10; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  }
+
+  onForgotPassword(user: any) {
+    this.selectedUserForPasswordReset = user;
+    const tempPassword = this.generateRandomPassword();
+    
+    this.forgotPasswordForm = new FormGroup({
+      to: new FormControl(user.Email, [Validators.required, Validators.email]),
+      subject: new FormControl('Reset Password - Academic Submission System', Validators.required),
+      plainPassword: new FormControl(tempPassword, [Validators.required, Validators.minLength(4)]),
+      message: new FormControl('', Validators.required),
+    });
+
+    this.updateMessagePassword(tempPassword);
+
+    this.dialogRef = this.dialog.open(this.forgotPasswordModal, {
+      width: '500px',
+      autoFocus: true,
+    });
+  }
+
+  regeneratePassword() {
+    const newPass = this.generateRandomPassword();
+    this.forgotPasswordForm.patchValue({ plainPassword: newPass });
+    this.updateMessagePassword(newPass);
+  }
+
+  updateMessagePassword(newPass?: string) {
+    const pass = newPass || this.forgotPasswordForm.get('plainPassword')?.value || '';
+    const name = this.selectedUserForPasswordReset?.Name || 'User';
+    const messageText = `Dear ${name},
+
+Your password has been reset by the Super-Admin.
+
+Your new temporary password is: ${pass}
+
+Please log in and change your password immediately.
+
+Best regards,
+Academic Submission System`;
+
+    this.forgotPasswordForm.patchValue({ message: messageText });
+    this.cdr.markForCheck();
+  }
+
+  closeForgotPasswordModal() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+  }
+
+  sendResetPasswordEmail() {
+    if (this.forgotPasswordForm.invalid || this.resetting) {
+      return;
+    }
+
+    this.resetting = true;
+    this.cdr.markForCheck();
+
+    const formValues = this.forgotPasswordForm.getRawValue();
+
+    this.usersService.getUsersById(this.selectedUserForPasswordReset.Id).subscribe({
+      next: (res) => {
+        const fullUser = res.data;
+        fullUser.Password = formValues.plainPassword;
+
+        this.usersService.updateUser(fullUser).subscribe({
+          next: () => {
+            const mailData = {
+              email: formValues.to,
+              subject: formValues.subject,
+              text: formValues.message,
+            };
+
+            this.plagarismService.sendEmail(mailData).subscribe({
+              next: () => {
+                this.toastService.success('Password reset successfully and email sent.');
+                this.resetting = false;
+                this.closeForgotPasswordModal();
+                this.getUsers();
+              },
+              error: (err) => {
+                console.error('Error sending reset email:', err);
+                this.toastService.error('Password updated, but failed to send email.');
+                this.resetting = false;
+                this.closeForgotPasswordModal();
+                this.cdr.markForCheck();
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Error updating user password:', err);
+            this.toastService.error('Failed to reset user password.');
+            this.resetting = false;
+            this.cdr.markForCheck();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching user details for reset:', err);
+        this.toastService.error('Failed to retrieve user details.');
+        this.resetting = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { LoginService } from '../../services/login-service';
+import { ToastService } from '../../../shared/services/toast.service';
 
 export type AuthMode = 'login' | 'register';
 
@@ -30,6 +31,7 @@ export class LoginComponent implements OnInit {
     private readonly localStorageService: LocalStorageService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
+    private readonly toastService: ToastService,
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +63,11 @@ export class LoginComponent implements OnInit {
 
   onGuestMode() {
     this.router.navigate(['/home']);
+  }
+
+  onForgotPassword(event: Event): void {
+    event.preventDefault();
+    this.toastService.info('Please contact the academic administrator to reset your password.', 'Forgot Password');
   }
 
   onLogin(): void {

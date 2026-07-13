@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PlagarismService } from '../../../admin/services/plagarism-service';
 import { JournalService } from '../../../admin/services/journal-service';
 import { UserInfoService } from '../../../admin/services/user-info-service';
+import { PapersService } from '../../../admin/services/papers-service';
 import { ToastService } from '../../services/toast.service';
 import { jsPDF } from 'jspdf';
 
@@ -22,9 +23,10 @@ export class PlagarismComponent implements OnInit {
 
   constructor(
     private readonly dialogRef: MatDialogRef<PlagarismComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { JournalId?: number } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { JournalId?: number; PaperId?: number } | null,
     private readonly plagiarismService: PlagarismService,
     private readonly journalService: JournalService,
+    private readonly papersService: PapersService,
     private readonly userService: UserInfoService,
     private readonly cdr: ChangeDetectorRef,
     private readonly toastService: ToastService,
@@ -65,6 +67,13 @@ Academic Submission System`;
       subject: subjectText,
       message: messageText,
     });
+
+    try {
+      this.generateErrorPdfReport(title, errorDetail);
+    } catch (pdfErr) {
+      console.error('Error generating error PDF report:', pdfErr);
+    }
+
     this.cdr.markForCheck();
   }
 
@@ -74,7 +83,7 @@ Academic Submission System`;
 
   runPlagarismCheck() {
     if (!this.data) {
-      this.toastService.error('No journal metadata provided.');
+      this.toastService.error('No submission metadata provided.');
       return;
     }
 
@@ -82,6 +91,7 @@ Academic Submission System`;
     this.cdr.markForCheck();
 
     const journalId = this.data.JournalId;
+    const paperId = this.data.PaperId;
 
     if (journalId) {
       this.journalService.getById(journalId).subscribe({
@@ -112,12 +122,41 @@ Academic Submission System`;
           this.cdr.markForCheck();
         }
       });
+    } else if (paperId) {
+      this.papersService.getPaperById(paperId).subscribe({
+        next: (res) => {
+          if (res?.data) {
+            const paper = res.data;
+            this.processReview(paper.Title || '', paper.FileUrl || '', paper.UserId);
+          } else {
+            this.toastService.error('Failed to fetch paper details.');
+            this.prefillErrorEmail(
+              '',
+              '',
+              'We were unable to retrieve the paper details from the system. The record may be missing or inaccessible.'
+            );
+            this.loading = false;
+            this.cdr.markForCheck();
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastService.error('Error fetching paper details.');
+          this.prefillErrorEmail(
+            '',
+            '',
+            `A network or server error occurred while fetching the paper details. Error: ${err?.message || err?.statusText || 'Unknown error'}`
+          );
+          this.loading = false;
+          this.cdr.markForCheck();
+        }
+      });
     } else {
-      this.toastService.error('Invalid journal metadata.');
+      this.toastService.error('Invalid submission metadata.');
       this.prefillErrorEmail(
         '',
         '',
-        'The journal identifier provided was invalid or missing. The plagiarism check could not be started.'
+        'The submission identifier provided was invalid or missing. The plagiarism check could not be started.'
       );
       this.loading = false;
       this.cdr.markForCheck();
@@ -351,6 +390,97 @@ Academic Submission System`;
     } else {
       doc.text('No significant plagiarism, grammar, or formatting issues found.', 15, yOffset);
     }
+
+    const pdfDataUri = doc.output('datauristring');
+    this.pdfBase64 = pdfDataUri.split(',')[1];
+  }
+
+  generateErrorPdfReport(title: string, errorDetail: string) {
+    const doc = new jsPDF();
+
+    const errorColor = [185, 28, 28]; // RGB for crimson red #b91c1c
+    const textColor = '#1f2937';
+
+    // Header Title Banner
+    doc.setFillColor(errorColor[0], errorColor[1], errorColor[2]);
+    doc.rect(0, 0, 210, 40, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('Academic Submission System', 15, 18);
+    doc.setFontSize(14);
+    doc.setFont('Helvetica', 'normal');
+    doc.text('Plagiarism Check Failed Report', 15, 28);
+
+    // Document Metadata Panel
+    doc.setTextColor(textColor);
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('Document Title:', 15, 52);
+    doc.setFont('Helvetica', 'normal');
+    const displayTitle = title || 'Unknown Submission';
+    const splitTitle = doc.splitTextToSize(displayTitle, 140);
+    doc.text(splitTitle, 50, 52);
+
+    let yOffset = 52 + (splitTitle.length * 6);
+
+    doc.setFont('Helvetica', 'bold');
+    doc.text('Generated Date:', 15, yOffset);
+    doc.setFont('Helvetica', 'normal');
+    doc.text(new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(), 50, yOffset);
+
+    yOffset += 12;
+
+    // Status Panel Box background
+    doc.setFillColor(254, 242, 242); // soft light red #fef2f2
+    doc.rect(14, yOffset, 182, 25, 'F');
+
+    // Status message inside box
+    doc.setTextColor(153, 27, 27); // dark red text #991b1b
+    doc.setFontSize(11);
+    doc.setFont('Helvetica', 'bold');
+    doc.text('Plagiarism Check Status:', 20, yOffset + 15);
+    doc.setFontSize(13);
+    doc.text('FAILED / ERROR', 75, yOffset + 15);
+
+    yOffset += 35;
+
+    // Error Details Section
+    doc.setTextColor(errorColor[0], errorColor[1], errorColor[2]);
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Error Information', 15, yOffset);
+
+    doc.setDrawColor(242, 204, 204);
+    doc.line(15, yOffset + 2, 195, yOffset + 2);
+
+    yOffset += 8;
+    doc.setTextColor(textColor);
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(10.5);
+    const splitError = doc.splitTextToSize(errorDetail || 'An unspecified error occurred during the analysis.', 180);
+    doc.text(splitError, 15, yOffset);
+
+    yOffset += (splitError.length * 5.5) + 15;
+
+    // Next Steps Section
+    doc.setTextColor(errorColor[0], errorColor[1], errorColor[2]);
+    doc.setFont('Helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Recommended Action', 15, yOffset);
+
+    doc.setDrawColor(242, 204, 204);
+    doc.line(15, yOffset + 2, 195, yOffset + 2);
+
+    yOffset += 8;
+    doc.setTextColor(textColor);
+    doc.setFont('Helvetica', 'normal');
+    doc.text('• Please verify that the uploaded file is not corrupted and is in a supported format (e.g. PDF).', 15, yOffset);
+    yOffset += 6;
+    doc.text('• Ensure the submission details and file URL are correct.', 15, yOffset);
+    yOffset += 6;
+    doc.text('• If the problem persists, please contact the system administrator or IT support.', 15, yOffset);
 
     const pdfDataUri = doc.output('datauristring');
     this.pdfBase64 = pdfDataUri.split(',')[1];

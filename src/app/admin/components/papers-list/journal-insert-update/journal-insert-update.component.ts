@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Journals } from '../../../../fds-config/entity-models/journals';
 import { JournalService } from '../../../services/journal-service';
@@ -42,6 +42,7 @@ export class JournalInsertUpdateComponent implements OnInit {
     private readonly userService: UserInfoService,
     private readonly fileService: FileService,
     private readonly toastService: ToastService,
+    private readonly cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: Journals | null,
 
   ) { }
@@ -57,6 +58,7 @@ export class JournalInsertUpdateComponent implements OnInit {
       this.isEditMode = true;
       this.journalId = this.data.Id;
       this.journalForm.patchValue(this.data);
+      this.cdr.markForCheck();
     }
   }
 
@@ -77,23 +79,25 @@ export class JournalInsertUpdateComponent implements OnInit {
   getCategory() {
     this.categoryService.getCategories().subscribe({
       next: (res) => {
-        this.category = res?.data
+        this.category = res?.data;
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        console.log(err)
+        console.log(err);
       }
-    })
+    });
   }
 
   getSubCategory() {
     this.subCategoryService.getSubcategories().subscribe({
       next: (res) => {
-        this.subcategory = res?.data
+        this.subcategory = res?.data;
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        console.log(err)
+        console.log(err);
       }
-    })
+    });
   }
 
   save() {

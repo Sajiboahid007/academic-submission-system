@@ -66,11 +66,11 @@ export class InsertUpdatePaperComponent implements OnInit {
     this.getUsers();
     this.getDepartment();
 
-    this.papersForm.markAllAsTouched();
     if (this.data) {
       this.isEditMode = true;
       this.paperId = this.data.Id;
       this.papersForm.patchValue(this.data);
+      this.cdr.markForCheck();
     }
   }
 

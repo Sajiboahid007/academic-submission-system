@@ -50,7 +50,10 @@
             </div>
 
             <div class="field-group">
-              <label for="login-password">Password</label>
+              <div class="password-label-container">
+                <label for="login-password">Password</label>
+                <a href="#" (click)="onForgotPassword($event)" class="forgot-password-link">Forgot password?</a>
+              </div>
               <p-password id="login-password" formControlName="Password" [toggleMask]="true" [feedback]="false"
                 placeholder="Enter your password" styleClass="auth-password" inputStyleClass="auth-input"
                 [inputStyle]="{ width: '100%' }" autocomplete="current-password" />
