@@ -90,6 +90,33 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         })
       }
 
+    } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.SuperAdmin) {
+      this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus).map((status) => ({
+        label: status,
+        value: status,
+      }));
+    } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Admin) {
+      this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
+        .filter(
+          (status) =>
+            status !== AcademicSubmissionConfig.ApprovalStatus.Pending &&
+            status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+        )
+        .map((status) => ({
+          label: status,
+          value: status,
+        }));
+    } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
+      this.statusOptions = [
+        {
+          label: AcademicSubmissionConfig.ApprovalStatus.Draft,
+          value: AcademicSubmissionConfig.ApprovalStatus.Draft,
+        },
+        {
+          label: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
+          value: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
+        },
+      ];
     } else {
       this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
         .filter((status) => status !== AcademicSubmissionConfig.ApprovalStatus.Draft)
@@ -107,11 +134,19 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       this.users = res.data as Users[];
 
       this.editorial = this.users.filter(
-        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Teacher ||
+        (user) => user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Reviewer ||
           user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Admin ||
           user?.Roles?.Name === AcademicSubmissionConfig.UserRole.SuperAdmin,
       );
     });
+  }
+
+  showEditorial(): boolean {
+    const role = this.userInfo?.role;
+    return this.data?.Source === 'Journal' && (
+      role === AcademicSubmissionConfig.UserRole.SuperAdmin ||
+      role === AcademicSubmissionConfig.UserRole.Admin
+    );
   }
 
   onCancel() {

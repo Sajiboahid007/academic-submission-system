@@ -30,7 +30,7 @@
 
 
       <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto"
-        *ngIf="data?.Source === 'Journal' &&  userInfo.role !== 'Teacher'">
+        *ngIf="showEditorial()">
         <p-floatlabel variant="on" class="float-label-wrapper">
           <p-multiselect id="EditorialId" [options]="editorial" formControlName="EditorialId" optionLabel="Name"
             optionValue="Id" display="chip" [showClear]="true" styleClass="full-width">
