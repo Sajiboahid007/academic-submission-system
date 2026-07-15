@@ -156,8 +156,27 @@ export class InsertUpdatePaperComponent implements OnInit {
     }
   }
   updatePaper() {
-    const paperData = this.papersForm.getRawValue() as Papers
-    paperData.Id = this.paperId
+    const file = this.papersForm.value.File;
+    const paperData = this.papersForm.getRawValue() as Papers;
+    paperData.Id = this.paperId;
+
+    if (file) {
+      this.fileService.uploadFile(file).subscribe({
+        next: (res) => {
+          paperData.FileUrl = res?.data?.url;
+          this.executePaperUpdate(paperData);
+        },
+        error: (err) => {
+          console.log(err);
+          this.toastService.error('Error uploading file');
+        },
+      });
+    } else {
+      this.executePaperUpdate(paperData);
+    }
+  }
+
+  private executePaperUpdate(paperData: Papers) {
     this.papersService.updatePaper(paperData).subscribe({
       next: (res) => {
         this.dialogRef.close(res);
