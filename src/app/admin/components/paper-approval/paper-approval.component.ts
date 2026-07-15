@@ -74,7 +74,9 @@ export class PaperApprovalComponent implements OnInit {
   getJournalByUserId(id: number) {
     this.journalService.getJournalByUserId(id).subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = res.data;
+        this.journal = (res.data || []).filter(
+          (j: any) => j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
+        );
         this.cdr.markForCheck();
       },
       error: (error: any) => {
@@ -86,7 +88,9 @@ export class PaperApprovalComponent implements OnInit {
   getJounals() {
     this.journalService.getNonApprovedJournals().subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = res.data;
+        this.journal = (res.data || []).filter(
+          (j: any) => j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
+        );
         this.cdr.markForCheck();
       },
       error: (error: any) => {
