@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Dashboard',
           route: '/dashboard',
           icon: 'pi pi-home',
-          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
       ],
     },
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       label: 'Administration',
       icon: 'pi pi-cog',
       collapsible: true,
-      roles: ['Teacher', 'Admin', 'Super-Admin'],
+      roles: ['Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
       items: [
         {
           label: 'Users',
@@ -169,7 +169,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Papers Approval',
           route: '/dashboard/papers-approval',
           icon: 'pi pi-verified',
-          roles: ['Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
       ],
     },
@@ -183,7 +183,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Upload Article',
           route: '/dashboard/create-papers',
           icon: 'pi pi-upload',
-          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
         // {
         //   label: 'Home',
@@ -195,19 +195,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Thesis / Research',
           route: '/dashboard/paper-detail',
           icon: 'pi pi-graduation-cap',
-          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
         {
           label: 'Publication List',
           route: '/dashboard/journal',
           icon: 'pi pi-list',
-          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
         {
           label: 'Profile',
           route: '/dashboard/profile',
           icon: 'pi pi-user',
-          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
+          roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
       ],
     },
@@ -382,9 +382,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.notifications.set(list);
 
         // If any new notification arrived that wasn't in the previous list,
-        // remove it from seenIds so the badge shows it as unread
+        // remove it from seenIds so the badge shows it as unread.
+        // We only do this if it's not the initial load (prevIds.size > 0).
         const newIds = list.map((n) => n.id).filter((id) => !prevIds.has(id));
-        if (newIds.length > 0) {
+        if (prevIds.size > 0 && newIds.length > 0) {
           const currentSeen = this.seenIds().filter((id) => !newIds.includes(id));
           this.seenIds.set(currentSeen);
           localStorage.setItem('seen_notification_ids', JSON.stringify(currentSeen));
