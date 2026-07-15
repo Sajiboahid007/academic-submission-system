@@ -46,9 +46,9 @@ export class PaperApprovalComponent implements OnInit {
     this.userTokenInfo = this.userInfoService.getUserInfo();
 
     const userRole = this.userTokenInfo?.role;
-    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin } = AcademicSubmissionConfig.UserRole;
+    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin, Reviewer: Reviewer } = AcademicSubmissionConfig.UserRole;
 
-    if (userRole === studentRole || userRole === teacherRole) {
+    if (userRole === studentRole || userRole === teacherRole || userRole === Reviewer) {
       this.userPapers(Number(this.userTokenInfo?.userId));
       this.getJournalByUserId(Number(this.userTokenInfo?.userId));
     } else {
@@ -266,7 +266,7 @@ export class PaperApprovalComponent implements OnInit {
 
   onApprove(paperId: any) {
     const userRole = this.userTokenInfo?.role;
-    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin } = AcademicSubmissionConfig.UserRole;
+    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin, Reviewer: Reviewer } = AcademicSubmissionConfig.UserRole;
 
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
@@ -403,10 +403,37 @@ export class PaperApprovalComponent implements OnInit {
     const userRole = this.userTokenInfo?.role;
 
     // Only allow if the user has the SuperAdmin or Admin role
-    if (userRole === role.SuperAdmin || userRole === role.Admin || userRole === role.Teacher) {
+    if (userRole === role.SuperAdmin || userRole === role.Admin || userRole === role.Teacher || userRole === role.Reviewer) {
       return true;
     }
 
     return false;
+  }
+
+  getReviewerNames(journal: any): string {
+    if (!journal?.PaperGroups) return '';
+    return journal.PaperGroups
+      .filter((item: any) => item?.UserType === 'Reviewer')
+      .map((item: any) => item?.Users?.Name)
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  viewResponseLater(id: number) {
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.ResponseLater;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 }

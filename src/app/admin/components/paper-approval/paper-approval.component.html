@@ -55,6 +55,9 @@
                   ? 'danger'
                   : 'warn'
                   "></p-badge>
+                <div>
+                  <small style="font-size: 10px; color: rgb(169, 169, 169)">Up-By {{ paper?.Users?.Name }} </small>
+                </div>
               </td>
               <td>
                 <div *ngFor="let item of paper.PaperGroups">
@@ -94,6 +97,12 @@
               </td>
             </tr>
           </ng-template>
+          <!-- Empty Message -->
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="6">No Paper found.</td>
+            </tr>
+          </ng-template>
         </p-table>
       </div>
     </p-tabpanel>
@@ -118,18 +127,20 @@
           <ng-template #header style="margin-top: 10px">
             <tr style="margin-top: 50px">
 
-              <th style="width: 22%">Title</th>
+              <th style="width: 18%">Title</th>
               <th style="width: 14%">Status</th>
               <th style="width: 10%">Authors</th>
               <th style="width: 10%">Remarks</th>
               <th style="width: 10%">Category</th>
               <th style="width: 7%">Year</th>
-              <th style="width: 15%">Action</th>
+              <th style="width: 10%">Res.Later</th>
+              <th style="width: 17%">Action</th>
             </tr>
           </ng-template>
 
           <ng-template #body let-journal>
-            <tr>
+            <tr
+              *ngIf="(userTokenInfo?.role !== 'Admin' || journal?.PaperApprovals?.[0]?.Status === 'Pending') && (userTokenInfo?.role !== 'Reviewer' || journal?.PaperApprovals?.[0]?.Status === 'Review Requested')">
               <td>
                 <div>
                   <div>{{ journal.Title | truncateText: 50 }}</div>
@@ -143,10 +154,20 @@
                 <p-badge *ngIf="journal.PaperApprovals[0]?.Status" [value]="journal?.PaperApprovals[0]?.Status"
                   [severity]="getSeverity(journal?.PaperApprovals[0]?.Status)">
                 </p-badge>
+                <div *ngIf="getReviewerNames(journal)">
+                  <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="getReviewerNames(journal)"
+                    tooltipPosition="right">
+                    Reviewer: {{ getReviewerNames(journal) | truncateText: 15 }}
+                  </small>
+                </div>
               </td>
               <td>
                 <div>
                   {{journal.Authors}}
+                  <div>
+                    <small style="font-size: 10px; color: rgb(169, 169, 169)"> Up-By: {{ journal?.Users?.Name }}
+                    </small>
+                  </div>
                 </div>
               </td>
               <td>
@@ -170,6 +191,10 @@
                   <div>{{ journal.Year | truncateText: 50 }}</div>
                 </div>
               </td>
+              <td>
+                <p-button *ngIf="journal.ResponseLater" [outlined]="true" icon="pi pi-file-pdf" size="small"
+                  styleClass="p-button-sm p-button-outlined" (click)="viewResponseLater(journal.Id)" />
+              </td>
               <td *ngIf="onApproved()">
                 <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
                   (click)="viewJournal(journal?.Id)" />
@@ -184,6 +209,12 @@
                 <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
                   severity="danger" (click)="onDeleteJournal(journal.Id)" />
               </td>
+            </tr>
+          </ng-template>
+          <!-- Empty Message -->
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="6">No Journal found.</td>
             </tr>
           </ng-template>
         </p-table>
