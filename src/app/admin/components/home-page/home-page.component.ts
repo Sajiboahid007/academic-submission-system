@@ -294,14 +294,19 @@ export class HomePageComponent implements OnInit {
         i.DisplayTitle?.toLowerCase().includes(q) ||
         i.DisplayAbstract?.toLowerCase().includes(q) ||
         i.KeywordsList?.some((k: string) => k.toLowerCase().includes(q)) ||
-        i.Authors?.toLowerCase().includes(q)
+        i.Authors?.toLowerCase().includes(q) ||
+        i.CreatedBy?.toLowerCase().includes(q) ||
+        i.PaperGroups?.some((group: any) => group.Users?.Name?.toLowerCase().includes(q))
       );
     }
 
     if (this.selectedBrowse === 'Journals') {
       if (this.journalAuthor.trim()) {
         const a = this.journalAuthor.toLowerCase().trim();
-        items = items.filter(i => i.Authors?.toLowerCase().includes(a));
+        items = items.filter(i =>
+          i.Authors?.toLowerCase().includes(a) ||
+          i.PaperGroups?.some((group: any) => group.Users?.Name?.toLowerCase().includes(a))
+        );
       }
       if (this.journalKeyword.trim()) {
         const k = this.journalKeyword.toLowerCase().trim();

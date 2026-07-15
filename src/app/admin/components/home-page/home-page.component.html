@@ -251,9 +251,14 @@
 
             <!-- Metadata items with Icons -->
             <div class="paper-card-metadata">
-              <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
+              <!-- <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
                 <i class="pi pi-user"></i>
                 <span> {{ teacher?.Users?.Name }}</span>
+              </div> -->
+
+              <div class="meta-item author-meta">
+                <i class="pi pi-user"></i>
+                <span *ngIf="journalData?.Authors"> {{ journalData?.Authors }}</span>
               </div>
 
               <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
