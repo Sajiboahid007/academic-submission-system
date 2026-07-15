@@ -102,8 +102,8 @@
     <div class="filter-controls-row">
       <div class="search-input-wrapper">
         <i class="pi pi-search search-icon"></i>
-        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchQueryChange()" placeholder="Search by title, author, keyword..."
-          class="search-input-field" />
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchQueryChange()"
+          placeholder="Search by title, author, keyword..." class="search-input-field" />
       </div>
     </div>
 
@@ -137,7 +137,7 @@
               <div class="paper-card-metadata">
                 <div class="meta-item author-meta">
                   <i class="pi pi-user"></i>
-                  <span>{{ userDetailedData?.Name || 'Sajib Oahid' }}</span>
+                  <span>{{ userDetailedData?.Name }}</span>
                 </div>
 
                 <div class="meta-item date-meta">
@@ -155,6 +155,14 @@
                   <i class="pi pi-th-large"></i>
                   <span>{{ paper.SubCategory.Name }}</span>
                 </div>
+                <div class="meta-item tag-meta">
+                  <i class="pi pi-building"></i>
+                  <span>{{ paper.Department.Name }}</span>
+                </div>
+                <div class="meta-item tag-meta">
+                  <i class="pi pi-box"></i>
+                  <span>{{ paper.Batches.Name }}</span>
+                </div>
               </div>
 
               <!-- Action Control Buttons -->
@@ -170,12 +178,8 @@
               </div>
             </article>
           </div>
-          <p-paginator 
-            *ngIf="filteredPapers.length > 0"
-            (onPageChange)="onPapersPageChange($event)" 
-            [first]="papersFirst" 
-            [rows]="papersRows" 
-            [totalRecords]="filteredPapers.length" 
+          <p-paginator *ngIf="filteredPapers.length > 0" (onPageChange)="onPapersPageChange($event)"
+            [first]="papersFirst" [rows]="papersRows" [totalRecords]="filteredPapers.length"
             [rowsPerPageOptions]="[10, 20, 50]">
           </p-paginator>
         </p-tabpanel>
@@ -241,12 +245,8 @@
               </div>
             </article>
           </div>
-          <p-paginator 
-            *ngIf="filteredJournals.length > 0"
-            (onPageChange)="onJournalsPageChange($event)" 
-            [first]="journalsFirst" 
-            [rows]="journalsRows" 
-            [totalRecords]="filteredJournals.length" 
+          <p-paginator *ngIf="filteredJournals.length > 0" (onPageChange)="onJournalsPageChange($event)"
+            [first]="journalsFirst" [rows]="journalsRows" [totalRecords]="filteredJournals.length"
             [rowsPerPageOptions]="[10, 20, 50]">
           </p-paginator>
         </p-tabpanel>
