@@ -15,6 +15,7 @@ import { ToastService } from '../../services/toast.service';
 import { Users } from '../../../fds-config/entity-models/user';
 import { PlagarismComponent } from '../plagarism/plagarism.component';
 import { PlagarismService } from '../../../admin/services/plagarism-service';
+import { FileService } from '../../../admin/services/file-service';
 
 @Component({
   selector: 'app-paper-approval-confirmation',
@@ -42,7 +43,8 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly userService: UserInfoService,
     private readonly dialog: MatDialog,
-    private readonly plagarismService: PlagarismService
+    private readonly plagarismService: PlagarismService,
+    private readonly fileService: FileService
   ) {
 
   }
@@ -58,6 +60,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       Status: new FormControl('', Validators.required),
       Remarks: new FormControl('', Validators.required),
       EditorialId: new FormControl(),
+      RemarksFile: new FormControl(null),
     });
 
     if (this.userInfo && (this.userInfo.role === AcademicSubmissionConfig.UserRole.Student
@@ -151,19 +154,44 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       return;
     }
 
-    if (this.data?.PaperId) {
-      this.updatePaperApproval();
-    } else if (this.data?.JournalId) {
-      this.updateJournalApproval();
+    const file = this.approveFrom.get('RemarksFile')?.value;
+    if (file) {
+      this.isSaving = true;
+      this.cdr.detectChanges();
+      this.fileService.uploadFile(file).subscribe({
+        next: (res) => {
+          const remarksFileUrl = res?.data?.url;
+          this.executeApprovalUpdate(remarksFileUrl);
+        },
+        error: (err) => {
+          console.error('Error uploading remarks file:', err);
+          this.toastService.error('Failed to upload remarks file');
+          this.isSaving = false;
+          this.cdr.detectChanges();
+        }
+      });
     } else {
-      this.toastService.error('Paper ID or Journal ID could not be empty');
+      this.executeApprovalUpdate(null);
     }
   }
 
-  private updatePaperApproval() {
+  private executeApprovalUpdate(remarksFileUrl: string | null) {
+    if (this.data?.PaperId) {
+      this.updatePaperApproval(remarksFileUrl);
+    } else if (this.data?.JournalId) {
+      this.updateJournalApproval(remarksFileUrl);
+    } else {
+      this.toastService.error('Paper ID or Journal ID could not be empty');
+      this.isSaving = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private updatePaperApproval(remarksFileUrl: string | null) {
     this.isSaving = true;
     let formData = this.approveFrom.getRawValue();
     formData.PaperId = this.data?.PaperId;
+    formData.RemarksFile = remarksFileUrl;
 
     this.paperApprovalConfirmation.updateApprovalStatus(formData).subscribe({
       next: (_) => {
@@ -174,14 +202,16 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         console.error('Error updating paper approval status:', error);
         this.toastService.error('Failed to update paper approval status');
         this.isSaving = false;
+        this.cdr.detectChanges();
       },
     });
   }
 
-  private updateJournalApproval() {
+  private updateJournalApproval(remarksFileUrl: string | null) {
     this.isSaving = true;
     let formData = this.approveFrom.getRawValue();
     formData.JournalId = this.data?.JournalId;
+    formData.RemarksFile = remarksFileUrl;
 
     this.paperApprovalConfirmation.updateJournalApprovalStatus(formData).subscribe({
       next: (_) => {
@@ -192,6 +222,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         console.error('Error updating journal approval status:', error);
         this.toastService.error('Failed to update journal approval status');
         this.isSaving = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -207,5 +238,21 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   }
 
   sendMail() { }
+
+
+  onFileSelect(event: any) {
+    const file = event.files[0];
+    if (file) {
+      this.approveFrom.patchValue({ RemarksFile: file });
+    }
+  }
+
+  onFileClear() {
+    this.approveFrom.patchValue({ RemarksFile: null });
+  }
+
+  onFileRemove(event: any) {
+    this.approveFrom.patchValue({ RemarksFile: null });
+  }
 
 }

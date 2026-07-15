@@ -13,8 +13,8 @@
     <div fxLayout="column" fxLayoutGap="24px">
       <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-select id="Status" [options]="statusOptions" formControlName="Status" optionLabel="label" optionValue="value"
-            display="chip" [showClear]="true" styleClass="full-width">
+          <p-select id="Status" [options]="statusOptions" formControlName="Status" optionLabel="label"
+            optionValue="value" display="chip" [showClear]="true" styleClass="full-width">
             <ng-template let-item pTemplate="item">
               <div class="flex items-center gap-2">
                 <span>{{ item?.label }}</span>
@@ -32,8 +32,8 @@
       <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto"
         *ngIf="data?.Source === 'Journal' &&  userInfo.role !== 'Teacher'">
         <p-floatlabel variant="on" class="float-label-wrapper">
-          <p-multiselect id="EditorialId" [options]="editorial" formControlName="EditorialId" optionLabel="Name" optionValue="Id"
-            display="chip" [showClear]="true" styleClass="full-width">
+          <p-multiselect id="EditorialId" [options]="editorial" formControlName="EditorialId" optionLabel="Name"
+            optionValue="Id" display="chip" [showClear]="true" styleClass="full-width">
             <ng-template let-item pTemplate="item">
               <div class="flex items-center gap-2">
                 <img [src]="item?.ImageUrl" class="rounded-image" />
@@ -55,6 +55,15 @@
         <small *ngIf="approveFrom.get('Remarks')?.invalid && approveFrom.get('Remarks')?.touched" class="error-text">
           Remarks is required
         </small>
+      </div>
+
+      <div class="card">
+        <p-fileupload (onSelect)="onFileSelect($event)" (onClear)="onFileClear()" (onRemove)="onFileRemove($event)"
+          [showUploadButton]="false" [multiple]="false" accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
+          <ng-template #empty>
+            <div>Drag and drop files to here to upload.</div>
+          </ng-template>
+        </p-fileupload>
       </div>
 
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px" *ngIf="data?.JournalId || data?.PaperId">

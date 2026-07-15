@@ -25,6 +25,7 @@ export class HomePageComponent implements OnInit {
   category: Category[] = [];
   subCategory: SubCategory[] = [];
   department: any[] = [];
+  batches: any[] = [];
 
   // Unified list + filtered/paged views
   allCombinedItems: any[] = [];
@@ -43,6 +44,10 @@ export class HomePageComponent implements OnInit {
   searchQuery: string = '';
   journalAuthor: string = '';
   journalKeyword: string = '';
+
+  years: string[] = [];
+  selectedYear: string | null = null;
+  selectedBatchId: number | null = null;
 
   // Auth
   isLoggedIn: boolean = false;
@@ -87,10 +92,17 @@ export class HomePageComponent implements OnInit {
       error: (err) => console.error(err)
     });
 
+    this.homeService.getBatch().subscribe({
+      next: (res) => { this.batches = res?.data || []; this.cdr.markForCheck(); },
+      error: (err) => console.error(err)
+    });
+
     this.homeService.getDepartment().subscribe({
       next: (res) => { this.department = res?.data || []; this.cdr.markForCheck(); },
       error: (err) => console.error(err)
     });
+
+
 
     // Load papers then journals
     this.homeService.getAllPapers().subscribe({
@@ -171,6 +183,13 @@ export class HomePageComponent implements OnInit {
       return dB - dA;
     });
 
+    // Extract unique years
+    const paperYears = this.allPapers.map(p => p.Year).filter((y): y is string => !!y);
+    const journalYears = this.journals.map(j => j.Year).filter((y): y is string => !!y);
+    this.years = Array.from(new Set([...paperYears, ...journalYears])).sort();
+
+
+
     this.allCombinedItems = combined;
     this.applyFilters();
   }
@@ -182,6 +201,8 @@ export class HomePageComponent implements OnInit {
     this.selectedCategoryId = null;
     this.selectedSubCategoryId = null;
     this.selectedDepartmentId = null;
+    this.selectedYear = null;
+    this.selectedBatchId = null;
     this.searchQuery = '';
     this.journalAuthor = '';
     this.journalKeyword = '';
@@ -199,6 +220,24 @@ export class HomePageComponent implements OnInit {
     event.stopPropagation();
     this.selectedSubCategoryId = this.selectedSubCategoryId === subCategoryId ? null : subCategoryId;
     this.selectedDepartmentId = null; // Clear department to avoid conflict
+    this.applyFilters();
+  }
+
+  get filteredSubCategories(): SubCategory[] {
+    if (this.selectedCategoryId !== null) {
+      return this.subCategory.filter(sc => sc.CategoryId === this.selectedCategoryId && !sc.IsMarkToDelete);
+    }
+    return this.subCategory.filter(sc => !sc.IsMarkToDelete);
+  }
+
+  onCategoryChange() {
+    if (this.selectedCategoryId !== null) {
+      const allowedSubCats = this.getSubCategoriesForCategory(this.selectedCategoryId);
+      const isStillValid = allowedSubCats.some(sc => sc.Id === this.selectedSubCategoryId);
+      if (!isStillValid) {
+        this.selectedSubCategoryId = null;
+      }
+    }
     this.applyFilters();
   }
 
@@ -239,6 +278,14 @@ export class HomePageComponent implements OnInit {
 
     if (this.selectedDepartmentId !== null) {
       items = items.filter(i => i.DepartmentId === this.selectedDepartmentId);
+    }
+
+    if (this.selectedYear) {
+      items = items.filter(i => String(i.Year) === String(this.selectedYear));
+    }
+
+    if (this.selectedBatchId !== null) {
+      items = items.filter(i => i.BatchId === this.selectedBatchId);
     }
 
     if (this.searchQuery.trim()) {
@@ -286,10 +333,24 @@ export class HomePageComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  clearAllFilters() {
+    this.selectedCategoryId = null;
+    this.selectedSubCategoryId = null;
+    this.selectedDepartmentId = null;
+    this.selectedYear = null;
+    this.selectedBatchId = null;
+    this.searchQuery = '';
+    this.journalAuthor = '';
+    this.journalKeyword = '';
+    this.applyFilters();
+  }
+
   get isFiltered(): boolean {
     return this.selectedCategoryId !== null ||
       this.selectedSubCategoryId !== null ||
       this.selectedDepartmentId !== null ||
+      this.selectedYear !== null ||
+      this.selectedBatchId !== null ||
       !!this.searchQuery?.trim() ||
       !!this.journalAuthor?.trim() ||
       !!this.journalKeyword?.trim();

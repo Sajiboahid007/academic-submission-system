@@ -41,4 +41,8 @@ export class HomeService {
     return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/department/get`);
   }
 
+  getBatch(): Observable<AppQuery<any[]>> {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/home/batches/get`);
+  }
+
 }

@@ -16,6 +16,7 @@ import { CreatePapersComponent } from './components/papers-list/create-papers/cr
 import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
 import { PaperDetailComponent } from './components/papers-list/paper-detail/paper-detail.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -92,6 +93,10 @@ const routes: Routes = [
       {
         path: 'create-papers',
         component: CreatePapersComponent,
+      },
+      {
+        path: 'notification',
+        component: NotificationComponent,
       }
     ],
   },

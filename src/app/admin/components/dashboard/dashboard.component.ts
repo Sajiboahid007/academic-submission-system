@@ -5,11 +5,13 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  OnDestroy,
   signal,
   ViewChild,
+  computed,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, interval, Subscription } from 'rxjs';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import {
   NotificationItem,
@@ -33,7 +35,7 @@ import { JournalService } from '../../services/journal-service';
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('userMenuWrap', { read: ElementRef }) userMenuWrap?: ElementRef<HTMLElement>;
   @ViewChild('notificationWrap', { read: ElementRef }) notificationWrap?: ElementRef<HTMLElement>;
   @ViewChild('mainContent', { read: ElementRef }) mainContent?: ElementRef<HTMLElement>;
@@ -41,6 +43,22 @@ export class DashboardComponent implements OnInit {
   userMenuOpen = signal(false);
   notificationsOpen = signal(false);
   notifications = signal<NotificationItem[]>([]);
+  seenIds = signal<string[]>([]);
+  clearedIds = signal<string[]>([]);
+  notification: any[] = [];
+
+  unreadCount = computed(() => {
+    const seen = this.seenIds();
+    const cleared = this.clearedIds();
+    return this.notifications().filter((n) => !seen.includes(n.id) && !cleared.includes(n.id)).length;
+  });
+
+  visibleNotifications = computed(() => {
+    const cleared = this.clearedIds();
+    return this.notifications().filter((n) => !cleared.includes(n.id));
+  });
+
+  private notificationPollSub?: Subscription;
 
   userInfo: Users | null = null;
 
@@ -116,6 +134,12 @@ export class DashboardComponent implements OnInit {
           route: '/dashboard/department',
           icon: 'pi pi-sitemap',
           roles: ['Admin', 'Super-Admin'],
+        },
+        {
+          label: 'Notification',
+          route: '/dashboard/notification',
+          icon: 'pi pi-bell',
+          roles: ['Admin', 'Super-Admin', 'Student', 'Teacher'],
         },
         {
           label: 'Batch',
@@ -240,7 +264,24 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     // this.recentPapers = this.papers.slice(0, 5);
+    const savedSeen = localStorage.getItem('seen_notification_ids');
+    if (savedSeen) {
+      try {
+        this.seenIds.set(JSON.parse(savedSeen));
+      } catch (e) {
+        console.error('Error parsing seen_notification_ids', e);
+      }
+    }
+    const savedCleared = localStorage.getItem('cleared_notification_ids');
+    if (savedCleared) {
+      try {
+        this.clearedIds.set(JSON.parse(savedCleared));
+      } catch (e) {
+        console.error('Error parsing cleared_notification_ids', e);
+      }
+    }
     this.loadNotifications();
+    this.getNotification();
     this.loadDashboardStats();
     const userInfo = this.userInfoService.getUserInfo();
     if (!userInfo) {
@@ -265,6 +306,16 @@ export class DashboardComponent implements OnInit {
     this.checkIfUserDataUpdate();
     this.getTotalJournal();
     this.getTotalpapers();
+
+    // Poll for new notifications every 30 seconds
+    this.notificationPollSub = interval(30000).subscribe(() => {
+      this.loadNotifications();
+      this.getNotification();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.notificationPollSub?.unsubscribe();
   }
 
   getTotalpapers() {
@@ -303,9 +354,54 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  public getSeverity(
+    status: string | undefined,
+  ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warn';
+      case 'Draft':
+        return 'info';
+      case 'Review Requested':
+        return 'warn'
+      case 'Editorial Approved':
+        return 'success'
+      default:
+        return 'secondary';
+    }
+  }
+
   loadNotifications(): void {
     this.notificationService.getNotifications().subscribe({
-      next: (list) => this.notifications.set(list),
+      next: (list) => {
+        const prevIds = new Set(this.notifications().map((n) => n.id));
+        this.notifications.set(list);
+
+        // If any new notification arrived that wasn't in the previous list,
+        // remove it from seenIds so the badge shows it as unread
+        const newIds = list.map((n) => n.id).filter((id) => !prevIds.has(id));
+        if (newIds.length > 0) {
+          const currentSeen = this.seenIds().filter((id) => !newIds.includes(id));
+          this.seenIds.set(currentSeen);
+          localStorage.setItem('seen_notification_ids', JSON.stringify(currentSeen));
+        }
+
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  getNotification(): void {
+    this.notificationService.getNotification().subscribe((res) => {
+      const data = res.data || [];
+      const cleared = this.clearedIds();
+      // Filter out notifications whose Id is in clearedIds
+      this.notification = data.filter((n: any) => !cleared.includes(String(n.Id)));
+      this.cdr.markForCheck();
     });
   }
 
@@ -560,7 +656,33 @@ export class DashboardComponent implements OnInit {
   toggleNotifications(event: Event): void {
     event.stopPropagation();
     this.userMenuOpen.set(false);
-    this.notificationsOpen.update((open) => !open);
+    this.notificationsOpen.update((open) => {
+      const nextOpen = !open;
+      if (nextOpen) {
+        this.markAllAsSeen();
+      }
+      return nextOpen;
+    });
+  }
+
+  markAllAsSeen(): void {
+    const currentIds = this.notifications().map((n) => n.id);
+    const seen = Array.from(new Set([...this.seenIds(), ...currentIds]));
+    this.seenIds.set(seen);
+    localStorage.setItem('seen_notification_ids', JSON.stringify(seen));
+    this.cdr.markForCheck();
+  }
+
+  clearAllNotifications(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const currentIds = this.notifications().map((n) => n.id);
+    const cleared = Array.from(new Set([...this.clearedIds(), ...currentIds]));
+    this.clearedIds.set(cleared);
+    localStorage.setItem('cleared_notification_ids', JSON.stringify(cleared));
+    this.notification = [];
+    this.cdr.markForCheck();
   }
 
   statusLabel(status: NotificationStatus): string {

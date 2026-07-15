@@ -256,6 +256,7 @@
     text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
   }
 }
+
 .field-group-userId {
   width: 50%;
   flex-direction: row;
@@ -406,5 +407,45 @@
 
   .p-message-text {
     font-size: 0.875rem;
+  }
+}
+
+// Mobile responsiveness overrides
+@media (max-width: 576px) {
+  .field-flex {
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .field-group-userId,
+  .field-group-name {
+    width: 100% !important;
+  }
+
+  .auth-actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.75rem;
+
+    p-button,
+    button,
+    ::ng-deep p-button,
+    ::ng-deep .p-button {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      margin: 0 !important;
+    }
+  }
+
+  .google-sso-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .google-auth-btn-fallback {
+    font-size: 0.82rem !important;
+    padding: 0.6rem 0.75rem !important;
   }
 }

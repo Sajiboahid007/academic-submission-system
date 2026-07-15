@@ -548,6 +548,64 @@
   }
 }
 
+// Dropdown Filters
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+
+    ::ng-deep {
+      .p-select {
+        border-radius: 10px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+        height: 38px;
+        align-items: center;
+
+        &:hover:not(.p-disabled) {
+          border-color: #cbd5e1;
+          background-color: #ffffff;
+        }
+
+        &.p-select-focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+          background-color: #ffffff;
+        }
+
+        .p-select-label {
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+          color: #334155;
+        }
+
+        .p-select-clear-icon {
+          right: 2.25rem;
+          color: #94a3b8;
+        }
+      }
+
+      .p-button {
+        border-radius: 10px;
+        font-weight: 500;
+        height: 38px;
+        padding: 0 1rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
 // Section Headers
 .section-header {
   display: flex;

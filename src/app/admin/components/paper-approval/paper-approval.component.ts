@@ -120,7 +120,6 @@ export class PaperApprovalComponent implements OnInit {
     this.papersService.getPapersByUserId(id).subscribe({
       next: (res: any) => {
         this.papers = res?.data || [];
-        console.debug(this.papers);
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -219,7 +218,6 @@ export class PaperApprovalComponent implements OnInit {
         dialogRef.afterClosed().subscribe((res: any) => {
           if (res) {
             this.toastService.success('Journal updated successfully!');
-            // this.getJounals();
             if (this.userTokenInfo.role == 'Teacher') {
               this.getJournalByUserId(this.userTokenInfo?.userId);
             } else {
@@ -267,6 +265,9 @@ export class PaperApprovalComponent implements OnInit {
   }
 
   onApprove(paperId: any) {
+    const userRole = this.userTokenInfo?.role;
+    const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin } = AcademicSubmissionConfig.UserRole;
+
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       // height: '500px',
@@ -276,7 +277,13 @@ export class PaperApprovalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.getApprovalList();
+        if (userRole === studentRole || userRole === teacherRole) {
+          this.userPapers(Number(this.userTokenInfo?.userId));
+          this.getJournalByUserId(Number(this.userTokenInfo?.userId));
+        } else {
+          this.getApprovalList();
+          this.getJounals();
+        }
       }
     });
   }

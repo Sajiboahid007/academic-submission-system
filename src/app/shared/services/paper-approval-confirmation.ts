@@ -15,6 +15,7 @@ export class PaperApprovalConfirmation {
     PaperId: number;
     Status: string;
     Remarks: string;
+    RemarksFile?: string | null;
   }): Observable<AppQuery<any>> {
     const url = `${this.baseUrl}/api/paper-approval/update`;
     return this.http.post<AppQuery<any>>(url, data);
@@ -24,6 +25,7 @@ export class PaperApprovalConfirmation {
     JournalId: number;
     Status: string;
     Remarks: string;
+    RemarksFile?: string | null;
   }): Observable<AppQuery<any>> {
     const url = `${this.baseUrl}/api/journal-approval/update`;
     return this.http.post<AppQuery<any>>(url, data);

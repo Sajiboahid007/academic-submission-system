@@ -172,6 +172,26 @@
   padding: 0.75rem $spacing-lg;
   border-bottom: 1px solid $neutral-200;
   flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: $neutral-500;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: $accent-error;
+    background-color: rgba($accent-error, 0.08);
+  }
 }
 
 .notification-panel-title {
@@ -244,6 +264,31 @@
   }
 
   &--on_hold {
+    background: rgba($neutral-400, 0.2);
+    color: $neutral-700;
+  }
+
+  &--success {
+    background: rgba($primary-500, 0.15);
+    color: $primary-600;
+  }
+
+  &--danger {
+    background: rgba($accent-error, 0.12);
+    color: $accent-error;
+  }
+
+  &--warn {
+    background: rgba(#eab308, 0.15);
+    color: #a16207;
+  }
+
+  &--info {
+    background: rgba($primary-400, 0.2);
+    color: color.scale($primary-600, $lightness: -8%);
+  }
+
+  &--secondary {
     background: rgba($neutral-400, 0.2);
     color: $neutral-700;
   }

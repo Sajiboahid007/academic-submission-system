@@ -29,7 +29,7 @@ export class LoginService {
   constructor(
     private readonly http: HttpClient,
     private readonly fb: FormBuilder,
-  ) {}
+  ) { }
 
   getLoginForm(): FormGroup {
     return this.fb.group({

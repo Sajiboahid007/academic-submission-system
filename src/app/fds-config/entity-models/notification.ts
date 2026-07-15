@@ -8,6 +8,7 @@ export interface NotificationApiDto {
   At?: string;
   CreatedAt?: string;
   DateTime?: string;
+  FileUrl?: string;
 }
 
 export interface NotificationListPayload {
@@ -22,4 +23,5 @@ export interface NotificationItem {
   message: string;
   status: NotificationStatus;
   at: Date;
+  fileUrl?: string;
 }

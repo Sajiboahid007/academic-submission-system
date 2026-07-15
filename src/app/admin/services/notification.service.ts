@@ -17,10 +17,10 @@ import { AppQuery } from '../../shared/app-query';
 export class NotificationService {
   private readonly baseUrl = AcademicSubmissionConfig.BaseUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getNotifications(): Observable<NotificationItem[]> {
-    const url = `${this.baseUrl}${AcademicSubmissionConfig}`;
+    const url = `${this.baseUrl}/api/notifications`;
     return this.http.get<AppQuery<NotificationListPayload>>(url).pipe(
       map((res) => this.mapResultRows(res.data?.Result ?? [])),
       catchError(() => of(this.mapResultRows(SAMPLE_NOTIFICATION_RESULT))),
@@ -43,12 +43,13 @@ export class NotificationService {
       message: (dto.Message ?? dto.Body ?? '').trim(),
       status: this.normalizeStatus(dto.Status),
       at: safeAt,
+      fileUrl: dto.FileUrl,
     };
   }
 
   private normalizeStatus(raw: string | undefined): NotificationStatus {
     const s = (raw ?? '').toLowerCase().replaceAll(/\s+/g, '_').replaceAll('-', '_');
-    if (s === 'approved' || s === 'approve') {
+    if (s === 'approved' || s === 'approve' || s === 'editorial_approved' || s === 'editorialapproved') {
       return 'approved';
     }
     if (s === 'accepted' || s === 'accept') {
@@ -61,5 +62,9 @@ export class NotificationService {
       return 'on_hold';
     }
     return 'on_hold';
+  }
+
+  getNotification(): Observable<AppQuery<any[]>> {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/notifications`);
   }
 }

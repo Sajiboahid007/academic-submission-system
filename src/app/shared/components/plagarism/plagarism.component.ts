@@ -165,7 +165,7 @@ Academic Submission System`;
 
   processReview(title: string, fileUrl: string, userId?: number) {
     if (!fileUrl) {
-      this.toastService.error('Document file URL is missing.');
+      this.toastService.error('Document file is missing.');
       // Fetch author email first (if we have userId), then prefill error email
       if (userId) {
         this.userService.getUsersById(userId).subscribe({
@@ -174,14 +174,14 @@ Academic Submission System`;
             this.prefillErrorEmail(
               title,
               email,
-              'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+              'The submission document file is missing. Please re-upload your paper and try again.'
             );
           },
           error: () => {
             this.prefillErrorEmail(
               title,
               '',
-              'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+              'The submission document file is missing. Please re-upload your paper and try again.'
             );
           }
         });
@@ -189,7 +189,7 @@ Academic Submission System`;
         this.prefillErrorEmail(
           title,
           '',
-          'The submission document file could not be located. The file URL is missing or has not been uploaded correctly. Please re-upload your paper and try again.'
+          'The submission document file is missing. Please re-upload your paper and try again.'
         );
       }
       this.loading = false;
@@ -478,7 +478,7 @@ Academic Submission System`;
     doc.setFont('Helvetica', 'normal');
     doc.text('• Please verify that the uploaded file is not corrupted and is in a supported format (e.g. PDF).', 15, yOffset);
     yOffset += 6;
-    doc.text('• Ensure the submission details and file URL are correct.', 15, yOffset);
+    doc.text('• Ensure the submission details and uploaded file are correct.', 15, yOffset);
     yOffset += 6;
     doc.text('• If the problem persists, please contact the system administrator or IT support.', 15, yOffset);
 
@@ -525,5 +525,27 @@ Academic Submission System`;
         this.cdr.markForCheck();
       }
     });
+  }
+
+  viewPdfReport(): void {
+    if (!this.pdfBase64) {
+      this.toastService.warn('PDF report is still generating. Please try again in a moment.');
+      return;
+    }
+
+    try {
+      const byteCharacters = atob(this.pdfBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      console.error('Error opening PDF report:', err);
+      this.toastService.error('Failed to open PDF report.');
+    }
   }
 }

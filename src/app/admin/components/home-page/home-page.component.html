@@ -29,53 +29,7 @@
           </ul>
         </div>
 
-        <!-- CATEGORIES -->
-        <div class="nav-section">
-          <div class="nav-section-header">
-            <h3 class="nav-section-title">Categories</h3>
-          </div>
-          <ul class="nav-categories-list">
-            <li class="category-item-wrap" *ngFor="let cat of category" [class.expanded]="expandedCategories[cat.Id]">
-              <div class="category-header-row" [class.active]="selectedCategoryId === cat.Id"
-                (click)="selectCategory(cat.Id)">
-                <div class="category-info">
-                  <span class="category-name">{{ cat.Name }}</span>
-                  <span class="category-count">{{ getCategoryCount(cat.Id) }}</span>
-                </div>
-                <button class="expand-btn" *ngIf="getSubCategoriesForCategory(cat.Id).length > 0"
-                  (click)="toggleCategoryExpand(cat.Id, $event)" type="button">
-                  <i class="pi" [class.pi-chevron-down]="!expandedCategories[cat.Id]"
-                    [class.pi-chevron-up]="expandedCategories[cat.Id]"></i>
-                </button>
-              </div>
-              <ul class="subcategory-menu"
-                *ngIf="expandedCategories[cat.Id] && getSubCategoriesForCategory(cat.Id).length > 0">
-                <li class="subcategory-item" *ngFor="let sub of getSubCategoriesForCategory(cat.Id)"
-                  [class.active]="selectedSubCategoryId === sub.Id" (click)="selectSubCategory(sub.Id, $event)">
-                  <span class="subcategory-name">{{ sub.Name }}</span>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
 
-        <!-- DEPARTMENTS -->
-        <div class="nav-section" *ngIf="department.length > 0">
-          <div class="nav-section-header">
-            <h3 class="nav-section-title">Departments</h3>
-          </div>
-          <ul class="nav-categories-list">
-            <li class="category-item-wrap" *ngFor="let dept of department">
-              <div class="category-header-row" [class.active]="selectedDepartmentId === dept.Id"
-                (click)="selectDepartment(dept.Id)">
-                <div class="category-info">
-                  <span class="category-name">{{ dept.Name }}</span>
-                  <span class="category-count">{{ getDepartmentCount(dept.Id) }}</span>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
 
       </div>
 
@@ -136,6 +90,64 @@
             <span>Search</span>
             <i class="pi pi-arrow-right search-btn-arrow"></i>
           </button>
+        </div>
+      </div>
+
+      <!-- Dropdown Filters Row -->
+      <div class="filters-row animate-fade-in">
+        <!-- Category Dropdown -->
+        <div class="filter-item">
+          <p-select appendTo="body" [(ngModel)]="selectedCategoryId" [options]="category" optionLabel="Name"
+            optionValue="Id" placeholder="Category" [showClear]="true" (onChange)="onCategoryChange()"
+            style="width: 150px">
+            <ng-template let-option #item>
+              <span>{{ option.Name }}</span>
+            </ng-template>
+          </p-select>
+        </div>
+
+        <!-- SubCategory Dropdown -->
+        <div class="filter-item">
+          <p-select appendTo="body" [(ngModel)]="selectedSubCategoryId" [options]="filteredSubCategories"
+            optionLabel="Name" optionValue="Id" placeholder="SubCategory" [showClear]="true" (onChange)="applyFilters()"
+            style="width: 160px">
+            <ng-template let-option #item>
+              <span>{{ option.Name }}</span>
+            </ng-template>
+          </p-select>
+        </div>
+
+        <!-- Department Dropdown -->
+        <div class="filter-item" *ngIf="selectedBrowse === 'Papers'">
+          <p-select appendTo="body" [(ngModel)]="selectedDepartmentId" [options]="department" optionLabel="Name"
+            optionValue="Id" placeholder="Department" [showClear]="true" (onChange)="applyFilters()"
+            style="width: 160px">
+            <ng-template let-option #item>
+              <span>{{ option.Name }}</span>
+            </ng-template>
+          </p-select>
+        </div>
+
+        <!-- Year Dropdown -->
+        <div class="filter-item">
+          <p-select appendTo="body" [(ngModel)]="selectedYear" [options]="years" placeholder="Year" [showClear]="true"
+            (onChange)="applyFilters()" style="width: 120px">
+          </p-select>
+        </div>
+
+        <!-- Batch Dropdown -->
+        <div class="filter-item" *ngIf="selectedBrowse === 'Papers'">
+          <p-select appendTo="body" [(ngModel)]="selectedBatchId" [options]="batches" optionLabel="Name"
+            optionValue="Id" placeholder="Batch" [showClear]="true" (onChange)="applyFilters()" style="width: 140px">
+            <ng-template let-option #item>
+              <span>{{ option.Name }}</span>
+            </ng-template>
+          </p-select>
+        </div>
+
+        <!-- Clear Button -->
+        <div class="filter-item">
+          <p-button label="Clear" [outlined]="true" icon="pi pi-filter-slash" (click)="clearAllFilters()" />
         </div>
       </div>
 

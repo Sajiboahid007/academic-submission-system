@@ -55,12 +55,14 @@
                 </p-floatlabel>
             </div>
 
-            <div class="card" *ngIf="pdfBase64">
-                <div style="padding: 12px; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+            <div class="card" *ngIf="pdfBase64" (click)="viewPdfReport()" style="cursor: pointer;" title="Click to view PDF report">
+                <div style="padding: 12px; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; display: flex; align-items: center; gap: 10px; transition: background-color 0.2s;"
+                     onmouseover="this.style.backgroundColor='#dbeafe'"
+                     onmouseout="this.style.backgroundColor='#eff6ff'">
                     <i class="pi pi-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
                     <div style="text-align: left;">
                         <div style="font-weight: 600; color: #1e3a8a; font-size: 0.9rem;">Plagiarism_and_AI_Review_Report.pdf</div>
-                        <div style="font-size: 0.8rem; color: #6b7280;">Auto-generated report will be attached automatically</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">Auto-generated report. Click to view PDF.</div>
                     </div>
                 </div>
             </div>
