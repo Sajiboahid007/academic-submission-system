@@ -21,8 +21,11 @@ export class NotificationService {
 
   getNotifications(): Observable<NotificationItem[]> {
     const url = `${this.baseUrl}/api/notifications`;
-    return this.http.get<AppQuery<NotificationListPayload>>(url).pipe(
-      map((res) => this.mapResultRows(res.data?.Result ?? [])),
+    return this.http.get<AppQuery<any>>(url).pipe(
+      map((res) => {
+        const rows = Array.isArray(res.data) ? res.data : (res.data?.Result ?? []);
+        return this.mapResultRows(rows);
+      }),
       catchError(() => of(this.mapResultRows(SAMPLE_NOTIFICATION_RESULT))),
     );
   }

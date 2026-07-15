@@ -19,6 +19,7 @@ export class AcademicSubmissionConfig {
     Student: 'Student',
     Teacher: 'Teacher',
     Admin: 'Admin',
+    Reviewer: 'Reviewer'
   } as const;
 
   public static readonly ApprovalStatus = {

@@ -15,6 +15,7 @@ export interface Journals {
     DOI?: string;
     Year?: string;
     FileUrl: string;
+    ResponseLater?: string;
     CreatedDate?: Date | null;
     UpdatedDate?: Date | null;
     CreatedBy?: string;

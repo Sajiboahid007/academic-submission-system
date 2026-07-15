@@ -82,7 +82,10 @@ export class JournalService {
       DOI: [journals?.DOI ?? ''],
       Year: [journals?.Year ?? '', Validators.required],
       FileUrl: [journals?.FileUrl ?? ''],
+      ResponseLater: [journals?.ResponseLater ?? ''],
 
+
+      ResFile: [journals?.ResFile ?? null],
       authorsIds: [journals?.TeacherIds ?? []],
       File: [journals?.File ?? null],
 

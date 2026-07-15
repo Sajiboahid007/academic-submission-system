@@ -18,4 +18,12 @@ export class FileService {
     formData.append('file', file);
     return this.requestService.post<AppQuery<any>>(`${this.baseUrl}/api/upload`, formData);
   }
+
+  uploadFiles2(files: File[]): Observable<AppQuery<any>> {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+    return this.requestService.post<AppQuery<any>>(`${this.baseUrl}/api/uploadFiles`, formData);
+  }
 }
