@@ -12,6 +12,7 @@ import { UserInfoService } from '../../../services/user-info-service';
 import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
 import { FileService } from '../../../services/file-service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-journal-insert-update',
@@ -152,17 +153,49 @@ export class JournalInsertUpdateComponent implements OnInit {
   }
 
   updateJournal() {
-    const journalData = this.journalForm.getRawValue() as Journals
-    journalData.Id = this.journalId
+    const file = this.journalForm.value.File;
+    const resFile = this.journalForm.value.ResFile;
+    const journalData = this.journalForm.getRawValue() as Journals;
+    journalData.Id = this.journalId;
+
+    if (file || resFile) {
+      this.fileService.uploadFiles2([file, resFile]).subscribe({
+        next: (res: any) => {
+          if (file && resFile) {
+            journalData.FileUrl = res?.data?.url;
+            journalData.ResponseLater = resFile?.data?.url;
+          } else if (file) {
+            journalData.FileUrl = res?.data?.url;
+          } else {
+            journalData.ResponseLater = res?.data?.url;
+          }
+          this.executeJournalUpdate(journalData);
+        },
+        error: (err) => {
+          console.log(err);
+          this.isSaving = false;
+          this.toastService.error('Error uploading file');
+          this.cdr.markForCheck();
+        },
+      });
+    } else {
+      this.executeJournalUpdate(journalData);
+    }
+  }
+
+
+  private executeJournalUpdate(journalData: Journals) {
     this.journalService.updateJournal(journalData).subscribe({
       next: (res) => {
         this.isSaving = false;
         this.dialogRef.close(res);
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.log(err);
         this.isSaving = false;
         this.toastService.error('Error updating journal');
+        this.cdr.markForCheck();
       },
     });
   }
@@ -185,6 +218,21 @@ export class JournalInsertUpdateComponent implements OnInit {
 
   onFileRemove(event: any) {
     this.journalForm.patchValue({ File: null });
+  }
+
+  onResponseLaterSelect(event: any) {
+    const file = event.files[0];
+    if (file) {
+      this.journalForm.patchValue({ ResFile: file });
+    }
+  }
+
+  onResponseLaterClear() {
+    this.journalForm.patchValue({ ResFile: null });
+  }
+
+  onResponseLaterRemove(event: any) {
+    this.journalForm.patchValue({ ResFile: null });
   }
 
 }

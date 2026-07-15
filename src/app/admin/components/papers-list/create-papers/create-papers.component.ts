@@ -177,6 +177,26 @@ export class CreatePapersComponent {
     });
 
   }
+
+  viewResponseLater(id: number) {
+    if (!id) return;
+    this.journalService.getById(id).subscribe({
+      next: (res) => {
+        const fileUrl = res?.data?.ResponseLater;
+
+        if (!fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
   editJournal(id: number) {
     this.journalService.getById(id).subscribe({
       next: (res) => {
@@ -324,7 +344,18 @@ export class CreatePapersComponent {
     return this.userTokenInfo.role !== AcademicSubmissionConfig.UserRole.Student;
   }
 
+  isPaperDeletable(paper: any): boolean {
+    const status = paper?.PaperApprovals?.[0]?.Status;
+    return status !== AcademicSubmissionConfig.ApprovalStatus.Approved;
+  }
+
   deletePaper(id: number): void {
+    const paper = this.papers.find((p) => p.Id === id);
+    if (paper && paper.PaperApprovals?.[0]?.Status === AcademicSubmissionConfig.ApprovalStatus.Approved) {
+      this.toastService.error('Approved papers cannot be deleted');
+      return;
+    }
+
     this.confirmationService.confirm({
       message: `Are you sure you want to delete this paper?`,
       header: 'Confirm Delete',

@@ -48,7 +48,7 @@
                         <!-- Filter Row -->
 
                         <tr style="margin-top: 50px">
-                            <th style="width: 25%">Title</th>
+                            <th style="width: 20%">Title</th>
                             <th style="width: 8%">Status</th>
                             <th style="width: 10%">Category</th>
                             <!-- <th style="width: 10%">Sub Category</th> -->
@@ -107,7 +107,7 @@
 
                                 <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton size="small"
                                     icon="pi pi-verified" class="p-button-sm" (click)="onApprove(paper.Id)"></button>
-                                <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" size="small" icon="pi pi-trash"
+                                <p-button *ngIf="isPaperDeletable(paper)" size="small" icon="pi pi-trash"
                                     class="p-button-sm" severity="danger" (click)="deletePaper(paper.Id)"></p-button>
                             </td>
                         </tr>
@@ -150,7 +150,8 @@
                             <th style="width: 10%">Category</th>
                             <th style="width: 10%">Volume</th>
                             <th style="width: 7%">Year</th>
-                            <th style="width: 20%">Action</th>
+                            <th style="width: 10%">Res.Later</th>
+                            <th style="width: 17%">Action</th>
                         </tr>
                     </ng-template>
 
@@ -195,6 +196,11 @@
                                 </div>
                             </td>
                             <td>
+                                <p-button *ngIf="journal.ResponseLater" [outlined]="true" icon="pi pi-file-pdf"
+                                    size="small" styleClass="p-button-sm p-button-outlined"
+                                    (click)="viewResponseLater(journal.Id)" />
+                            </td>
+                            <td>
                                 <p-button [outlined]="true" icon="pi pi-eye" size="small"
                                     styleClass="p-button-sm p-button-outlined" (click)="viewJournal(journal.Id)" />
 
@@ -209,6 +215,12 @@
                                     class="p-button-sm" severity="danger"
                                     (click)="deleteJournal(journal.Id)"></p-button>
                             </td>
+                        </tr>
+                    </ng-template>
+                    <!-- Empty Message -->
+                    <ng-template #emptymessage>
+                        <tr>
+                            <td colspan="6">No Journal found.</td>
                         </tr>
                     </ng-template>
                 </p-table>

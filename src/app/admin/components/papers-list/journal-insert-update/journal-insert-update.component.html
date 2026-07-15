@@ -88,7 +88,7 @@
 
             <div fxLayout="row" fxLayoutGap="24px">
                 <!-- Authors-->
-                <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+                <!-- <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
                         <p-multiselect [options]="authors" formControlName="authorsIds" optionLabel="Name"
                             optionValue="Id" display="chip" [showClear]="true" styleClass="full-width">
@@ -102,7 +102,7 @@
                         </p-multiselect>
                         <label for=" authorsIds" class="field-label"> Authors </label>
                     </p-floatlabel>
-                </div>
+                </div> -->
                 <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
                     <p-floatlabel variant="on" class="float-label-wrapper">
                         <input pInputText id="Authors" formControlName="Authors" autocomplete="off"
@@ -198,10 +198,21 @@
                     (onRemove)="onFileRemove($event)" [showUploadButton]="false" [multiple]="false"
                     accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
                     <ng-template #empty>
-                        <div>Drag and drop files to here to upload.</div>
+                        <div>Drag and drop Journal files to here to upload.</div>
                     </ng-template>
                 </p-fileupload>
             </div>
+
+            <div class="card" *ngIf="isEditMode">
+                <p-fileupload (onSelect)="onResponseLaterSelect($event)" (onClear)="onResponseLaterClear()"
+                    (onRemove)="onResponseLaterRemove($event)" [showUploadButton]="false" [multiple]="false"
+                    accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
+                    <ng-template #empty>
+                        <div>Drag and drop Response Later files to here to upload.</div>
+                    </ng-template>
+                </p-fileupload>
+            </div>
+
 
         </div>
     </form>
