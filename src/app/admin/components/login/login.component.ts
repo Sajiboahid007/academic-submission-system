@@ -26,6 +26,11 @@ export class LoginComponent implements OnInit {
   /** Shown on the Sign in tab after a successful registration */
   loginBannerSuccess: string | null = null;
 
+  roles = [
+    { Id: 1, Name: 'Student' },
+    { Id: 2, Name: 'Authors' },
+  ];
+
   constructor(
     private readonly loginService: LoginService,
     private readonly localStorageService: LocalStorageService,
@@ -126,6 +131,7 @@ export class LoginComponent implements OnInit {
       Name: raw.Name,
       Email: raw.Email,
       Password: raw.Password,
+      Role: raw.Role,
     };
 
     this.loginService

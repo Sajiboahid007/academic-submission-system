@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       label: 'Administration',
       icon: 'pi pi-cog',
       collapsible: true,
-      roles: ['Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
+      roles: ['Admin', 'Super-Admin', 'Reviewer'],
       items: [
         {
           label: 'Users',
@@ -134,12 +134,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           route: '/dashboard/department',
           icon: 'pi pi-sitemap',
           roles: ['Admin', 'Super-Admin'],
-        },
-        {
-          label: 'Notification',
-          route: '/dashboard/notification',
-          icon: 'pi pi-bell',
-          roles: ['Admin', 'Super-Admin', 'Student', 'Teacher'],
         },
         {
           label: 'Batch',
@@ -169,7 +163,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           label: 'Papers Approval',
           route: '/dashboard/papers-approval',
           icon: 'pi pi-verified',
-          roles: ['Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
+          roles: ['Admin', 'Super-Admin', 'Reviewer'],
         },
       ],
     },
@@ -185,12 +179,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           icon: 'pi pi-upload',
           roles: ['Student', 'Teacher', 'Admin', 'Super-Admin', 'Reviewer'],
         },
-        // {
-        //   label: 'Home',
-        //   route: '/dashboard/home',
-        //   icon: 'pi pi-home',
-        //   roles: ['Student', 'Teacher', 'Admin', 'Super-Admin'],
-        // },
+        {
+          label: 'Notification',
+          route: '/dashboard/notification',
+          icon: 'pi pi-bell',
+          roles: ['Admin', 'Super-Admin', 'Student', 'Teacher', 'Reviewer'],
+        },
         {
           label: 'Thesis / Research',
           route: '/dashboard/paper-detail',

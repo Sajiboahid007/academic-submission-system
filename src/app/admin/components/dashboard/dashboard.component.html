@@ -43,7 +43,7 @@
                 <li *ngIf="notification.length === 0" class="notification-empty">
                   No notifications yet.
                 </li>
-                <li *ngFor="let n of notification" class="notification-item" (click)="onNotificationClick(n)" style="cursor: pointer;">
+                <li *ngFor="let n of notification" class="notification-item">
                   <div class="notification-item-top">
                     <span class="notification-title">{{ n.Title }}</span>
                     <span class="notification-status" [ngClass]="'notification-status--' + getSeverity(n.Status)">
@@ -52,7 +52,8 @@
                   </div>
                   <p class="notification-message">{{ n.Message }}</p>
                   <div *ngIf="n.FileUrl" style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <a [href]="n.FileUrl" target="_blank" class="p-button p-component p-button-sm p-button-outlined p-button-info"
+                    <a [href]="n.FileUrl" target="_blank"
+                      class="p-button p-component p-button-sm p-button-outlined p-button-info"
                       style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
                       <span class="p-button-icon pi pi-eye" aria-hidden="true"></span>
                       <span class="p-button-label">View Attachment</span>

@@ -163,7 +163,7 @@ export class JournalInsertUpdateComponent implements OnInit {
         next: (res: any) => {
           if (file && resFile) {
             journalData.FileUrl = res?.data?.url;
-            journalData.ResponseLater = res.File?.data?.url;
+            journalData.ResponseLater = res.data?.url;
           } else if (file) {
             journalData.FileUrl = res?.data?.url;
           } else {

@@ -15,7 +15,7 @@ import { privateDecrypt } from 'crypto';
 import { JournalService } from '../../services/journal-service';
 import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
 import { ConfirmationService } from 'primeng/api';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-paper-approval',
@@ -42,8 +42,14 @@ export class PaperApprovalComponent implements OnInit {
     private readonly papersService: PapersService,
     private readonly journalService: JournalService,
     private readonly confirmationService: ConfirmationService,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) { }
+
+  unfilteredPapers: Papers[] = [];
+  unfilteredJournals: Journals[] = [];
+  filterPaperId: number | null = null;
+  filterJournalId: number | null = null;
 
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
@@ -62,34 +68,50 @@ export class PaperApprovalComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params['tab'] === 'journal') {
         this.activeTab = '1';
-        const journalId = Number(params['journalId']);
-        if (journalId) {
-          setTimeout(() => {
-            this.onApproveJournal(journalId);
-          }, 500);
-        }
+        this.filterJournalId = Number(params['journalId']) || null;
       } else {
         this.activeTab = '0';
-        const paperId = Number(params['paperId']);
-        if (paperId) {
-          setTimeout(() => {
-            this.onApprove(paperId);
-          }, 500);
-        }
+        this.filterPaperId = Number(params['paperId']) || null;
       }
-      this.cdr.markForCheck();
+      this.applyQueryParamsFilter();
     });
+  }
+
+  applyQueryParamsFilter() {
+    if (this.filterPaperId) {
+      this.papers = this.unfilteredPapers.filter(p => p.Id === this.filterPaperId);
+    } else {
+      this.papers = [...this.unfilteredPapers];
+    }
+
+    if (this.filterJournalId) {
+      this.journal = this.unfilteredJournals.filter(j => j.Id === this.filterJournalId);
+    } else {
+      this.journal = [...this.unfilteredJournals];
+    }
+    this.cdr.markForCheck();
+  }
+
+  clearFilter() {
+    this.filterPaperId = null;
+    this.filterJournalId = null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: this.activeTab === '1' ? 'journal' : 'paper' },
+      queryParamsHandling: 'merge'
+    });
+    this.applyQueryParamsFilter();
   }
 
   public getApprovalList() {
     try {
       this.papersService.getNonApprovalPapers().subscribe((res: AppQuery<Papers[]>) => {
-        this.papers = (res.data || []).filter(
+        this.unfilteredPapers = (res.data || []).filter(
           (p: any) =>
             p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
             p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
         );
-        this.cdr.markForCheck();
+        this.applyQueryParamsFilter();
       });
     } catch (error) {
       console.error('Error fetching approval list:', error);
@@ -111,8 +133,8 @@ export class PaperApprovalComponent implements OnInit {
               j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
           );
         }
-        this.journal = list;
-        this.cdr.markForCheck();
+        this.unfilteredJournals = list;
+        this.applyQueryParamsFilter();
       },
       error: (error: any) => {
         this.toastService.error('Failed to load journals.');
@@ -135,8 +157,8 @@ export class PaperApprovalComponent implements OnInit {
               j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
           );
         }
-        this.journal = list;
-        this.cdr.markForCheck();
+        this.unfilteredJournals = list;
+        this.applyQueryParamsFilter();
       },
       error: (error: any) => {
         this.toastService.error('Failed to load journals.');
@@ -168,12 +190,12 @@ export class PaperApprovalComponent implements OnInit {
   private userPapers(id: number) {
     this.papersService.getPapersByUserId(id).subscribe({
       next: (res: any) => {
-        this.papers = (res?.data || []).filter(
+        this.unfilteredPapers = (res?.data || []).filter(
           (p: any) =>
             p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
             p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
         );
-        this.cdr.markForCheck();
+        this.applyQueryParamsFilter();
       },
       error: (err) => {
         console.error('Error fetching papers:', err);

@@ -83,18 +83,16 @@
 
           <div [formGroup]="registerForm" class="auth-form">
             <div class="field-flex">
-              <div class="field-group-userId">
-                <label for="reg-StudentId">User ID</label>
-                <input id="reg-StudentId" pInputText class="auth-input" formControlName="StudentId" type="text"
-                  autocomplete="username" placeholder="Unique user ID" />
-                <small class="field-error" *ngIf="
-                    registerForm.get('StudentId')?.invalid && registerForm.get('StudentId')?.touched
-                  ">
-                  User ID is required
+              <div class="field-group">
+                <label for="reg-Role">Role</label>
+                <p-select [options]="roles" formControlName="Role" optionLabel="Name" optionValue="Id" />
+                <small class="field-error"
+                  *ngIf="registerForm.get('Role')?.invalid && registerForm.get('Role')?.touched">
+                  Role is required
                 </small>
               </div>
 
-              <div class="field-group-name">
+              <div class="field-group">
                 <label for="reg-Name">Name</label>
                 <input id="reg-Name" pInputText class="auth-input" formControlName="Name" type="text"
                   autocomplete="username" placeholder="Your name.." />

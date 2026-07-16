@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Papers } from '../../../../fds-config/entity-models/papers';
 import { Category } from '../../../../fds-config/entity-models/categories';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
@@ -30,6 +31,11 @@ import { JournalService } from '../../../services/journal-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreatePapersComponent {
+  activeTab = '0';
+  unfilteredPapers: Papers[] = [];
+  unfilteredJournals: Journals[] = [];
+  filterPaperId: number | null = null;
+  filterJournalId: number | null = null;
   papers: Papers[] = [];
   journal: Journals[] = [];
   loading: boolean = false;
@@ -49,21 +55,61 @@ export class CreatePapersComponent {
     private readonly userInfoService: UserInfoService,
     private readonly journalService: JournalService,
     private readonly confirmationService: ConfirmationService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
     this.getPapers();
     this.getJournals();
+
+    this.route.queryParams.subscribe((params) => {
+      if (params['tab'] === 'journal') {
+        this.activeTab = '1';
+        this.filterJournalId = Number(params['journalId']) || null;
+      } else {
+        this.activeTab = '0';
+        this.filterPaperId = Number(params['paperId']) || null;
+      }
+      this.applyQueryParamsFilter();
+    });
+  }
+
+  applyQueryParamsFilter() {
+    if (this.filterPaperId) {
+      this.papers = this.unfilteredPapers.filter(p => p.Id === this.filterPaperId);
+    } else {
+      this.papers = [...this.unfilteredPapers];
+    }
+
+    if (this.filterJournalId) {
+      this.journal = this.unfilteredJournals.filter(j => j.Id === this.filterJournalId);
+    } else {
+      this.journal = [...this.unfilteredJournals];
+    }
+    this.cdr.markForCheck();
+  }
+
+  clearFilter() {
+    this.filterPaperId = null;
+    this.filterJournalId = null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: this.activeTab === '1' ? 'journal' : 'paper' },
+      queryParamsHandling: 'merge'
+    });
+    this.applyQueryParamsFilter();
   }
 
   getPapers() {
     this.papersService
       .getPaperUploadsById(this.userTokenInfo.userId)
       .subscribe((res: AppQuery<Papers[]>) => {
-        this.papers = res?.data;
+        this.unfilteredPapers = res?.data || [];
+        this.applyQueryParamsFilter();
         this.years = Array.from(
-          new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
+          new Set(this.unfilteredPapers.map((paper) => paper.Year).filter((year): year is string => !!year)),
         ).sort();
         this.cdr.markForCheck();
       });
@@ -72,8 +118,8 @@ export class CreatePapersComponent {
   getJournals() {
     this.journalService.getJournalUploadId(this.userTokenInfo.userId).subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = res?.data;
-        this.cdr.markForCheck();
+        this.unfilteredJournals = res?.data || [];
+        this.applyQueryParamsFilter();
       },
       error: (error: any) => {
         this.toastService.error('Failed to load journals.');
@@ -226,8 +272,9 @@ export class CreatePapersComponent {
 
   deleteJournal(id: number) {
     const journal = this.journal.find((j) => j.Id === id);
-    if (journal && journal.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft) {
-      this.toastService.error('Only draft journals can be deleted');
+    if (journal && journal.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
+      && journal.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Rejected) {
+      this.toastService.error('Only draft or rejected journals can be deleted');
       return;
     }
 
@@ -328,18 +375,21 @@ export class CreatePapersComponent {
 
   isPaperDeletable(paper: any): boolean {
     const status = paper?.PaperApprovals?.[0]?.Status;
-    return status === AcademicSubmissionConfig.ApprovalStatus.Draft;
+    return status === AcademicSubmissionConfig.ApprovalStatus.Draft
+      || status === AcademicSubmissionConfig.ApprovalStatus.Rejected;
   }
 
   isJournalDeletable(journal: any): boolean {
     const status = journal?.PaperApprovals?.[0]?.Status;
-    return status === AcademicSubmissionConfig.ApprovalStatus.Draft;
+    return status === AcademicSubmissionConfig.ApprovalStatus.Draft
+      || status === AcademicSubmissionConfig.ApprovalStatus.Rejected;
   }
 
   deletePaper(id: number): void {
     const paper = this.papers.find((p) => p.Id === id);
-    if (paper && paper.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft) {
-      this.toastService.error('Only draft papers can be deleted');
+    if (paper && paper.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
+      && paper.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Rejected) {
+      this.toastService.error('Only draft or rejected papers can be deleted');
       return;
     }
 

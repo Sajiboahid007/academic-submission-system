@@ -1,31 +1,102 @@
-<div class="grid">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h1>Notifications</h1>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Message</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let notification of notifications" (click)="onNotificationClick(notification)" style="cursor: pointer;">
-                                <td>{{notification.Title}}</td>
-                                <td>{{notification.Message}}</td>
-                                <td>{{notification.Status}}</td>
-                                <td>{{notification.CreatedAt}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="notifications-container animate-fade-in">
+  <div class="notifications-card">
+    <!-- Header -->
+    <div class="notifications-header">
+      <div class="header-left">
+        <span class="header-icon"><i class="pi pi-bell"></i></span>
+        <div>
+          <h2 class="header-title">Notifications</h2>
+          <p class="header-subtitle">Stay updated with your paper and journal approval status changes</p>
         </div>
+      </div>
+      <div class="header-actions">
+        <button pButton type="button" label="Mark all as read" icon="pi pi-check-all" class="p-button-outlined p-button-sm mark-all-btn" (click)="markAllAsRead()"></button>
+      </div>
     </div>
+
+    <!-- Filters and Search -->
+    <div class="filter-search-bar">
+      <div class="filter-chips">
+        <button type="button" class="filter-chip" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+          All <span class="badge">{{ notifications.length }}</span>
+        </button>
+        <button type="button" class="filter-chip" [class.active]="activeFilter === 'unread'" (click)="setFilter('unread')">
+          Unread <span class="badge badge-unread">{{ getUnreadCount() }}</span>
+        </button>
+        <button type="button" class="filter-chip" [class.active]="activeFilter === 'read'" (click)="setFilter('read')">
+          Read <span class="badge badge-read">{{ getReadCount() }}</span>
+        </button>
+      </div>
+      <div class="search-input-wrapper">
+        <i class="pi pi-search search-icon"></i>
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()" placeholder="Search notifications..." class="search-input" />
+      </div>
+    </div>
+
+    <!-- Notification List -->
+    <div class="notification-list-wrapper">
+      <div *ngIf="filteredNotifications.length === 0" class="empty-state animate-fade-in">
+        <div class="empty-icon-wrap">
+          <i class="pi pi-bell-slash"></i>
+        </div>
+        <h3>No Notifications Found</h3>
+        <p>You don't have any notifications matching this filter.</p>
+      </div>
+
+      <div *ngIf="filteredNotifications.length > 0" class="notification-list">
+        <div *ngFor="let n of paginatedNotifications" 
+             class="notification-card-item animate-fade-in" 
+             [class.unread-item]="!isRead(n)"
+             (click)="onNotificationClick(n)">
+          <!-- Icon indicator -->
+          <div class="notification-status-icon" [ngClass]="'status-' + getStatusClass(n)">
+            <i [class]="getNotificationIcon(n)"></i>
+          </div>
+
+          <!-- Message details -->
+          <div class="notification-details">
+            <div class="notification-meta">
+              <span class="notification-badge" [ngClass]="'badge-' + getStatusClass(n)">
+                {{ getDisplayStatus(n) }}
+              </span>
+              <span class="notification-time">
+                <i class="pi pi-clock"></i> {{ n.CreatedAt | date:'medium' }}
+              </span>
+            </div>
+            <h4 class="notification-card-title">{{ n.Title }}</h4>
+            <p class="notification-card-message">{{ n.Message }}</p>
+          </div>
+ 
+          <!-- Action block -->
+          <div class="notification-actions" (click)="$event.stopPropagation()">
+            <a *ngIf="n.FileUrl" [href]="n.FileUrl" target="_blank" class="attachment-btn" pTooltip="Open PDF Attachment" tooltipPosition="top">
+              <i class="pi pi-file-pdf"></i>
+              <span>View Attachment</span>
+            </a>
+            <button *ngIf="!isRead(n)" 
+                    pButton 
+                    type="button" 
+                    icon="pi pi-check" 
+                    class="p-button-rounded p-button-text p-button-sm mark-read-btn" 
+                    pTooltip="Mark as read" 
+                    tooltipPosition="left"
+                    (click)="markAsRead(n)"></button>
+            <div class="unread-dot-indicator" *ngIf="!isRead(n)"></div>
+            <i class="pi pi-chevron-right arrow-detail"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginator -->
+      <div class="notifications-footer" *ngIf="filteredNotifications.length > 0" style="padding: 1rem; border-top: 1px solid #f1f5f9; background: #ffffff;">
+        <p-paginator 
+          (onPageChange)="onPageChange($event)" 
+          [first]="first" 
+          [rows]="rows" 
+          [totalRecords]="filteredNotifications.length" 
+          [rowsPerPageOptions]="[10, 20, 50]">
+        </p-paginator>
+      </div>
+    </div>
+  </div>
 </div>

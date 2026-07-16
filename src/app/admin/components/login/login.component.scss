@@ -257,32 +257,13 @@
   }
 }
 
-.field-group-userId {
-  width: 50%;
-  flex-direction: row;
-
-  label {
-    font-weight: 600;
-    color: #cbd5e1;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-}
-
 .field-flex {
   display: flex;
   gap: 1.4rem;
-}
 
-.field-group-name {
-  width: 50%;
-  flex-direction: row;
-
-  label {
-    font-weight: 600;
-    color: #cbd5e1;
-    display: block;
-    margin-bottom: 0.5rem;
+  .field-group {
+    flex: 1;
+    min-width: 0;
   }
 }
 
@@ -293,11 +274,13 @@
 
 .auth-input {
   width: 100%;
+  height: 2.75rem;
   background: rgba(2, 6, 23, 0.45) !important;
   border: 1px solid rgba(100, 116, 139, 0.45) !important;
   color: #f1f5f9 !important;
   border-radius: 0.6rem !important;
-  padding: 0.65rem 0.85rem !important;
+  padding: 0 0.85rem !important;
+  box-sizing: border-box;
 
   &::placeholder {
     color: rgba(148, 163, 184, 0.65);
@@ -315,61 +298,50 @@
   .p-password,
   &.p-password {
     width: 100%;
+    display: block;
   }
 
-  // Wrapper (PrimeNG often puts background on the flex wrapper, not only the input)
-  .p-password-input-wrapper,
-  .p-inputwrapper,
-  .p-password.p-inputwrapper {
+  .p-password-input-wrapper {
+    position: relative;
     width: 100%;
-    background: rgba(2, 6, 23, 0.45) !important;
-    border: 1px solid rgba(100, 116, 139, 0.45) !important;
-    border-radius: 0.6rem !important;
-    box-shadow: none !important;
   }
 
   .p-password-input,
   .p-inputtext,
   input.p-inputtext {
     width: 100% !important;
+    height: 2.75rem !important;
     background: rgba(2, 6, 23, 0.45) !important;
     border: 1px solid rgba(100, 116, 139, 0.45) !important;
     color: #f1f5f9 !important;
     border-radius: 0.6rem !important;
     box-shadow: none !important;
+    padding: 0 2.5rem 0 0.85rem !important;
+    box-sizing: border-box;
+
+    &:enabled:focus {
+      border-color: rgba(45, 212, 191, 0.65) !important;
+      box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15) !important;
+    }
   }
 
-  // When input sits inside a styled wrapper, avoid double border / stacked white
-  .p-password-input-wrapper .p-inputtext,
-  .p-password-input-wrapper input,
-  .p-inputwrapper .p-inputtext,
-  .p-inputwrapper input {
+  // Reset default wrapper styling to prevent conflicts
+  .p-inputwrapper,
+  .p-password.p-inputwrapper {
+    width: 100%;
     background: transparent !important;
     border: none !important;
-    border-radius: 0.5rem !important;
     box-shadow: none !important;
-    color: #f1f5f9 !important;
-  }
-
-  .p-inputtext::placeholder,
-  input::placeholder {
-    color: rgba(148, 163, 184, 0.65);
-  }
-
-  .p-inputtext:enabled:focus,
-  input:enabled:focus {
-    outline: none;
-    box-shadow: none !important;
-  }
-
-  .p-password-input-wrapper:has(.p-inputtext:focus),
-  .p-inputwrapper:has(input:focus) {
-    border-color: rgba(45, 212, 191, 0.65) !important;
-    box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15) !important;
   }
 
   .p-password-toggle {
     color: #94a3b8;
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    cursor: pointer;
 
     &:hover {
       color: #e2e8f0;
@@ -447,5 +419,62 @@
   .google-auth-btn-fallback {
     font-size: 0.82rem !important;
     padding: 0.6rem 0.75rem !important;
+  }
+}
+
+::ng-deep .auth-form p-select {
+  width: 100%;
+
+  .p-select,
+  &.p-select {
+    width: 100%;
+    background: rgba(2, 6, 23, 0.45) !important;
+    border: 1px solid rgba(100, 116, 139, 0.45) !important;
+    border-radius: 0.6rem !important;
+    color: #f1f5f9 !important;
+    box-shadow: none !important;
+  }
+
+  .p-select-label,
+  .p-select-input {
+    color: #f1f5f9 !important;
+    padding: 0.65rem 0.85rem !important;
+  }
+
+  .p-select-clear-icon,
+  .p-select-dropdown {
+    color: #94a3b8;
+  }
+
+  .p-select-overlay,
+  .p-select-panel,
+  .p-select-list-container {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(100, 116, 139, 0.35) !important;
+    border-radius: 0.5rem;
+    color: #e2e8f0;
+  }
+
+  .p-select-option,
+  .p-dropdown-item {
+    color: #e2e8f0 !important;
+    background: transparent !important;
+
+    &:hover,
+    &.p-focus {
+      background: rgba(45, 212, 191, 0.15) !important;
+    }
+
+    &.p-select-option-selected,
+    &.p-highlight {
+      background: rgba(45, 212, 191, 0.35) !important;
+    }
+  }
+
+  &:has(.p-select:focus),
+  .p-select:focus,
+  &.p-select:has(:focus) {
+    border-color: rgba(45, 212, 191, 0.65) !important;
+    box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15) !important;
   }
 }
