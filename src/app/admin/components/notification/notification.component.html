@@ -16,7 +16,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let notification of notifications">
+                            <tr *ngFor="let notification of notifications" (click)="onNotificationClick(notification)" style="cursor: pointer;">
                                 <td>{{notification.Title}}</td>
                                 <td>{{notification.Message}}</td>
                                 <td>{{notification.Status}}</td>

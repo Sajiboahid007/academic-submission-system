@@ -203,16 +203,11 @@
                             <td>
                                 <p-button [outlined]="true" icon="pi pi-eye" size="small"
                                     styleClass="p-button-sm p-button-outlined" (click)="viewJournal(journal.Id)" />
-
-                                <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true"
-                                    icon="pi pi-file-edit" size="small" severity="danger"
+                                <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit" size="small" severity="danger"
                                     styleClass="p-button-sm p-button-outlined m-2" (click)="editJournal(journal.Id)" />
-
-                                <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton size="small"
-                                    icon="pi pi-verified" class="p-button-sm"
+                                <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton size="small" icon="pi pi-verified" class="p-button-sm"
                                     (click)="onApproveJournal(journal.Id)"></button>
-                                <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" size="small" icon="pi pi-trash"
-                                    class="p-button-sm" severity="danger"
+                                <p-button *ngIf="isJournalDeletable(journal)" size="small" icon="pi pi-trash" class="p-button-sm" severity="danger"
                                     (click)="deleteJournal(journal.Id)"></p-button>
                             </td>
                         </tr>

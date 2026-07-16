@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NotificationService } from '../../services/notification.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'notification',
@@ -12,7 +13,10 @@ export class NotificationComponent implements OnInit {
 
   notifications: any[] = []
 
-  constructor(private notificationService: NotificationService) { }
+  constructor(
+    private readonly notificationService: NotificationService,
+    private readonly router: Router
+  ) { }
 
   ngOnInit(): void {
     this.getNotifications()
@@ -25,4 +29,18 @@ export class NotificationComponent implements OnInit {
     })
   }
 
+  onNotificationClick(notification: any) {
+    const paperId = notification.paperId || notification.PaperId;
+    const journalId = notification.journalId || notification.JournalId;
+
+    if (journalId) {
+      this.router.navigate(['/dashboard/papers-approval'], {
+        queryParams: { tab: 'journal', journalId: journalId }
+      });
+    } else if (paperId) {
+      this.router.navigate(['/dashboard/papers-approval'], {
+        queryParams: { tab: 'paper', paperId: paperId }
+      });
+    }
+  }
 }

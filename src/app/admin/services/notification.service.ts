@@ -47,6 +47,8 @@ export class NotificationService {
       status: this.normalizeStatus(dto.Status),
       at: safeAt,
       fileUrl: dto.FileUrl,
+      paperId: dto.PaperId,
+      journalId: dto.JournalId,
     };
   }
 

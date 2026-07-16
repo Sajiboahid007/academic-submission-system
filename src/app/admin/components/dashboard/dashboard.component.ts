@@ -737,4 +737,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.paginationFirst.set(event.first);
     this.paginationRows.set(event.rows);
   }
+
+  onNotificationClick(notification: any): void {
+    this.notificationsOpen.set(false);
+    const paperId = notification.paperId || notification.PaperId;
+    const journalId = notification.journalId || notification.JournalId;
+
+    if (journalId) {
+      this.router.navigate(['/dashboard/papers-approval'], {
+        queryParams: { tab: 'journal', journalId: journalId }
+      });
+    } else if (paperId) {
+      this.router.navigate(['/dashboard/papers-approval'], {
+        queryParams: { tab: 'paper', paperId: paperId }
+      });
+    }
+  }
 }

@@ -33,11 +33,12 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   users: Users[] = [];
   editorial: Users[] = [];
   userInfo: any = {};
+  isReviewer: boolean = false;
 
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source: 'Journal' | 'Paper' } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source?: 'Journal' | 'Paper'; fromPaperApproval?: boolean } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
@@ -51,6 +52,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
 
   ngOnInit(): void {
     this.userInfo = this.userInfoService.getUserInfo();
+    this.isReviewer = this.userInfo?.role === AcademicSubmissionConfig.UserRole.Reviewer;
 
     if (this.data?.Source === 'Journal') {
       this.getUsers();
@@ -76,7 +78,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         },
       ];
 
-      if (this.data?.Source === 'Journal') {
+      if (this.data?.Source === 'Journal' || this.data?.Source === 'Paper') {
         this.statusOptions.push({
           label: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
           value: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
@@ -85,6 +87,12 @@ export class PaperApprovalConfirmationComponent implements OnInit {
           label: AcademicSubmissionConfig.ApprovalStatus.Rejected,
           value: AcademicSubmissionConfig.ApprovalStatus.Rejected,
         });
+        if (this.data?.Source === 'Paper') {
+          this.statusOptions.push({
+            label: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
+            value: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
+          });
+        }
         this.statusOptions = this.statusOptions.filter(item => {
           return item.label !== AcademicSubmissionConfig.ApprovalStatus.Pending
         })
@@ -99,8 +107,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
         .filter(
           (status) =>
-            status !== AcademicSubmissionConfig.ApprovalStatus.Pending &&
-            status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+            status !== AcademicSubmissionConfig.ApprovalStatus.Pending
         )
         .map((status) => ({
           label: status,
@@ -143,7 +150,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
 
   showEditorial(): boolean {
     const role = this.userInfo?.role;
-    return this.data?.Source === 'Journal' && (
+    return !!this.data?.fromPaperApproval && this.data?.Source === 'Journal' && (
       role === AcademicSubmissionConfig.UserRole.SuperAdmin ||
       role === AcademicSubmissionConfig.UserRole.Admin
     );

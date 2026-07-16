@@ -15,6 +15,7 @@ import { privateDecrypt } from 'crypto';
 import { JournalService } from '../../services/journal-service';
 import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
 import { ConfirmationService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-paper-approval',
@@ -27,7 +28,8 @@ export class PaperApprovalComponent implements OnInit {
   aprovals: PaperApprovals[] = [];
   userTokenInfo: any = {};
   papers: Papers[] = [];
-  journal: Journals[] = []
+  journal: Journals[] = [];
+  activeTab: string = '0';
 
   loading: boolean = false;
 
@@ -39,7 +41,8 @@ export class PaperApprovalComponent implements OnInit {
     private readonly userInfoService: UserInfoService,
     private readonly papersService: PapersService,
     private readonly journalService: JournalService,
-    private readonly confirmationService: ConfirmationService
+    private readonly confirmationService: ConfirmationService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -56,14 +59,36 @@ export class PaperApprovalComponent implements OnInit {
       this.getJounals();
     }
 
-
-
+    this.route.queryParams.subscribe((params) => {
+      if (params['tab'] === 'journal') {
+        this.activeTab = '1';
+        const journalId = Number(params['journalId']);
+        if (journalId) {
+          setTimeout(() => {
+            this.onApproveJournal(journalId);
+          }, 500);
+        }
+      } else {
+        this.activeTab = '0';
+        const paperId = Number(params['paperId']);
+        if (paperId) {
+          setTimeout(() => {
+            this.onApprove(paperId);
+          }, 500);
+        }
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   public getApprovalList() {
     try {
       this.papersService.getNonApprovalPapers().subscribe((res: AppQuery<Papers[]>) => {
-        this.papers = res.data;
+        this.papers = (res.data || []).filter(
+          (p: any) =>
+            p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
+            p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+        );
         this.cdr.markForCheck();
       });
     } catch (error) {
@@ -74,9 +99,19 @@ export class PaperApprovalComponent implements OnInit {
   getJournalByUserId(id: number) {
     this.journalService.getJournalByUserId(id).subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = (res.data || []).filter(
-          (j: any) => j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
-        );
+        let list = res.data || [];
+        if (this.userTokenInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
+          list = list.filter(
+            (j: any) => j.PaperApprovals?.[0]?.Status === AcademicSubmissionConfig.ApprovalStatus.ReviewRequested
+          );
+        } else {
+          list = list.filter(
+            (j: any) =>
+              j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
+              j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+          );
+        }
+        this.journal = list;
         this.cdr.markForCheck();
       },
       error: (error: any) => {
@@ -88,9 +123,19 @@ export class PaperApprovalComponent implements OnInit {
   getJounals() {
     this.journalService.getNonApprovedJournals().subscribe({
       next: (res: AppQuery<Journals[]>) => {
-        this.journal = (res.data || []).filter(
-          (j: any) => j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft
-        );
+        let list = res.data || [];
+        if (this.userTokenInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
+          list = list.filter(
+            (j: any) => j.PaperApprovals?.[0]?.Status === AcademicSubmissionConfig.ApprovalStatus.ReviewRequested
+          );
+        } else {
+          list = list.filter(
+            (j: any) =>
+              j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
+              j.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+          );
+        }
+        this.journal = list;
         this.cdr.markForCheck();
       },
       error: (error: any) => {
@@ -123,7 +168,11 @@ export class PaperApprovalComponent implements OnInit {
   private userPapers(id: number) {
     this.papersService.getPapersByUserId(id).subscribe({
       next: (res: any) => {
-        this.papers = res?.data || [];
+        this.papers = (res?.data || []).filter(
+          (p: any) =>
+            p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft &&
+            p.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Approved
+        );
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -144,31 +193,6 @@ export class PaperApprovalComponent implements OnInit {
 
     return false;
   }
-
-  // isUserAllowedToApprove(paperApproval: any): boolean {
-  //   // this are not allowed status to edit or approve
-  //   if (!this.isAllowedStatus(paperApproval)) {
-  //     return false;
-  //   }
-
-
-  //   const role = AcademicSubmissionConfig.UserRole;
-
-  //   // if student then he is not allowed
-  //   if (role?.Student === this.userTokenInfo?.role) {
-  //     return false;
-  //   }
-
-  //   // if teacher and paper is not assigned to him then he is not allowed
-  //   const paperGroups = paperApproval?.Papers?.PaperGroups;
-  //   if (role?.Teacher === this.userTokenInfo?.role && paperGroups?.find((group: any) => group.UserId === this.userTokenInfo?.id)) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
-
 
   canEditPaper(approval: any): boolean {
     return this.isUserAllowedToApproveOrEdit(approval);
@@ -273,10 +297,10 @@ export class PaperApprovalComponent implements OnInit {
     const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin, Reviewer: Reviewer } = AcademicSubmissionConfig.UserRole;
 
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
-      width: '500px',
+      width: '600px',
       // height: '500px',
       autoFocus: true,
-      data: { PaperId: paperId, Source: 'Paper' },
+      data: { PaperId: paperId, Source: 'Paper', fromPaperApproval: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -297,12 +321,12 @@ export class PaperApprovalComponent implements OnInit {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
-      data: { JournalId: journalId, Source: 'Journal' },
+      data: { JournalId: journalId, Source: 'Journal', fromPaperApproval: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        if (this.userTokenInfo?.role === role.SuperAdmin) {
+        if (this.userTokenInfo?.role === role.SuperAdmin || this.userTokenInfo?.role === role.Admin) {
           this.getJounals();
         } else {
           this.getJournalByUserId(this.userTokenInfo?.userId);

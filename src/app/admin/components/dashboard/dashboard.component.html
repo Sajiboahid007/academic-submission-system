@@ -43,7 +43,7 @@
                 <li *ngIf="notification.length === 0" class="notification-empty">
                   No notifications yet.
                 </li>
-                <li *ngFor="let n of notification" class="notification-item">
+                <li *ngFor="let n of notification" class="notification-item" (click)="onNotificationClick(n)" style="cursor: pointer;">
                   <div class="notification-item-top">
                     <span class="notification-title">{{ n.Title }}</span>
                     <span class="notification-status" [ngClass]="'notification-status--' + getSeverity(n.Status)">

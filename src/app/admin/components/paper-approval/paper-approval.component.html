@@ -11,7 +11,7 @@
 
 </div>
 
-<p-tabs value="0">
+<p-tabs [(value)]="activeTab">
   <p-tablist>
     <p-tab value="0">Papers</p-tab>
     <p-tab value="1">Journals</p-tab>
@@ -140,7 +140,7 @@
 
           <ng-template #body let-journal>
             <tr
-              *ngIf="(userTokenInfo?.role !== 'Admin' || journal?.PaperApprovals?.[0]?.Status === 'Pending') && (userTokenInfo?.role !== 'Reviewer' || journal?.PaperApprovals?.[0]?.Status === 'Review Requested')">
+              *ngIf="userTokenInfo?.role !== 'Reviewer' || journal?.PaperApprovals?.[0]?.Status === 'Review Requested'">
               <td>
                 <div>
                   <div>{{ journal.Title | truncateText: 50 }}</div>
@@ -202,9 +202,9 @@
                 <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton icon="pi pi-verified"
                   class="p-button-sm m-2" (click)="onApproveJournal(journal.Id)"></button>
 
-                <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit"
+                <!-- <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit"
                   size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
-                  (click)="editJournal(journal.Id)" />
+                  (click)="editJournal(journal.Id)" /> -->
 
                 <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
                   severity="danger" (click)="onDeleteJournal(journal.Id)" />

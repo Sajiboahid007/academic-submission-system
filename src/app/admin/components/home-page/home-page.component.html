@@ -24,7 +24,7 @@
             </li>
             <li class="nav-item" [class.active]="selectedBrowse === 'Papers'" (click)="selectBrowseType('Papers')">
               <i class="pi pi-file nav-icon"></i>
-              <span class="nav-label">Academic Papers</span>
+              <span class="nav-label">Project Report/Thesis</span>
             </li>
           </ul>
         </div>
@@ -179,7 +179,7 @@
             <i class="pi pi-book section-title-icon"></i> Journals
           </ng-container>
           <ng-container *ngIf="selectedBrowse === 'Papers'">
-            <i class="pi pi-file section-title-icon"></i> Academic Papers
+            <i class="pi pi-file section-title-icon"></i> Project Report/thesis
           </ng-container>
         </h2>
         <span class="showing-records-count" *ngIf="filteredItems.length > 0">

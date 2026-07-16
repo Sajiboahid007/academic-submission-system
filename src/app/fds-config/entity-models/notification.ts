@@ -1,4 +1,3 @@
-/** Row shape from API `data.Result[]` (PascalCase matches typical backend payloads). */
 export interface NotificationApiDto {
   Id?: string | number;
   Title?: string;
@@ -9,6 +8,8 @@ export interface NotificationApiDto {
   CreatedAt?: string;
   DateTime?: string;
   FileUrl?: string;
+  PaperId?: number;
+  JournalId?: number;
 }
 
 export interface NotificationListPayload {
@@ -24,4 +25,6 @@ export interface NotificationItem {
   status: NotificationStatus;
   at: Date;
   fileUrl?: string;
+  paperId?: number;
+  journalId?: number;
 }

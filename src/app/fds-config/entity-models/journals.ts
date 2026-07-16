@@ -1,3 +1,5 @@
+import { PaperApprovals } from './approval';
+
 export interface Journals {
     Id: number;
     Title: string;
@@ -21,4 +23,5 @@ export interface Journals {
     CreatedBy?: string;
     UpdatedBy?: string;
     IsMarkToDelete?: boolean;
+    PaperApprovals?: PaperApprovals[];
 }

@@ -29,8 +29,7 @@
       </div>
 
 
-      <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto"
-        *ngIf="showEditorial()">
+      <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto" *ngIf="showEditorial()">
         <p-floatlabel variant="on" class="float-label-wrapper">
           <p-multiselect id="EditorialId" [options]="editorial" formControlName="EditorialId" optionLabel="Name"
             optionValue="Id" display="chip" [showClear]="true" styleClass="full-width">
@@ -57,16 +56,17 @@
         </small>
       </div>
 
-      <div class="card">
+      <div class="card" *ngIf="data?.fromPaperApproval">
         <p-fileupload (onSelect)="onFileSelect($event)" (onClear)="onFileClear()" (onRemove)="onFileRemove($event)"
           [showUploadButton]="false" [multiple]="false" accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
           <ng-template #empty>
-            <div>Drag and drop files to here to upload.</div>
+            <div>Drag and drop Remarks files to here to upload.</div>
           </ng-template>
         </p-fileupload>
       </div>
 
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px" *ngIf="data?.JournalId || data?.PaperId">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px"
+        *ngIf="(data?.JournalId || data?.PaperId) && data?.fromPaperApproval && !isReviewer">
         <label>Check Plagarism with Gemini</label>
         <p-button label="Check Plagarism" icon="pi pi-pencil" class="" (click)="checkPlagarism()"></p-button>
       </div>

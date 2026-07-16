@@ -225,6 +225,12 @@ export class CreatePapersComponent {
   }
 
   deleteJournal(id: number) {
+    const journal = this.journal.find((j) => j.Id === id);
+    if (journal && journal.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft) {
+      this.toastService.error('Only draft journals can be deleted');
+      return;
+    }
+
     this.confirmationService.confirm({
       message: `Are you sure you want to delete this journal?`,
       header: 'Confirm Delete',
@@ -299,10 +305,7 @@ export class CreatePapersComponent {
   }
 
   isAllowedStatus(paperApproval: any) {
-    if (
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft
-    ) {
+    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
       return true;
     }
 
@@ -316,28 +319,7 @@ export class CreatePapersComponent {
       return false;
     }
 
-    const role = AcademicSubmissionConfig.UserRole;
-    const paperGroups = paper?.PaperGroups || [];
-
-    if (
-      (this.userTokenInfo.role === role.Student || this.userTokenInfo.role === role.Teacher) &&
-      this.isAllowedStatus(paperAproval)
-    ) {
-      if (paperGroups.find((group: any) => group.UserId === this.userTokenInfo.userId)) {
-        return true;
-      }
-    }
-
-    // except for student and teacher, everyone can approve
-    if (
-      this.userTokenInfo.role !== role.Student &&
-      this.userTokenInfo.role !== role.Teacher &&
-      this.isAllowedStatus(paperAproval)
-    ) {
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   journalButton() {
@@ -346,13 +328,18 @@ export class CreatePapersComponent {
 
   isPaperDeletable(paper: any): boolean {
     const status = paper?.PaperApprovals?.[0]?.Status;
-    return status !== AcademicSubmissionConfig.ApprovalStatus.Approved;
+    return status === AcademicSubmissionConfig.ApprovalStatus.Draft;
+  }
+
+  isJournalDeletable(journal: any): boolean {
+    const status = journal?.PaperApprovals?.[0]?.Status;
+    return status === AcademicSubmissionConfig.ApprovalStatus.Draft;
   }
 
   deletePaper(id: number): void {
     const paper = this.papers.find((p) => p.Id === id);
-    if (paper && paper.PaperApprovals?.[0]?.Status === AcademicSubmissionConfig.ApprovalStatus.Approved) {
-      this.toastService.error('Approved papers cannot be deleted');
+    if (paper && paper.PaperApprovals?.[0]?.Status !== AcademicSubmissionConfig.ApprovalStatus.Draft) {
+      this.toastService.error('Only draft papers can be deleted');
       return;
     }
 
