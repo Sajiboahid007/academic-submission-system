@@ -73,6 +73,7 @@ export class PapersService {
       Id: [papers?.Id ?? 0],
       Title: [papers?.Title ?? '', Validators.required],
       Abstract: [papers?.Abstract ?? '', Validators.required],
+      Authors: [papers?.Authors ?? ''],
       UserId: [papers?.UserId ?? null],
       CategoryId: [papers?.CategoryId ?? null, Validators.required],
       SubcategoryId: [papers?.SubcategoryId ?? null, Validators.required],

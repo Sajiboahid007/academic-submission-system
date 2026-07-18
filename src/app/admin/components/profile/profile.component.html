@@ -68,9 +68,20 @@
 
         <div class="info-field">
           <span class="field-title">Email</span>
-          <span class="field-value email-value">
-            {{ userDetailedData?.Email || 'sajib.oahid@research.edu' }}
-          </span>
+          <div class="email-value-container">
+            <span class="field-value email-value">
+              {{ userDetailedData?.Email || 'sajib.oahid@research.edu' }}
+            </span>
+            <ng-container *ngIf="shouldShowVerification()">
+              <span *ngIf="userDetailedData?.IsEmailVerified" class="verified-badge">
+                <i class="pi pi-verified"></i> Verified
+              </span>
+              <button *ngIf="!userDetailedData?.IsEmailVerified" pButton type="button" 
+                icon="pi pi-shield" label="Verify" class="p-button-text p-button-sm verify-email-btn"
+                (click)="startEmailVerification()">
+              </button>
+            </ng-container>
+          </div>
         </div>
       </div>
 
@@ -282,4 +293,45 @@
   </main>
 
 </div>
+
+<ng-template #otpModal>
+  <div class="otp-dialog-container">
+    <div class="otp-dialog-header">
+      <h3>Email Verification</h3>
+      <button pButton type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-plain close-btn"
+        (click)="closeOtpModal()"></button>
+    </div>
+    
+    <div class="otp-dialog-body">
+      <p class="instruction-text">
+        We have sent a 6-digit verification code to your email <strong>{{ userDetailedData?.Email }}</strong>.
+      </p>
+      
+      <div class="otp-input-section">
+        <label for="otpCode" class="otp-label">Enter Verification Code</label>
+        <input type="text" id="otpCode" [(ngModel)]="verificationOtp" maxLength="6"
+          placeholder="123456" class="otp-input-field" />
+      </div>
+
+      <div class="resend-section">
+        <button pButton type="button" label="Resend Code" class="p-button-text p-button-sm resend-btn"
+          [disabled]="resendCooldown > 0" (click)="resendVerificationCode()">
+        </button>
+        <span *ngIf="resendCooldown > 0" class="cooldown-text">
+          resend in {{ resendCooldown }}s
+        </span>
+      </div>
+    </div>
+
+    <div class="otp-dialog-footer">
+      <button pButton type="button" label="Cancel" class="p-button-text cancel-btn"
+        (click)="closeOtpModal()"></button>
+      <button pButton type="button" label="Verify" class="verify-submit-btn"
+        [disabled]="!verificationOtp || verificationOtp.length !== 6 || verifyingOtp"
+        [icon]="verifyingOtp ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+        (click)="submitOtp()"></button>
+    </div>
+  </div>
+</ng-template>
+
 <app-footer></app-footer>

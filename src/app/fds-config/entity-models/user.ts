@@ -14,4 +14,5 @@ export interface Users {
   IsMarkToDelete?: boolean | null;
   CreatedAt?: Date | null;
   UpdatedAt?: Date | null;
+  IsEmailVerified?: boolean | null;
 }

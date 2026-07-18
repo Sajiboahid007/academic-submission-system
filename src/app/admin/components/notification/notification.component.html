@@ -10,7 +10,8 @@
         </div>
       </div>
       <div class="header-actions">
-        <button pButton type="button" label="Mark all as read" icon="pi pi-check-all" class="p-button-outlined p-button-sm mark-all-btn" (click)="markAllAsRead()"></button>
+        <button pButton type="button" label="Mark all as read" icon="pi pi-check-all"
+          class="p-button-outlined p-button-sm mark-all-btn" (click)="markAllAsRead()"></button>
       </div>
     </div>
 
@@ -20,7 +21,8 @@
         <button type="button" class="filter-chip" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
           All <span class="badge">{{ notifications.length }}</span>
         </button>
-        <button type="button" class="filter-chip" [class.active]="activeFilter === 'unread'" (click)="setFilter('unread')">
+        <button type="button" class="filter-chip" [class.active]="activeFilter === 'unread'"
+          (click)="setFilter('unread')">
           Unread <span class="badge badge-unread">{{ getUnreadCount() }}</span>
         </button>
         <button type="button" class="filter-chip" [class.active]="activeFilter === 'read'" (click)="setFilter('read')">
@@ -29,7 +31,8 @@
       </div>
       <div class="search-input-wrapper">
         <i class="pi pi-search search-icon"></i>
-        <input type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()" placeholder="Search notifications..." class="search-input" />
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()" placeholder="Search notifications..."
+          class="search-input" />
       </div>
     </div>
 
@@ -44,10 +47,8 @@
       </div>
 
       <div *ngIf="filteredNotifications.length > 0" class="notification-list">
-        <div *ngFor="let n of paginatedNotifications" 
-             class="notification-card-item animate-fade-in" 
-             [class.unread-item]="!isRead(n)"
-             (click)="onNotificationClick(n)">
+        <div *ngFor="let n of paginatedNotifications" class="notification-card-item animate-fade-in"
+          [class.unread-item]="!isRead(n)" (click)="onNotificationClick(n)">
           <!-- Icon indicator -->
           <div class="notification-status-icon" [ngClass]="'status-' + getStatusClass(n)">
             <i [class]="getNotificationIcon(n)"></i>
@@ -56,31 +57,26 @@
           <!-- Message details -->
           <div class="notification-details">
             <div class="notification-meta">
-              <span class="notification-badge" [ngClass]="'badge-' + getStatusClass(n)">
-                {{ getDisplayStatus(n) }}
-              </span>
+              <p-badge [value]="getDisplayStatus(n)" [severity]="getSeverity(getDisplayStatus(n))">
+              </p-badge>
               <span class="notification-time">
                 <i class="pi pi-clock"></i> {{ n.CreatedAt | date:'medium' }}
               </span>
             </div>
             <h4 class="notification-card-title">{{ n.Title }}</h4>
-            <p class="notification-card-message">{{ n.Message }}</p>
+            <p class="notification-card-message" [innerHTML]="getFormattedMessage(n.Message)"></p>
           </div>
- 
+
           <!-- Action block -->
           <div class="notification-actions" (click)="$event.stopPropagation()">
-            <a *ngIf="n.FileUrl" [href]="n.FileUrl" target="_blank" class="attachment-btn" pTooltip="Open PDF Attachment" tooltipPosition="top">
+            <a *ngIf="n.FileUrl" [href]="n.FileUrl" target="_blank" class="attachment-btn"
+              pTooltip="Open PDF Attachment" tooltipPosition="top">
               <i class="pi pi-file-pdf"></i>
-              <span>View Attachment</span>
+              <span>Review letter</span>
             </a>
-            <button *ngIf="!isRead(n)" 
-                    pButton 
-                    type="button" 
-                    icon="pi pi-check" 
-                    class="p-button-rounded p-button-text p-button-sm mark-read-btn" 
-                    pTooltip="Mark as read" 
-                    tooltipPosition="left"
-                    (click)="markAsRead(n)"></button>
+            <button *ngIf="!isRead(n)" pButton type="button" icon="pi pi-check"
+              class="p-button-rounded p-button-text p-button-sm mark-read-btn" pTooltip="Mark as read"
+              tooltipPosition="left" (click)="markAsRead(n)"></button>
             <div class="unread-dot-indicator" *ngIf="!isRead(n)"></div>
             <i class="pi pi-chevron-right arrow-detail"></i>
           </div>
@@ -88,13 +84,10 @@
       </div>
 
       <!-- Paginator -->
-      <div class="notifications-footer" *ngIf="filteredNotifications.length > 0" style="padding: 1rem; border-top: 1px solid #f1f5f9; background: #ffffff;">
-        <p-paginator 
-          (onPageChange)="onPageChange($event)" 
-          [first]="first" 
-          [rows]="rows" 
-          [totalRecords]="filteredNotifications.length" 
-          [rowsPerPageOptions]="[10, 20, 50]">
+      <div class="notifications-footer" *ngIf="filteredNotifications.length > 0"
+        style="padding: 1rem; border-top: 1px solid #f1f5f9; background: #ffffff;">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+          [totalRecords]="filteredNotifications.length" [rowsPerPageOptions]="[10, 20, 50]">
         </p-paginator>
       </div>
     </div>

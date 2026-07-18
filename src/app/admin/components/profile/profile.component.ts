@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { UserInfoService } from '../../services/user-info-service';
 import { PapersService } from '../../services/papers-service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InsertUpdateUserComponent } from '../user-list/insert-update-user/insert-update-user.component';
 import { InsertUpdatePaperComponent } from '../papers-list/insert-update-paper/insert-update-paper.component';
 import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
@@ -35,6 +35,13 @@ export class ProfileComponent implements OnInit {
   papersRows = 10;
   journalsFirst = 0;
   journalsRows = 10;
+
+  @ViewChild('otpModal') otpModal!: TemplateRef<any>;
+  private dialogRef!: MatDialogRef<any>;
+  verificationOtp = '';
+  verifyingOtp = false;
+  resendCooldown = 0;
+  private cooldownInterval: any;
 
   constructor(
     private readonly userInfoService: UserInfoService,
@@ -83,7 +90,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getJournalByUserId(id: number) {
-    this.journalService.getByUserIdforProfile(id).subscribe({
+    this.journalService.getJournalUploadId(id).subscribe({
       next: (res: AppQuery<Journals[]>) => {
         this.journal = res.data;
         this.cdr.markForCheck();
@@ -373,6 +380,90 @@ export class ProfileComponent implements OnInit {
       default:
         return 'secondary';
     }
+  }
+
+  shouldShowVerification(): boolean {
+    const role = this.userDetailedData?.Roles?.Name?.toLowerCase();
+    return role === 'student' || role === 'teacher' || role === 'reviewer';
+  }
+
+  startEmailVerification(): void {
+    this.verificationOtp = '';
+    this.verifyingOtp = false;
+
+    this.userInfoService.sendEmailVerification().subscribe({
+      next: () => {
+        this.toastService.success('Verification code sent to your email.');
+        this.startResendCooldown();
+        this.dialogRef = this.dialog.open(this.otpModal, {
+          width: '400px',
+          disableClose: true,
+        });
+      },
+      error: (err) => {
+        console.error('Error sending verification code:', err);
+        this.toastService.error('Failed to send verification code. Please try again.');
+      },
+    });
+  }
+
+  startResendCooldown(): void {
+    this.resendCooldown = 60;
+    if (this.cooldownInterval) {
+      clearInterval(this.cooldownInterval);
+    }
+    this.cooldownInterval = setInterval(() => {
+      if (this.resendCooldown > 0) {
+        this.resendCooldown--;
+      } else {
+        clearInterval(this.cooldownInterval);
+      }
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  resendVerificationCode(): void {
+    this.userInfoService.sendEmailVerification().subscribe({
+      next: () => {
+        this.toastService.success('Verification code resent.');
+        this.startResendCooldown();
+      },
+      error: (err) => {
+        console.error('Error resending verification code:', err);
+        this.toastService.error('Failed to resend verification code.');
+      },
+    });
+  }
+
+  closeOtpModal(): void {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
+    if (this.cooldownInterval) {
+      clearInterval(this.cooldownInterval);
+    }
+  }
+
+  submitOtp(): void {
+    if (!this.verificationOtp || this.verificationOtp.length !== 6) {
+      return;
+    }
+    this.verifyingOtp = true;
+    this.cdr.markForCheck();
+
+    this.userInfoService.confirmEmailVerification(this.verificationOtp).subscribe({
+      next: (res) => {
+        this.toastService.success('Email verified successfully!');
+        this.closeOtpModal();
+        this.fetchUserProfile();
+      },
+      error: (err) => {
+        console.error('Error verifying OTP:', err);
+        this.toastService.error(err?.error?.message || 'Invalid or expired verification code.');
+        this.verifyingOtp = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }
 

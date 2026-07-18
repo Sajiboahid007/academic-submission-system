@@ -186,6 +186,9 @@
       font-size: 0.775rem;
       font-weight: 500;
       color: #3b82f6;
+      white-space: nowrap;
+      word-break: keep-all;
+      max-width: none;
     }
   }
 }
@@ -554,4 +557,173 @@
   max-width: 320px;
   line-height: 1.5;
   margin: 0;
+}
+
+// Email Verification Styles
+.email-value-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  max-width: 80%;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #ecfdf5;
+  color: #10b981;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #a7f3d0;
+
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+.verify-email-btn {
+  padding: 0 !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #f59e0b !important;
+  height: auto !important;
+  text-decoration: underline;
+
+  &:hover {
+    color: #d97706 !important;
+    background: transparent !important;
+  }
+}
+
+.otp-dialog-container {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.otp-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 0.75rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .close-btn {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.otp-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .instruction-text {
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.otp-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .otp-label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .otp-input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5rem;
+    text-align: center;
+    color: #1f2937;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+  }
+}
+
+.resend-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.825rem;
+
+  .resend-btn {
+    padding: 0 !important;
+    height: auto !important;
+    font-weight: 600 !important;
+    color: #2563eb !important;
+    text-decoration: none;
+
+    &:disabled {
+      color: #9ca3af !important;
+    }
+  }
+
+  .cooldown-text {
+    color: #6b7280;
+  }
+}
+
+.otp-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 1rem;
+
+  .cancel-btn {
+    color: #4b5563 !important;
+    font-weight: 600;
+  }
+
+  .verify-submit-btn {
+    background: #2563eb;
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #1d4ed8 !important;
+    }
+
+    &:disabled {
+      background: #9ca3af !important;
+      cursor: not-allowed;
+    }
+  }
 }

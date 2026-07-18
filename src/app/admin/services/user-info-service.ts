@@ -62,4 +62,12 @@ export class UserInfoService {
   deleteUser(id: number): Observable<AppQuery<Users>> {
     return this.http.put<AppQuery<Users>>(`${this.baseUrl}/api/users/delete/${id}`, null);
   }
+
+  sendEmailVerification(): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/api/users/send-verification`, {});
+  }
+
+  confirmEmailVerification(otp: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/api/users/confirm-verification`, { otp });
+  }
 }

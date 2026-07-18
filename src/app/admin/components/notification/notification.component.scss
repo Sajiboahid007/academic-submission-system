@@ -452,3 +452,24 @@
     transform: translateY(0);
   }
 }
+
+// Notification Message Highlights
+::ng-deep {
+  .msg-highlight-title {
+    color: #1e3a8a !important;
+    font-weight: 700 !important;
+  }
+  .msg-highlight-status {
+    color: #b55d00 !important;
+    font-weight: 700 !important;
+  }
+  .msg-highlight-user {
+    color: #0d9488 !important;
+    font-weight: 700 !important;
+  }
+  .msg-highlight-remarks {
+    color: #b91c1c !important;
+    font-style: italic !important;
+    font-weight: 600 !important;
+  }
+}

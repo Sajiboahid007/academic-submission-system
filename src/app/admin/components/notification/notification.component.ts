@@ -146,6 +146,59 @@ export class NotificationComponent implements OnInit {
     return 'pi pi-bell';
   }
 
+  getFormattedMessage(message: string): string {
+    if (!message) return '';
+    
+    let formatted = message;
+
+    // 1. Highlight Remarks: "Remarks: [Message]"
+    formatted = formatted.replace(/Remarks:\s*(.*)$/i, (match, remarks) => {
+      return `Remarks: <strong class="msg-highlight-remarks">${remarks}</strong>`;
+    });
+
+    // 2. Highlight double quoted or single quoted strings (titles or statuses)
+    formatted = formatted.replace(/(["'])(.*?)\1/g, (match, quote, content) => {
+      const lower = content.toLowerCase();
+      if (lower === 'draft' || lower === 'pending' || lower === 'approved' || lower === 'rejected' || lower === 'pending approval' || lower === 'editorial approved') {
+        return `<strong class="msg-highlight-status">${quote}${content}${quote}</strong>`;
+      }
+      return `<strong class="msg-highlight-title">${quote}${content}${quote}</strong>`;
+    });
+
+    // 3. Highlight submitter names: "submitted by [Name]"
+    formatted = formatted.replace(/submitted by ([\w\s-]+?)(?=\s+and|\.|$)/gi, (match, name) => {
+      return `submitted by <strong class="msg-highlight-user">${name}</strong>`;
+    });
+
+    // 4. Highlight unquoted status patterns: "is pending approval", "is approved", "updated to pending", etc.
+    formatted = formatted.replace(/\b(is|to|status|state)\s+(pending approval|approved|rejected|submitted|draft|pending|editorial approved)\b/gi, (match, prefix, status) => {
+      return `${prefix} <strong class="msg-highlight-status">${status}</strong>`;
+    });
+
+    return formatted;
+  }
+
+  public getSeverity(
+    status: string | undefined,
+  ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warn';
+      case 'Draft':
+        return 'info';
+      case 'Review Requested':
+        return 'warn';
+      case 'Editorial Approved':
+        return 'success';
+      default:
+        return 'secondary';
+    }
+  }
+
   markAsRead(notification: any) {
     const id = String(notification.Id || notification.id);
     if (!this.seenIds.includes(id)) {
@@ -174,7 +227,10 @@ export class NotificationComponent implements OnInit {
       userRole === AcademicSubmissionConfig.UserRole.SuperAdmin ||
       userRole === AcademicSubmissionConfig.UserRole.Reviewer;
 
-    const targetRoute = isAdminOrSuperAdminOrReviewer
+    const status = (notification.Status || '').toLowerCase();
+    const isDraft = status.includes('draft');
+
+    const targetRoute = (isAdminOrSuperAdminOrReviewer && !isDraft)
       ? '/dashboard/papers-approval'
       : '/dashboard/create-papers';
 

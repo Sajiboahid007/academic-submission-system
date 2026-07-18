@@ -135,9 +135,20 @@
                 <a class="nav-link" [routerLink]="item.route" routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }" (click)="navigateTo(item.route)"
                   [title]="isSidebarCollapsed() ? item.label : ''">
-                  <span class="nav-icon"><i [class]="item.icon"></i></span>
-                  <span class="nav-label" *ngIf="!isSidebarCollapsed()">{{ item.label }}</span>
-                  <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">{{ item.label }}</span>
+                  <span class="nav-icon" style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+                    <i [class]="item.icon"></i>
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" 
+                          style="position: absolute; top: -1px; right: -1px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 0 1px #0b635c;">
+                    </span>
+                  </span>
+                  <span class="nav-label" *ngIf="!isSidebarCollapsed()">
+                    {{ item.label }}
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
+                  </span>
+                  <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">
+                    {{ item.label }}
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
+                  </span>
                 </a>
               </li>
             </ng-container>
