@@ -12,8 +12,8 @@
           </svg>
         </button>
         <div class="navbar-brand">
-          <h1 class="brand-title">Project & Thesis</h1>
-          <span class="brand-subtitle">Approval System</span>
+          <h1 class="brand-title">Online Research & Article</h1>
+          <span class="brand-subtitle">Management System</span>
         </div>
       </div>
 
@@ -113,7 +113,8 @@
         <div class="sidebar-header">
 
           <div class="sidebar-logo" *ngIf="!isSidebarCollapsed()">
-            <span class="logo-text">Approval Hub</span>
+            <i class="pi pi-bars" style="font-size: 1.2rem; color: #fff;"></i>
+            <span class="logo-text">Menu</span>
           </div>
           <button class="sidebar-collapse-btn" (click)="toggleSidebarCollapse()" aria-label="Collapse sidebar"
             type="button">
@@ -135,19 +136,22 @@
                 <a class="nav-link" [routerLink]="item.route" routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }" (click)="navigateTo(item.route)"
                   [title]="isSidebarCollapsed() ? item.label : ''">
-                  <span class="nav-icon" style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+                  <span class="nav-icon"
+                    style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
                     <i [class]="item.icon"></i>
-                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" 
-                          style="position: absolute; top: -1px; right: -1px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 0 1px #0b635c;">
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0"
+                      style="position: absolute; top: -1px; right: -1px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 0 1px #0b635c;">
                     </span>
                   </span>
                   <span class="nav-label" *ngIf="!isSidebarCollapsed()">
                     {{ item.label }}
-                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0"
+                      style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
                   </span>
                   <span class="nav-tooltip" *ngIf="isSidebarCollapsed()">
                     {{ item.label }}
-                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0" style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
+                    <span *ngIf="item.label === 'Notification' && unreadCount() > 0"
+                      style="color: #ef4444; font-weight: bold; margin-left: 2px;">*</span>
                   </span>
                 </a>
               </li>

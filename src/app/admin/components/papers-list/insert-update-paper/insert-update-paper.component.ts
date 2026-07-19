@@ -213,7 +213,6 @@ export class InsertUpdatePaperComponent implements OnInit {
     this.papersService.createPaper(paper).subscribe({
       next: (res) => {
         this.dialogRef.close(res);
-        this.toastService.success('Paper created successfully!');
       },
       error: (err) => {
         console.log(err);

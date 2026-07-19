@@ -225,7 +225,9 @@
         <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
             [disabled]="isLoading" (click)="onCancel()"></button>
 
-        <button pButton type="button" [label]="isSaving? 'Saving Details...' : 'Save Details'" icon="pi pi-check"
+        <button pButton type="button" [label]="isSaving ? 'Saving Details...' : 'Save Details'"
+            [icon]="isSaving ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+            [disabled]="journalForm.invalid || isSaving"
             class="p-button-success btn-save" (click)="save()"></button>
     </div>
 </div>

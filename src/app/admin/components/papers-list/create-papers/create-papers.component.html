@@ -11,15 +11,18 @@
     </h2>
 
     <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div *ngIf="filterPaperId || filterJournalId" style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1.25rem;">
-            <span style="font-size: 0.85rem; color: #eab308; background: #fef9c3; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <div *ngIf="filterPaperId || filterJournalId"
+            style="display: flex; align-items: center; gap: 0.5rem; margin-right: 1.25rem;">
+            <span
+                style="font-size: 0.85rem; color: #eab308; background: #fef9c3; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
                 <i class="pi pi-filter"></i> Filtered by Notification
             </span>
-            <button pButton type="button" label="Show All" icon="pi pi-refresh" class="p-button-outlined p-button-sm" (click)="clearFilter()"></button>
+            <button pButton type="button" label="Show All" icon="pi pi-refresh" class="p-button-outlined p-button-sm"
+                (click)="clearFilter()"></button>
         </div>
         <button pButton type="button" label="Add Paper" icon="pi pi-plus" class="p-button-rounded p-button-success m-1"
             (click)="AddPapers()"></button>
-        <button *ngIf="journalButton()" pButton type="button" label="Add Journal" icon="pi pi-file"
+        <button pButton type="button" label="Add Journal" icon="pi pi-file"
             class="p-button-rounded p-button-success m-1" (click)="AddJournal()"></button>
     </div>
 
@@ -27,7 +30,7 @@
 <p-tabs [(value)]="activeTab">
     <p-tablist>
         <p-tab value="0">Papers</p-tab>
-        <p-tab *ngIf="journalButton()" value="1">Journals</p-tab>
+        <p-tab value="1">Journals</p-tab>
     </p-tablist>
     <p-tabpanels>
         <p-tabpanel value="0">
@@ -111,16 +114,20 @@
                             <td>{{ paper.Year }}</td>
                             <td>
                                 <p-button [outlined]="true" icon="pi pi-eye" size="small"
-                                    styleClass="p-button-sm p-button-outlined" (click)="viewPaper(paper.Id)" />
+                                    styleClass="p-button-sm p-button-outlined" (click)="viewPaper(paper.Id)"
+                                    pTooltip="View" tooltipPosition="top" />
 
                                 <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true"
                                     icon="pi pi-file-edit" size="small" severity="danger"
-                                    styleClass="p-button-sm p-button-outlined m-2" (click)="editPaper(paper.Id)" />
+                                    styleClass="p-button-sm p-button-outlined m-2" (click)="editPaper(paper.Id)"
+                                    pTooltip="Edit" tooltipPosition="top" />
 
                                 <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton size="small"
-                                    icon="pi pi-verified" class="p-button-sm" (click)="onApprove(paper.Id)"></button>
+                                    icon="pi pi-verified" class="p-button-sm" (click)="onApprove(paper.Id)"
+                                    pTooltip="Approve" tooltipPosition="top"></button>
                                 <p-button *ngIf="isPaperDeletable(paper)" size="small" icon="pi pi-trash"
-                                    class="p-button-sm" severity="danger" (click)="deletePaper(paper.Id)"></p-button>
+                                    class="p-button-sm" severity="danger" (click)="deletePaper(paper.Id)"
+                                    pTooltip="Delete" tooltipPosition="top"></p-button>
                             </td>
                         </tr>
                     </ng-template>
@@ -210,20 +217,23 @@
                             <td>
                                 <p-button *ngIf="journal.ResponseLater" [outlined]="true" label="Res.Later"
                                     icon="pi pi-file-pdf" size="small" styleClass="p-button-sm p-button-outlined"
-                                    (click)="viewResponseLater(journal.Id)" />
+                                    (click)="viewResponseLater(journal.Id)" pTooltip="Response Later"
+                                    tooltipPosition="top" />
                             </td>
                             <td>
                                 <p-button [outlined]="true" icon="pi pi-eye" size="small"
-                                    styleClass="p-button-sm p-button-outlined" (click)="viewJournal(journal.Id)" />
+                                    styleClass="p-button-sm p-button-outlined" (click)="viewJournal(journal.Id)"
+                                    pTooltip="View" tooltipPosition="top" />
                                 <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true"
                                     icon="pi pi-file-edit" size="small" severity="danger"
-                                    styleClass="p-button-sm p-button-outlined m-2" (click)="editJournal(journal.Id)" />
+                                    styleClass="p-button-sm p-button-outlined m-2" (click)="editJournal(journal.Id)"
+                                    pTooltip="Edit" tooltipPosition="top" />
                                 <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton size="small"
-                                    icon="pi pi-verified" class="p-button-sm"
-                                    (click)="onApproveJournal(journal.Id)"></button>
+                                    icon="pi pi-verified" class="p-button-sm" (click)="onApproveJournal(journal.Id)"
+                                    pTooltip="Approve" tooltipPosition="top"></button>
                                 <p-button *ngIf="isJournalDeletable(journal)" size="small" icon="pi pi-trash"
-                                    class="p-button-sm" severity="danger"
-                                    (click)="deleteJournal(journal.Id)"></p-button>
+                                    class="p-button-sm" severity="danger" (click)="deleteJournal(journal.Id)"
+                                    pTooltip="Delete" tooltipPosition="top"></p-button>
                             </td>
                         </tr>
                     </ng-template>

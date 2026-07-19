@@ -9,10 +9,12 @@
   <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Approval</h2>
 
   <div *ngIf="filterPaperId || filterJournalId" style="display: flex; align-items: center; gap: 0.75rem;">
-    <span style="font-size: 0.85rem; color: #eab308; background: #fef9c3; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+    <span
+      style="font-size: 0.85rem; color: #eab308; background: #fef9c3; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
       <i class="pi pi-filter"></i> Filtered by Notification
     </span>
-    <button pButton type="button" label="Show All" icon="pi pi-refresh" class="p-button-outlined p-button-sm" (click)="clearFilter()"></button>
+    <button pButton type="button" label="Show All" icon="pi pi-refresh" class="p-button-outlined p-button-sm"
+      (click)="clearFilter()"></button>
   </div>
 </div>
 
@@ -93,17 +95,18 @@
               </td>
               <td *ngIf="onApproved()">
                 <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
-                  (click)="viewPaper(paper?.Id)" />
+                  (click)="viewPaper(paper?.Id)" pTooltip="View" tooltipPosition="top" />
 
                 <button *ngIf="isUserAllowedToApproveOrEdit(paper)" pButton icon="pi pi-verified"
-                  class="p-button-sm m-2" (click)="onApprove(paper.Id)"></button>
+                  class="p-button-sm m-2" (click)="onApprove(paper.Id)" pTooltip="Approve"
+                  tooltipPosition="top"></button>
 
                 <p-button *ngIf="isUserAllowedToApproveOrEdit(paper)" [outlined]="true" icon="pi pi-file-edit"
                   size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
-                  (click)="editPaper(paper.Id)" />
+                  (click)="editPaper(paper.Id)" pTooltip="Edit" tooltipPosition="top" />
 
                 <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
-                  severity="danger" (click)="onDeletePaper(paper.Id)" />
+                  severity="danger" (click)="onDeletePaper(paper.Id)" pTooltip="Delete" tooltipPosition="top" />
 
               </td>
             </tr>
@@ -204,21 +207,23 @@
               </td>
               <td>
                 <p-button *ngIf="journal.ResponseLater" [outlined]="true" icon="pi pi-file-pdf" size="small"
-                  styleClass="p-button-sm p-button-outlined" (click)="viewResponseLater(journal.Id)" />
+                  styleClass="p-button-sm p-button-outlined" (click)="viewResponseLater(journal.Id)"
+                  pTooltip="Response Later" tooltipPosition="top" />
               </td>
               <td *ngIf="onApproved()">
                 <p-button [outlined]="true" icon="pi pi-eye" size="small" styleClass="p-button-sm p-button-outlined m-1"
-                  (click)="viewJournal(journal?.Id)" />
+                  (click)="viewJournal(journal?.Id)" pTooltip="View" tooltipPosition="top" />
 
                 <button *ngIf="isUserAllowedToApproveOrEdit(journal)" pButton icon="pi pi-verified"
-                  class="p-button-sm m-2" (click)="onApproveJournal(journal.Id)"></button>
+                  class="p-button-sm m-2" (click)="onApproveJournal(journal.Id)" pTooltip="Approve"
+                  tooltipPosition="top"></button>
 
                 <!-- <p-button *ngIf="isUserAllowedToApproveOrEdit(journal)" [outlined]="true" icon="pi pi-file-edit"
                   size="small" severity="danger" styleClass="p-button-sm p-button-outlined"
                   (click)="editJournal(journal.Id)" /> -->
 
                 <p-button *ngIf="isUserAllowedToDelete()" [outlined]="false" icon="pi pi-trash" size="small" class="m-2"
-                  severity="danger" (click)="onDeleteJournal(journal.Id)" />
+                  severity="danger" (click)="onDeleteJournal(journal.Id)" pTooltip="Delete" tooltipPosition="top" />
               </td>
             </tr>
           </ng-template>

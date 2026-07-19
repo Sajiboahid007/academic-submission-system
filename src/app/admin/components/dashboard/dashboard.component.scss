@@ -906,6 +906,7 @@
   transition: margin-left $transition-base;
   overflow-y: auto;
   min-height: calc(100vh - $navbar-height);
+  background-color: $content-bg;
 
   &.sidebar-open {
     margin-left: $sidebar-width;

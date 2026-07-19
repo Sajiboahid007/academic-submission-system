@@ -13,9 +13,7 @@ html {
 
 body {
   color-scheme: light;
-  background-color: rgb(195, 222, 245);
-
-  background-color: var(--mat-sys-surface);
+  background-color: $content-bg !important;
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
 
@@ -52,12 +50,12 @@ body {
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $content-bg;
+  background-color: $content-bg !important;
   color: $content-text;
 }
 
 body {
-  overflow: auto;
+  overflow: hidden !important;
 }
 
 a {

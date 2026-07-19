@@ -73,7 +73,7 @@
 
       <!-- Student & Teacher Row -->
       <div fxLayout="row" fxLayoutGap="24px">
-        <!-- Category -->
+
         <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
           <p-floatlabel variant="on" class="float-label-wrapper">
             <p-multiselect [options]="students" formControlName="StudentIds" optionLabel="Name" optionValue="Id"
@@ -90,7 +90,7 @@
               </ng-template>
             </p-multiselect>
             <label for="StudentIds" class="field-label">
-              Authors
+              Group of Student
             </label>
           </p-floatlabel>
           <p-message severity="error" size="small" variant="simple">
@@ -98,6 +98,17 @@
               Student Group is required.
             </span> -->
           </p-message>
+        </div>
+        <div fxLayout="column" fxLayoutGap="8px" fxFlex="1 1 auto">
+          <div>
+            <p-floatlabel variant="on" class="float-label-wrapper">
+              <input pInputText id="Title" formControlName="Authors" autocomplete="off" class="full-width" />
+
+              <label for="Authors" class="field-label">
+                Authors
+              </label>
+            </p-floatlabel>
+          </div>
         </div>
 
         <!-- Teacher Group -->
@@ -175,7 +186,8 @@
     <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
       [disabled]="isLoading" (click)="onCancel()"></button>
 
-    <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
-      [disabled]="papersForm.invalid" (click)="save()"></button>
+    <button pButton type="button" [label]="isLoading ? 'Saving...' : 'Save Details'"
+      [icon]="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-check'" class="p-button-success btn-save"
+      [disabled]="papersForm.invalid || isLoading" (click)="save()"></button>
   </div>
 </div>

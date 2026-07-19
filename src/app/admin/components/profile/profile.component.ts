@@ -40,6 +40,7 @@ export class ProfileComponent implements OnInit {
   private dialogRef!: MatDialogRef<any>;
   verificationOtp = '';
   verifyingOtp = false;
+  sendingVerificationEmail = false;
   resendCooldown = 0;
   private cooldownInterval: any;
 
@@ -390,19 +391,25 @@ export class ProfileComponent implements OnInit {
   startEmailVerification(): void {
     this.verificationOtp = '';
     this.verifyingOtp = false;
+    this.sendingVerificationEmail = true;
+    this.cdr.markForCheck();
 
     this.userInfoService.sendEmailVerification().subscribe({
       next: () => {
+        this.sendingVerificationEmail = false;
         this.toastService.success('Verification code sent to your email.');
         this.startResendCooldown();
         this.dialogRef = this.dialog.open(this.otpModal, {
           width: '400px',
           disableClose: true,
         });
+        this.cdr.markForCheck();
       },
       error: (err) => {
+        this.sendingVerificationEmail = false;
         console.error('Error sending verification code:', err);
         this.toastService.error('Failed to send verification code. Please try again.');
+        this.cdr.markForCheck();
       },
     });
   }

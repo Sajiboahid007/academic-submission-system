@@ -60,7 +60,7 @@ Please take note of the above and contact our support team or re-submit your pap
 We apologise for any inconvenience caused.
 
 Best regards,
-Academic Submission System`;
+Online Research & Article Management System`;
 
     this.plagarsimFrom.patchValue({
       to: authorEmail,
@@ -242,7 +242,7 @@ ${issuesText}
 Please find the detailed review PDF report attached.
 
 Best regards,
-Academic Submission System`;
+Online Research & Article Management System`;
 
           this.plagarsimFrom.patchValue({
             subject: subjectText,
@@ -283,15 +283,18 @@ Academic Submission System`;
     const primaryColor = [30, 58, 138]; // RGB for deep blue #1e3a8a
     const textColor = '#1f2937';
 
+    const cleanTitle = (title || '').replace(/\s+/g, ' ').trim();
+    const cleanSummary = (review.summary || 'No detailed analysis summary available.').replace(/\s+/g, ' ').trim();
+
     // Header Title Banner
     doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.rect(0, 0, 210, 40, 'F');
 
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('Academic Submission System', 15, 18);
-    doc.setFontSize(14);
+    doc.setFontSize(18); // Reduce font size slightly since the text is longer now
+    doc.text('Online Research & Article Management System', 15, 18);
+    doc.setFontSize(13);
     doc.setFont('Helvetica', 'normal');
     doc.text('Plagiarism & Content Quality Analysis Report', 15, 28);
 
@@ -301,8 +304,8 @@ Academic Submission System`;
     doc.setFontSize(12);
     doc.text('Document Title:', 15, 52);
     doc.setFont('Helvetica', 'normal');
-    const splitTitle = doc.splitTextToSize(title, 140);
-    doc.text(splitTitle, 50, 52);
+    const splitTitle = doc.splitTextToSize(cleanTitle, 140);
+    doc.text(splitTitle, 50, 52, { align: 'left' });
 
     let yOffset = 52 + (splitTitle.length * 6);
 
@@ -358,8 +361,8 @@ Academic Submission System`;
     doc.setTextColor(textColor);
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(10.5);
-    const splitSummary = doc.splitTextToSize(review.summary || 'No detailed analysis summary available.', 180);
-    doc.text(splitSummary, 15, yOffset);
+    const splitSummary = doc.splitTextToSize(cleanSummary, 180);
+    doc.text(splitSummary, 15, yOffset, { align: 'left' });
 
     yOffset += (splitSummary.length * 5.5) + 10;
 
@@ -379,12 +382,13 @@ Academic Submission System`;
 
     if (review.issues && review.issues.length > 0) {
       review.issues.forEach((issue: string) => {
-        const splitIssue = doc.splitTextToSize(`• ${issue}`, 175);
+        const cleanIssue = (issue || '').replace(/\s+/g, ' ').trim();
+        const splitIssue = doc.splitTextToSize(`• ${cleanIssue}`, 175);
         if (yOffset + (splitIssue.length * 6) > 280) {
           doc.addPage();
           yOffset = 20;
         }
-        doc.text(splitIssue, 15, yOffset);
+        doc.text(splitIssue, 15, yOffset, { align: 'left' });
         yOffset += (splitIssue.length * 6);
       });
     } else {
@@ -401,15 +405,18 @@ Academic Submission System`;
     const errorColor = [185, 28, 28]; // RGB for crimson red #b91c1c
     const textColor = '#1f2937';
 
+    const cleanTitle = (title || 'Unknown Submission').replace(/\s+/g, ' ').trim();
+    const cleanError = (errorDetail || 'An unspecified error occurred during the analysis.').replace(/\s+/g, ' ').trim();
+
     // Header Title Banner
     doc.setFillColor(errorColor[0], errorColor[1], errorColor[2]);
     doc.rect(0, 0, 210, 40, 'F');
 
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('Academic Submission System', 15, 18);
-    doc.setFontSize(14);
+    doc.setFontSize(18); // Reduce font size slightly since the text is longer now
+    doc.text('Online Research & Article Management System', 15, 18);
+    doc.setFontSize(13);
     doc.setFont('Helvetica', 'normal');
     doc.text('Plagiarism Check Failed Report', 15, 28);
 
@@ -419,9 +426,8 @@ Academic Submission System`;
     doc.setFontSize(12);
     doc.text('Document Title:', 15, 52);
     doc.setFont('Helvetica', 'normal');
-    const displayTitle = title || 'Unknown Submission';
-    const splitTitle = doc.splitTextToSize(displayTitle, 140);
-    doc.text(splitTitle, 50, 52);
+    const splitTitle = doc.splitTextToSize(cleanTitle, 140);
+    doc.text(splitTitle, 50, 52, { align: 'left' });
 
     let yOffset = 52 + (splitTitle.length * 6);
 
@@ -459,8 +465,8 @@ Academic Submission System`;
     doc.setTextColor(textColor);
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(10.5);
-    const splitError = doc.splitTextToSize(errorDetail || 'An unspecified error occurred during the analysis.', 180);
-    doc.text(splitError, 15, yOffset);
+    const splitError = doc.splitTextToSize(cleanError, 180);
+    doc.text(splitError, 15, yOffset, { align: 'left' });
 
     yOffset += (splitError.length * 5.5) + 15;
 
