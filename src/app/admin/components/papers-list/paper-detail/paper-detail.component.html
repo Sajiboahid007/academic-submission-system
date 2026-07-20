@@ -66,12 +66,11 @@
         <article class="paper-card" *ngFor="let paper of pagedPapers">
 
             <!-- Left Preview Side Column (PDF Preview) -->
-            <div class="paper-card-pdf-preview" [class.no-file]="!paper?.FileUrl"
-                (click)="paper?.FileUrl && viewPaper(paper.Id)"
-                [title]="paper?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+            <div class="paper-card-pdf-preview" [class.no-file]="!paper?.FileUrl">
 
                 <pdf-viewer *ngIf="paper?.FileUrl; else pdfPlaceholder" [src]="paper?.FileUrl" [page]="1"
-                    [show-all]="false" [fit-to-page]="true">
+                    [show-all]="false" [render-text]="false" [original-size]="false" [fit-to-page]="true"
+                    [autoresize]="true">
                 </pdf-viewer>
 
                 <ng-template #pdfPlaceholder>
@@ -80,19 +79,14 @@
                         <span class="no-file-text">No File</span>
                     </div>
                 </ng-template>
-
-                <div class="preview-label">
-                    <i class="pi pi-eye" *ngIf="!paper?.FileUrl"></i>
-                    <i class="pi pi-search-plus" *ngIf="paper?.FileUrl"></i>
-                    <span>{{ paper?.FileUrl ? 'Preview' : 'No PDF' }}</span>
-                </div>
             </div>
 
             <!-- Right Content Column (Title, Abstract, Badge, Metadata) -->
             <div class="paper-card-main-content">
                 <!-- Header row (Title & Status) -->
                 <div class="paper-card-header">
-                    <h3 class="paper-card-title">{{ paper?.Title }}</h3>
+                    <h3 class="paper-card-title clickable-title" [routerLink]="['/dashboard/view-paper']"
+                        [queryParams]="{ id: paper.Id, type: 'paper' }">{{ paper?.Title }}</h3>
                     <p-badge *ngIf="paper.PaperApprovals && paper.PaperApprovals[0]?.Status"
                         [value]="paper.PaperApprovals[0]?.Status"
                         [severity]="getSeverity(paper.PaperApprovals[0]?.Status)">

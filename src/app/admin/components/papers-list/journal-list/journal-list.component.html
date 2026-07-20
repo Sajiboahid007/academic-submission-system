@@ -66,12 +66,11 @@
     <div class="papers-cards-container" *ngIf="!loading && journal.length > 0">
         <article class="paper-card" *ngFor="let journalData of pagedData">
             <!-- PDF Preview Side Column (Left Side) -->
-            <div class="paper-card-pdf-preview" [class.no-file]="!journalData?.FileUrl"
-                (click)="journalData?.FileUrl && viewJournal(journalData.Id)"
-                [title]="journalData?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+            <div class="paper-card-pdf-preview" [class.no-file]="!journalData?.FileUrl">
 
                 <pdf-viewer *ngIf="journalData?.FileUrl; else pdfPlaceholder" [src]="journalData?.FileUrl" [page]="1"
-                    [show-all]="false" [fit-to-page]="true">
+                    [show-all]="false" [render-text]="false" [original-size]="false" [fit-to-page]="true"
+                    [autoresize]="true">
                 </pdf-viewer>
 
                 <ng-template #pdfPlaceholder>
@@ -80,19 +79,14 @@
                         <span class="no-file-text">No File</span>
                     </div>
                 </ng-template>
-
-                <div class="preview-label">
-                    <i class="pi pi-eye" *ngIf="!journalData?.FileUrl"></i>
-                    <i class="pi pi-search-plus" *ngIf="journalData?.FileUrl"></i>
-                    <span>{{ journalData?.FileUrl ? 'Preview' : 'No PDF' }}</span>
-                </div>
             </div>
 
             <!-- Main Content Column (Right Side) -->
             <div class="paper-card-main-content">
                 <!-- Header row (Title & Status) -->
                 <div class="paper-card-header">
-                    <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
+                    <h3 class="paper-card-title clickable-title" [routerLink]="['/dashboard/view-paper']"
+                        [queryParams]="{ id: journalData.Id, type: 'journal' }">{{ journalData?.Title }}</h3>
                     <p-badge *ngIf="journalData.PaperApprovals && journalData.PaperApprovals[0]?.Status"
                         [value]="journalData?.PaperApprovals[0]?.Status"
                         [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
@@ -101,7 +95,7 @@
 
                 <!-- Abstract Description -->
                 <p class="paper-card-abstract">
-                    {{ journalData?.Abstract || 'No abstract/description provided.' }}
+                    {{ journalData?.Abstract | truncateText:400 }}
                 </p>
 
                 <!-- Keywords Section -->
@@ -117,10 +111,33 @@
 
                 <!-- Metadata items with Icons -->
                 <div class="paper-card-metadata">
-                    <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
-                        <i class="pi pi-user"></i>
-                        <span> {{ teacher?.Users?.Name }}</span>
-                    </div>
+                    <ng-container *ngFor="let teacher of journalData?.PaperGroups">
+                        <div class="meta-item author-meta" *ngIf="isNotReviewer(teacher)">
+                            <i class="pi pi-user"></i>
+                            <span> {{ getTeacherName(teacher) }}</span>
+
+                            <!-- Hover Tooltip Card -->
+                            <div class="teacher-tooltip-card">
+                                <div class="tooltip-avatar-wrapper">
+                                    <img *ngIf="getTeacherImage(teacher); else defaultAvatar"
+                                        [src]="getTeacherImage(teacher)" [alt]="getTeacherName(teacher)"
+                                        class="tooltip-avatar" />
+                                    <ng-template #defaultAvatar>
+                                        <div class="tooltip-avatar-placeholder">
+                                            <i class="pi pi-user"></i>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <div class="tooltip-info">
+                                    <div class="tooltip-name">{{ getTeacherName(teacher) }}</div>
+                                    <div class="tooltip-dept">
+                                        <i class="pi pi-building"></i>
+                                        <span>{{ getTeacherDepartment(teacher, journalData) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
                     <div class="meta-item author-meta">
                         <i class="pi pi-user"></i>
                         <span> {{ journalData?.Authors}}</span>

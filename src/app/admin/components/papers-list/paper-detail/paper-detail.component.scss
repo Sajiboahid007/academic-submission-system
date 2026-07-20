@@ -127,29 +127,27 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
-  padding: 0.5rem;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.02);
+  padding: 0;
   min-height: 180px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-
-    pdf-viewer {
-      transform: scale(1.02);
-    }
-  }
+  height: 180px;
+  cursor: default;
 
   pdf-viewer {
-    width: 120px;
-    height: 160px;
+    width: 100%;
+    height: 100%;
     display: block;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: none;
     pointer-events: none;
-    transition: transform 0.2s ease;
+
+    ::ng-deep .ng2-pdf-viewer-container {
+      overflow: hidden !important;
+    }
+
+    ::ng-deep canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
 
   .pdf-placeholder-icon {
@@ -167,23 +165,6 @@
       font-size: 0.775rem;
       font-weight: 600;
       color: #64748b;
-    }
-  }
-
-  .preview-label {
-    font-size: 0.725rem;
-    color: #64748b;
-    margin-top: 0.5rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-
-    i {
-      font-size: 0.75rem;
-      color: #4b5563;
     }
   }
 
@@ -221,6 +202,16 @@
   margin: 0;
   line-height: 1.35;
   letter-spacing: -0.015em;
+
+  &.clickable-title {
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+  }
 }
 
 .paper-card-abstract {

@@ -187,45 +187,26 @@
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     overflow: hidden;
-    padding: 0.5rem;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.02);
+    padding: 0;
     min-height: 180px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-        background: #f1f5f9;
-        border-color: #cbd5e1;
-
-        pdf-viewer {
-            transform: scale(1.02);
-        }
-    }
+    height: 180px;
+    cursor: default;
 
     pdf-viewer {
-        width: 120px;
-        height: 160px;
+        width: 100%;
+        height: 100%;
         display: block;
-        border-radius: 4px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        box-shadow: none;
         pointer-events: none;
-        transition: transform 0.2s ease;
-    }
 
-    .preview-label {
-        font-size: 0.725rem;
-        color: #64748b;
-        margin-top: 0.5rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        ::ng-deep .ng2-pdf-viewer-container {
+            overflow: hidden !important;
+        }
 
-        i {
-            font-size: 0.75rem;
-            color: #4b5563;
+        ::ng-deep canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
     }
 
@@ -256,6 +237,16 @@
     margin: 0;
     line-height: 1.35;
     letter-spacing: -0.015em;
+
+    &.clickable-title {
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+    }
 }
 
 // Status Badges
@@ -326,14 +317,29 @@
     font-size: 0.85rem;
     color: #6b7280;
     font-weight: 500;
+    position: relative;
 
     i {
         font-size: 0.9rem;
         color: #9ca3af;
     }
 
-    &.author-meta i {
-        color: #6366f1;
+    &.author-meta {
+        cursor: pointer;
+
+        i {
+            color: #6366f1;
+        }
+
+        &:hover {
+            color: #4f46e5;
+
+            .teacher-tooltip-card {
+                visibility: visible;
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
     }
 
     &.date-meta i {
@@ -354,6 +360,111 @@
 
     &.year-meta i {
         color: #f59e0b;
+    }
+}
+
+// Teacher Profile Tooltip Card
+.teacher-tooltip-card {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 100;
+    white-space: nowrap;
+    min-width: 180px;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                visibility 0.2s;
+    pointer-events: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: #ffffff transparent transparent transparent;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 7px;
+        border-style: solid;
+        border-color: #e2e8f0 transparent transparent transparent;
+    }
+
+    .tooltip-avatar-wrapper {
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #f1f5f9;
+        border: 2px solid #6366f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .tooltip-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tooltip-avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e7ff;
+            color: #4f46e5;
+            font-size: 1.2rem;
+        }
+    }
+
+    .tooltip-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        text-align: left;
+
+        .tooltip-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+
+        .tooltip-dept {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.775rem;
+            color: #6b7280;
+            font-weight: 500;
+
+            i {
+                font-size: 0.8rem;
+                color: #8b5cf6;
+            }
+        }
     }
 }
 

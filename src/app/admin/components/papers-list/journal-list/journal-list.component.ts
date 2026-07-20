@@ -8,6 +8,10 @@ import { CategoriesService } from '../../../services/categories-service';
 import { SubcategoryService } from '../../../services/subcategory-service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { JournalService } from '../../../services/journal-service';
+import { DepartmentService } from '../../../services/department-service';
+import { UserInfoService } from '../../../services/user-info-service';
+import { AcademicSubmissionConfig } from '../../../../fds-config/constant/academic-submission-config';
+import { Department } from '../../../../fds-config/entity-models/department';
 
 @Component({
   selector: 'app-journal-list',
@@ -24,7 +28,9 @@ export class JournalListComponent implements OnInit {
   years: string[] = [];
   searchValue = '';
   uniqueKeywords: any[] = [];
-  authorsName: any[] = []
+  authorsName: any[] = [];
+  departmentsMap = new Map<number, any>();
+  usersMap = new Map<number, any>();
 
   // Filter selections (Name-based)
   selectedCategory: string | null = null;
@@ -47,6 +53,8 @@ export class JournalListComponent implements OnInit {
     private readonly subCategoryService: SubcategoryService,
     private readonly toastService: ToastService,
     private readonly journalService: JournalService,
+    private readonly departmentService: DepartmentService,
+    private readonly userInfoService: UserInfoService,
   ) { }
 
   ngOnInit(): void {
@@ -55,6 +63,120 @@ export class JournalListComponent implements OnInit {
     this.getSubCategory();
     this.getKeyword();
     this.getAuthorsName();
+    this.getDepartments();
+    this.getUsers();
+  }
+
+  getDepartments() {
+    this.departmentService.getDepartments().subscribe({
+      next: (res) => {
+        const list = res?.data || [];
+        list.forEach((d: any) => {
+          if (d?.Id) this.departmentsMap.set(Number(d.Id), d);
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Error fetching departments:', err)
+    });
+  }
+
+  getUsers() {
+    this.userInfoService.getUsers().subscribe({
+      next: (res) => {
+        const list = res?.data || [];
+        list.forEach((u: any) => {
+          if (u?.Id) this.usersMap.set(Number(u.Id), u);
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Error fetching users:', err)
+    });
+  }
+
+  getTeacherName(teacher: any): string {
+    if (teacher?.Users?.Name) return teacher.Users.Name;
+    if (teacher?.User?.Name) return teacher.User.Name;
+    if (teacher?.Name) return teacher.Name;
+
+    const userId = teacher?.UserId || teacher?.UsersId || teacher?.Users?.Id || teacher?.User?.Id;
+    if (userId && this.usersMap.has(Number(userId))) {
+      return this.usersMap.get(Number(userId))?.Name || 'N/A';
+    }
+    return 'N/A';
+  }
+
+  getTeacherImage(teacher: any): string {
+    const userId = teacher?.UserId || teacher?.UsersId || teacher?.Users?.Id || teacher?.User?.Id;
+    const userFromMap = userId ? this.usersMap.get(Number(userId)) : null;
+
+    let img =
+      teacher?.Users?.ImageUrl ||
+      teacher?.Users?.Image ||
+      teacher?.User?.ImageUrl ||
+      teacher?.User?.Image ||
+      teacher?.ImageUrl ||
+      teacher?.Image ||
+      userFromMap?.ImageUrl ||
+      userFromMap?.Image;
+
+    if (!img) return '';
+
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
+      return img;
+    }
+
+    const baseUrl = AcademicSubmissionConfig.BaseUrl;
+    return img.startsWith('/') ? `${baseUrl}${img}` : `${baseUrl}/${img}`;
+  }
+
+  getTeacherDepartment(teacher: any, journalData?: any): string {
+    // 1. Direct department name on teacher/Users/User
+    const directName =
+      teacher?.Users?.Department?.Name ||
+      teacher?.User?.Department?.Name ||
+      teacher?.Department?.Name ||
+      (typeof teacher?.Users?.Department === 'string' ? teacher.Users.Department : null) ||
+      (typeof teacher?.Department === 'string' ? teacher.Department : null);
+
+    if (directName) return directName;
+
+    // 2. Lookup via DepartmentId on teacher or user object
+    const userId = teacher?.UserId || teacher?.UsersId || teacher?.Users?.Id || teacher?.User?.Id;
+    const userFromMap = userId ? this.usersMap.get(Number(userId)) : null;
+
+    const deptId =
+      teacher?.Users?.DepartmentId ||
+      teacher?.User?.DepartmentId ||
+      teacher?.DepartmentId ||
+      userFromMap?.DepartmentId;
+
+    if (deptId && this.departmentsMap.has(Number(deptId))) {
+      return this.departmentsMap.get(Number(deptId))?.Name || 'Department N/A';
+    }
+
+    // 3. Fallback to user object's embedded department
+    if (userFromMap?.Department?.Name) {
+      return userFromMap.Department.Name;
+    }
+
+    // 4. Fallback to journalData department
+    const journalDept =
+      journalData?.Department?.Name ||
+      (journalData?.DepartmentId && this.departmentsMap.get(Number(journalData.DepartmentId))?.Name);
+
+    if (journalDept) return journalDept;
+
+    return 'Department N/A';
+  }
+
+  isNotReviewer(teacher: any): boolean {
+    if (!teacher) return false;
+    const userType = teacher?.UserType;
+    const roleName = teacher?.Users?.Roles?.Name || teacher?.User?.Roles?.Name;
+    if (userType === 'Reviewer' || roleName === 'Reviewer') {
+      return false;
+    }
+    return true;
   }
 
   getJournal() {
