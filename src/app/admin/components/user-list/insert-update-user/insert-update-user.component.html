@@ -87,8 +87,14 @@
             </label>
           </p-floatlabel>
 
+          <p-message severity="error" size="small" variant="simple" [text]="emailErrorMessage"
+            *ngIf="emailErrorMessage">
+          </p-message>
           <p-message severity="error" size="small" variant="simple" text="Email is required."
-            *ngIf="userForm.get('Email')?.invalid">
+            *ngIf="!emailErrorMessage && userForm.get('Email')?.hasError('required') && userForm.get('Email')?.touched">
+          </p-message>
+          <p-message severity="error" size="small" variant="simple" text="Please enter a valid email address."
+            *ngIf="!emailErrorMessage && userForm.get('Email')?.hasError('email') && userForm.get('Email')?.touched">
           </p-message>
         </div>
 
@@ -112,8 +118,8 @@
   <!-- Actions -->
   <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="20px" class="modal-footer-section">
     <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
-      (click)="onCancel()"></button>
+      (click)="onCancel()" [disabled]="loading"></button>
     <button pButton type="button" label="Save Details" icon="pi pi-check" class="p-button-success btn-save"
-      [disabled]="userForm.invalid" (click)="onSave()"></button>
+      [loading]="loading" [disabled]="userForm.invalid || loading" (click)="onSave()"></button>
   </div>
 </div>

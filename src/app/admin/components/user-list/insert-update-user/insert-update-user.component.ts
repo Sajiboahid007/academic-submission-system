@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
@@ -34,6 +35,8 @@ export class InsertUpdateUserComponent implements OnInit {
   roles: Role[] = [];
   isEditMode = false;
   userId!: number;
+  loading = false;
+  emailErrorMessage = '';
 
   userTokenInfo: any = {};
 
@@ -47,6 +50,7 @@ export class InsertUpdateUserComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly roleService: RoleService,
     private readonly batchService: BatchService,
+    private readonly cdr: ChangeDetectorRef,
   ) { }
 
 
@@ -73,6 +77,13 @@ export class InsertUpdateUserComponent implements OnInit {
     }
 
     this.userTokenInfo = this.usersService.getUserInfo();
+
+    this.userForm.get('Email')?.valueChanges.subscribe(() => {
+      if (this.emailErrorMessage) {
+        this.emailErrorMessage = '';
+        this.cdr.markForCheck();
+      }
+    });
 
     this.userForm.markAllAsTouched();
     this.userForm.updateValueAndValidity();
@@ -138,11 +149,15 @@ export class InsertUpdateUserComponent implements OnInit {
 
 
   onSave() {
+    this.emailErrorMessage = '';
     if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
       console.log(this.userForm);
       return;
     }
 
+    this.loading = true;
+    this.cdr.markForCheck();
 
     if (this.isEditMode) {
       this.updateUser();
@@ -155,11 +170,24 @@ export class InsertUpdateUserComponent implements OnInit {
     const users: Users = this.userForm.getRawValue();
     this.usersService.addUserAdmin(users).subscribe({
       next: (res: any) => {
+        this.loading = false;
         this.toastService.success('User created successfully');
+        this.cdr.markForCheck();
         this.dialogRef.close(true);
       },
       error: (error) => {
+        this.loading = false;
+        const errorMsg =
+          (Array.isArray(error?.error?.message) ? error?.error?.message.join(', ') : error?.error?.message) ||
+          error?.error?.error ||
+          'Error creating user';
+
+        this.emailErrorMessage = errorMsg;
+        this.userForm.get('Email')?.setErrors({ serverError: true });
+
+        this.toastService.error(errorMsg);
         console.error('Error creating user:', error);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -169,11 +197,24 @@ export class InsertUpdateUserComponent implements OnInit {
     users.Id = this.userId;
     this.usersService.updateUser(users).subscribe({
       next: (_: any) => {
+        this.loading = false;
         this.toastService.success('User updated successfully');
+        this.cdr.markForCheck();
         this.dialogRef.close(true);
       },
       error: (error) => {
+        this.loading = false;
+        const errorMsg =
+          (Array.isArray(error?.error?.message) ? error?.error?.message.join(', ') : error?.error?.message) ||
+          error?.error?.error ||
+          'Error updating user';
+
+        this.emailErrorMessage = errorMsg;
+        this.userForm.get('Email')?.setErrors({ serverError: true });
+
+        this.toastService.error(errorMsg);
         console.error('Error updating user:', error);
+        this.cdr.markForCheck();
       },
     });
   }
