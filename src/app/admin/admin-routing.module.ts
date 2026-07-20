@@ -18,6 +18,8 @@ import { PaperDetailComponent } from './components/papers-list/paper-detail/pape
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { NotificationComponent } from './components/notification/notification.component';
 
+import { ViewPapersComponent } from './components/view-papers/view-papers.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
@@ -97,6 +99,10 @@ const routes: Routes = [
       {
         path: 'notification',
         component: NotificationComponent,
+      },
+      {
+        path: 'view-paper',
+        component: ViewPapersComponent,
       }
     ],
   },

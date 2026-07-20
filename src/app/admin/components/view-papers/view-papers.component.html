@@ -1,0 +1,144 @@
+<div class="view-papers-wrapper">
+    <!-- Navigation / Header Bar -->
+    <div class="view-papers-topbar">
+        <button pButton type="button" icon="pi pi-arrow-left" label="Back to List"
+            class="p-button-outlined p-button-secondary p-button-sm back-btn" (click)="goBack()"></button>
+        <span class="type-badge">{{ type === 'journal' ? 'Journal Article' : 'Research Paper' }}</span>
+    </div>
+
+    <!-- Loading State -->
+    <div class="view-papers-loading" *ngIf="loading">
+        <p-progressSpinner ariaLabel="loading" styleClass="w-4rem h-4rem" strokeWidth="4" fill="transparent"
+            animationDuration=".5s"></p-progressSpinner>
+        <span>Loading article details...</span>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="view-papers-container" *ngIf="!loading && item">
+        <!-- LEFT COLUMN: Title, Abstract, Keywords -->
+        <main class="article-main-content">
+            <h1 class="article-title">{{ item?.Title }}</h1>
+
+            <!-- Abstract Section -->
+            <section class="article-section">
+                <h2 class="section-heading">Abstract</h2>
+                <p class="article-abstract">
+                    {{ item?.Abstract || 'No abstract text provided for this paper.' }}
+                </p>
+            </section>
+
+            <!-- Keywords Section -->
+            <section class="article-section" *ngIf="getKeywordsList().length > 0">
+                <h2 class="section-heading">Keywords</h2>
+                <div class="keywords-list">
+                    <span class="keyword-chip" *ngFor="let keyword of getKeywordsList()">
+                        {{ keyword }}
+                    </span>
+                </div>
+            </section>
+
+            <!-- PDF Preview (Page 1 Cover) -->
+            <section class="article-section pdf-section" *ngIf="item?.FileUrl">
+                <h2 class="section-heading">Article Document Preview</h2>
+                <div class="pdf-cover-container">
+                    <pdf-viewer [src]="item.FileUrl" [page]="1" [show-all]="false" [render-text]="false"
+                        [original-size]="false" [fit-to-page]="true" [autoresize]="true" class="pdf-cover-viewer">
+                    </pdf-viewer>
+                </div>
+            </section>
+        </main>
+
+        <!-- RIGHT SIDEBAR: Details Card -->
+        <aside class="article-sidebar">
+            <div class="details-card">
+                <!-- Sidebar Tabs Header -->
+                <div class="sidebar-tabs">
+                    <div class="tab-item" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">
+                        Details
+                    </div>
+                    <div class="tab-item" [class.active]="activeTab === 'figstbls'" (click)="activeTab = 'figstbls'">
+                        Figs/Tbls
+                    </div>
+                </div>
+
+                <!-- Tab Content: Details -->
+                <div class="tab-content" *ngIf="activeTab === 'details'">
+                    <!-- Metadata List -->
+                    <div class="meta-row" *ngIf="item?.CreatedDate || item?.Year">
+                        <span class="meta-label">Publication date:</span>
+                        <span class="meta-val">{{ getPublicationDate() }}</span>
+                    </div>
+
+                    <div class="meta-row" *ngIf="type === 'journal' || item?.Volume || item?.IssueNumber">
+                        <span class="meta-label">Issue:</span>
+                        <span class="meta-val">{{ getIssueString() }}</span>
+                    </div>
+
+                    <div class="meta-row" *ngIf="item?.Category?.Name">
+                        <span class="meta-label">Category:</span>
+                        <span class="meta-val">{{ item.Category.Name }}</span>
+                    </div>
+
+                    <div class="meta-row" *ngIf="item?.SubCategory?.Name">
+                        <span class="meta-label">SubCategory:</span>
+                        <span class="meta-val">{{ item.SubCategory.Name }}</span>
+                    </div>
+
+                    <div class="meta-row" *ngIf="item?.DOI || type === 'journal'">
+                        <span class="meta-label">DOI:</span>
+                        <span class="meta-val doi-val">{{ getDoi() }}</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Authors List -->
+                    <div class="authors-section">
+                        <h3 class="sidebar-section-title">AUTHORS</h3>
+                        <div class="authors-list">
+                            <div class="author-card-item" *ngFor="let author of getAuthorsList()">
+                                <div class="author-avatar-wrapper">
+                                    <img *ngIf="author.imageUrl; else defaultAvatar" [src]="author.imageUrl"
+                                        [alt]="author.name" class="author-avatar" />
+                                    <ng-template #defaultAvatar>
+                                        <div class="author-avatar-placeholder">
+                                            <i class="pi pi-user"></i>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <div class="author-details-col">
+                                    <span class="author-name">{{ author.name }}</span>
+                                    <span class="author-dept" *ngIf="author.department">
+                                        <i class="pi pi-building"></i> {{ author.department }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="getAuthorsList().length === 0" class="no-authors">
+                                No author details listed
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Full Text PDF Button -->
+                    <div class="pdf-btn-wrapper">
+                        <button pButton type="button" icon="pi pi-file-pdf" label="Full text PDF"
+                            class="p-button-outlined full-pdf-btn" [disabled]="!item?.FileUrl" (click)="downloadPdf()"></button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Figs/Tbls -->
+                <div class="tab-content" *ngIf="activeTab === 'figstbls'">
+                    <p class="empty-tab-text">No figures or tables attached to this paper.</p>
+                </div>
+            </div>
+
+            <!-- Related Articles Card -->
+            <div class="related-card">
+                <h3 class="related-title">Related Articles</h3>
+                <p class="related-text">Search for more articles in {{ item?.Category?.Name || 'this research area' }}.</p>
+            </div>
+        </aside>
+    </div>
+</div>

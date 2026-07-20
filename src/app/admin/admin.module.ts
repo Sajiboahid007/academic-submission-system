@@ -28,6 +28,7 @@ import { JournalInsertUpdateComponent } from './components/papers-list/journal-i
 import { JournalListComponent } from './components/papers-list/journal-list/journal-list.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { ViewPapersComponent } from './components/view-papers/view-papers.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { NotificationComponent } from './components/notification/notification.co
     JournalListComponent,
     HomePageComponent,
     NotificationComponent,
+    ViewPapersComponent,
   ],
   imports: [CommonModule, AdminRoutingModule, SharedModule],
   exports: [
@@ -84,6 +86,7 @@ import { NotificationComponent } from './components/notification/notification.co
     JournalListComponent,
     HomePageComponent,
     NotificationComponent,
+    ViewPapersComponent,
   ],
 })
 export class AdminModule { }
