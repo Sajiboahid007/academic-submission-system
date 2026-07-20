@@ -37,7 +37,9 @@
               <div class="flex items-center gap-2">
                 <img [src]="item?.ImageUrl" class="rounded-image" />
 
-                <span>{{ item?.Name }}</span>
+                <span>{{ item?.Name }}</span><br>
+                <small style="font-size: 12px; color: rgb(169, 169, 169)" [pTooltip]="item?.Department?.Name"
+                  tooltipPosition="right">{{item?.Department?.Name}}</small>
               </div>
             </ng-template>
           </p-multiselect>
