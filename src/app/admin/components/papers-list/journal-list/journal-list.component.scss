@@ -382,9 +382,9 @@
     z-index: 100;
     white-space: nowrap;
     min-width: 180px;
-    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                visibility 0.2s;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.2s;
     pointer-events: none;
 
     &::after {
@@ -874,7 +874,7 @@
 
         p-select {
             width: 100% !important;
-            
+
             ::ng-deep .p-select {
                 width: 100% !important;
             }
@@ -912,4 +912,4 @@
         color: #4b5563;
         letter-spacing: -0.01em;
     }
-}
+}

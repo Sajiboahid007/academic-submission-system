@@ -11,7 +11,7 @@ import {
   computed,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, interval, Subscription } from 'rxjs';
+import { filter, interval, Subscription, forkJoin, of, catchError } from 'rxjs';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 import {
   NotificationItem,
@@ -391,12 +391,68 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getNotification(): void {
+    const userInfo = this.userInfoService.getUserInfo();
+    const userRole = userInfo?.role;
+    const isSuperAdmin =
+      userRole === AcademicSubmissionConfig.UserRole.SuperAdmin ||
+      userRole === 'Super-Admin';
+
     this.notificationService.getNotification().subscribe((res) => {
       const data = res.data || [];
       const cleared = this.clearedIds();
-      // Filter out notifications whose Id is in clearedIds
-      this.notification = data.filter((n: any) => !cleared.includes(String(n.Id)));
-      this.cdr.markForCheck();
+      let notifList = data.filter((n: any) => !cleared.includes(String(n.Id)));
+
+      if (isSuperAdmin) {
+        forkJoin({
+          papers: this.papersService.getPapers().pipe(catchError(() => of({ data: [] }))),
+          journals: this.journalService.getJournals().pipe(catchError(() => of({ data: [] }))),
+        }).subscribe(({ papers, journals }) => {
+          const generatedNotifs: any[] = [];
+          const papersList = papers?.data || [];
+          const journalsList = journals?.data || [];
+
+          papersList.forEach((p: any) => {
+            const status = p.PaperApprovals?.[0]?.Status;
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'pending' || statusLower === 'pending approval' || statusLower.includes('editorial approved')) {
+              const displayStatus = statusLower.includes('editorial approved') ? 'Editorial Approved' : 'Pending';
+              generatedNotifs.push({
+                Id: `paper-status-${p.Id}`,
+                Title: statusLower.includes('editorial approved') ? 'Paper Editorial Approved' : 'Pending Paper Approval',
+                Message: `Paper "${p.Title}" is ${displayStatus.toLowerCase()}${p.CreatedBy ? ' by ' + p.CreatedBy : ''}.`,
+                Status: displayStatus,
+                CreatedAt: p.CreatedDate || new Date().toISOString(),
+                PaperId: p.Id,
+              });
+            }
+          });
+
+          journalsList.forEach((j: any) => {
+            const status = j.PaperApprovals?.[0]?.Status;
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'pending' || statusLower === 'pending approval' || statusLower.includes('editorial approved')) {
+              const displayStatus = statusLower.includes('editorial approved') ? 'Editorial Approved' : 'Pending';
+              generatedNotifs.push({
+                Id: `journal-status-${j.Id}`,
+                Title: statusLower.includes('editorial approved') ? 'Journal Editorial Approved' : 'Pending Journal Approval',
+                Message: `Journal "${j.Title}" is ${displayStatus.toLowerCase()}${j.Authors ? ' by ' + j.Authors : ''}.`,
+                Status: displayStatus,
+                CreatedAt: j.CreatedDate || new Date().toISOString(),
+                JournalId: j.Id,
+              });
+            }
+          });
+
+          const existingIds = new Set(notifList.map((n: any) => String(n.Id || n.id)));
+          const uniqueGenerated = generatedNotifs.filter((n) => !existingIds.has(String(n.Id)) && !cleared.includes(String(n.Id)));
+
+          this.notification = [...uniqueGenerated, ...notifList];
+          this.cdr.markForCheck();
+        });
+      } else {
+        this.notification = notifList;
+        this.cdr.markForCheck();
+      }
     });
   }
 

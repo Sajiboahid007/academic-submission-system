@@ -38,7 +38,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source?: 'Journal' | 'Paper'; fromPaperApproval?: boolean } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source?: 'Journal' | 'Paper'; fromPaperApproval?: boolean; fromCreatePapers?: boolean } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
@@ -104,15 +104,28 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         value: status,
       }));
     } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Admin) {
-      this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
-        .filter(
-          (status) =>
-            status !== AcademicSubmissionConfig.ApprovalStatus.Pending
-        )
-        .map((status) => ({
-          label: status,
-          value: status,
-        }));
+      if (this.data?.fromCreatePapers || !this.data?.fromPaperApproval) {
+        this.statusOptions = [
+          {
+            label: AcademicSubmissionConfig.ApprovalStatus.Draft,
+            value: AcademicSubmissionConfig.ApprovalStatus.Draft,
+          },
+          {
+            label: AcademicSubmissionConfig.ApprovalStatus.Pending,
+            value: AcademicSubmissionConfig.ApprovalStatus.Pending,
+          },
+        ];
+      } else {
+        this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
+          .filter(
+            (status) =>
+              status !== AcademicSubmissionConfig.ApprovalStatus.Pending
+          )
+          .map((status) => ({
+            label: status,
+            value: status,
+          }));
+      }
     } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
       this.statusOptions = [
         {

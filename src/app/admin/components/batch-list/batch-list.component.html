@@ -1,4 +1,4 @@
-<app-page-header title="Batch List" (onButtonClick)="AddBatch()"></app-page-header>
+<app-page-header *ngIf="onApprove()" title="Batch List" (onButtonClick)="AddBatch()"></app-page-header>
 
 <div class="card">
   <p-table #dt2 [columns]="cols" [value]="batches" dataKey="id" [rows]="10" [rowsPerPageOptions]="[10, 25, 50, 100]"
@@ -25,10 +25,10 @@
         <td>{{ batch?.Year }}</td>
         <td>{{ batch?.Department?.Name }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
+          <button *ngIf="onApprove()" pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
             (click)="onEditBatch(batch.Id)"></button>
 
-          <button pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
+          <button *ngIf="onApprove()" pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
             (click)="onDeleteBatch(batch.Id)"></button>
         </td>
       </tr>

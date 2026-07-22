@@ -3,6 +3,9 @@ import { NotificationService } from '../../services/notification.service';
 import { Router } from '@angular/router';
 import { UserInfoService } from '../../services/user-info-service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { PapersService } from '../../services/papers-service';
+import { JournalService } from '../../services/journal-service';
+import { forkJoin, of, catchError } from 'rxjs';
 
 @Component({
   selector: 'notification',
@@ -26,7 +29,9 @@ export class NotificationComponent implements OnInit {
     private readonly notificationService: NotificationService,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
-    private readonly userInfoService: UserInfoService
+    private readonly userInfoService: UserInfoService,
+    private readonly papersService: PapersService,
+    private readonly journalService: JournalService
   ) { }
 
   ngOnInit(): void {
@@ -46,10 +51,68 @@ export class NotificationComponent implements OnInit {
   }
 
   getNotifications() {
+    const userInfo = this.userInfoService.getUserInfo();
+    const userRole = userInfo?.role;
+    const isSuperAdmin =
+      userRole === AcademicSubmissionConfig.UserRole.SuperAdmin ||
+      userRole === 'Super-Admin';
+
     this.notificationService.getNotification().subscribe((res) => {
-      this.notifications = res.data || [];
-      this.filterNotifications();
-      this.cdr.markForCheck();
+      const apiNotifications = res.data || [];
+
+      if (isSuperAdmin) {
+        forkJoin({
+          papers: this.papersService.getPapers().pipe(catchError(() => of({ data: [] }))),
+          journals: this.journalService.getJournals().pipe(catchError(() => of({ data: [] }))),
+        }).subscribe(({ papers, journals }) => {
+          const generatedNotifs: any[] = [];
+          const papersList = papers?.data || [];
+          const journalsList = journals?.data || [];
+
+          papersList.forEach((p: any) => {
+            const status = p.PaperApprovals?.[0]?.Status;
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'pending' || statusLower === 'pending approval' || statusLower.includes('editorial approved')) {
+              const displayStatus = statusLower.includes('editorial approved') ? 'Editorial Approved' : 'Pending';
+              generatedNotifs.push({
+                Id: `paper-status-${p.Id}`,
+                Title: statusLower.includes('editorial approved') ? 'Paper Editorial Approved' : 'Pending Paper Approval',
+                Message: `Paper "${p.Title}" is ${displayStatus.toLowerCase()}${p.CreatedBy ? ' by ' + p.CreatedBy : ''}.`,
+                Status: displayStatus,
+                CreatedAt: p.CreatedDate || new Date().toISOString(),
+                PaperId: p.Id,
+              });
+            }
+          });
+
+          journalsList.forEach((j: any) => {
+            const status = j.PaperApprovals?.[0]?.Status;
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'pending' || statusLower === 'pending approval' || statusLower.includes('editorial approved')) {
+              const displayStatus = statusLower.includes('editorial approved') ? 'Editorial Approved' : 'Pending';
+              generatedNotifs.push({
+                Id: `journal-status-${j.Id}`,
+                Title: statusLower.includes('editorial approved') ? 'Journal Editorial Approved' : 'Pending Journal Approval',
+                Message: `Journal "${j.Title}" is ${displayStatus.toLowerCase()}${j.Authors ? ' by ' + j.Authors : ''}.`,
+                Status: displayStatus,
+                CreatedAt: j.CreatedDate || new Date().toISOString(),
+                JournalId: j.Id,
+              });
+            }
+          });
+
+          const existingIds = new Set(apiNotifications.map((n: any) => String(n.Id || n.id)));
+          const uniqueGenerated = generatedNotifs.filter((n) => !existingIds.has(String(n.Id)));
+
+          this.notifications = [...uniqueGenerated, ...apiNotifications];
+          this.filterNotifications();
+          this.cdr.markForCheck();
+        });
+      } else {
+        this.notifications = apiNotifications;
+        this.filterNotifications();
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -121,6 +184,7 @@ export class NotificationComponent implements OnInit {
 
   getStatusClass(notification: any): string {
     const status = (notification.Status || '').toLowerCase();
+    if (status.includes('editorial approved') || status.includes('editorial_approved')) return 'approved';
     if (status.includes('approve')) return 'approved';
     if (status.includes('reject')) return 'rejected';
     if (status.includes('pending') || status === 'unread' || status === 'read') return 'pending';
@@ -181,19 +245,18 @@ export class NotificationComponent implements OnInit {
   public getSeverity(
     status: string | undefined,
   ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (status) {
-      case 'Approved':
+    if (!status) return 'secondary';
+    switch (status.trim().toLowerCase()) {
+      case 'approved':
+      case 'editorial approved':
         return 'success';
-      case 'Rejected':
+      case 'rejected':
         return 'danger';
-      case 'Pending':
+      case 'pending':
+      case 'review requested':
         return 'warn';
-      case 'Draft':
+      case 'draft':
         return 'info';
-      case 'Review Requested':
-        return 'warn';
-      case 'Editorial Approved':
-        return 'success';
       default:
         return 'secondary';
     }
@@ -225,6 +288,7 @@ export class NotificationComponent implements OnInit {
     const isAdminOrSuperAdminOrReviewer =
       userRole === AcademicSubmissionConfig.UserRole.Admin ||
       userRole === AcademicSubmissionConfig.UserRole.SuperAdmin ||
+      userRole === 'Super-Admin' ||
       userRole === AcademicSubmissionConfig.UserRole.Reviewer;
 
     const status = (notification.Status || '').toLowerCase();
@@ -245,3 +309,4 @@ export class NotificationComponent implements OnInit {
     }
   }
 }
+

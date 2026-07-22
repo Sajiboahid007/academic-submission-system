@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Table } from 'primeng/table';
 import { AppQuery } from '../../../../shared/app-query';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
@@ -42,6 +43,7 @@ export class JournalListComponent implements OnInit {
   first: number = 0;
   rows: number = 10;
   totalRecords: number = 0;
+  highlightedId: number | null = null;
 
   allData: any[] = [];      // full list from API
   pagedData: any[] = [];    // visible list
@@ -55,9 +57,20 @@ export class JournalListComponent implements OnInit {
     private readonly journalService: JournalService,
     private readonly departmentService: DepartmentService,
     private readonly userInfoService: UserInfoService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['first'] !== undefined) {
+        this.first = Number(params['first']) || 0;
+      }
+      if (params['paperId'] || params['id']) {
+        this.highlightedId = Number(params['paperId'] || params['id']);
+      }
+    });
+
     this.getJournal();
     this.getCategory();
     this.getSubCategory();
@@ -194,9 +207,13 @@ export class JournalListComponent implements OnInit {
           new Set(this.allData.map((j) => j.Year).filter((year): year is string => !!year)),
         ).sort();
 
-        this.applyFilters();
+        this.applyFilters(false);
         this.loading = false;
         this.cdr.markForCheck();
+
+        if (this.highlightedId) {
+          this.scrollToCard('journal-card-' + this.highlightedId);
+        }
       },
       error: (err) => {
         console.error('Error fetching journals:', err);
@@ -253,7 +270,7 @@ export class JournalListComponent implements OnInit {
     });
   }
 
-  applyFilters() {
+  applyFilters(resetPage: boolean = true) {
     let temp = [...this.allData];
 
     // Global Search (Title, Abstract, Keywords)
@@ -301,7 +318,13 @@ export class JournalListComponent implements OnInit {
 
     this.journal = temp;
     this.totalRecords = temp.length;
-    this.first = 0; // Reset page to first
+
+    if (resetPage) {
+      this.first = 0;
+    } else if (this.first >= this.totalRecords) {
+      this.first = 0;
+    }
+
     this.updatePagedData();
   }
 
@@ -317,11 +340,34 @@ export class JournalListComponent implements OnInit {
     this.rows = event.rows;
     this.updatePagedData();
 
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { first: this.first },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const element = document.querySelector('.journal-list-layout-wrapper');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  scrollToCard(cardId: string) {
+    setTimeout(() => {
+      const element = document.getElementById(cardId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setTimeout(() => {
+          const el = document.getElementById(cardId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 350);
+      }
+    }, 150);
   }
 
   clearFilters() {

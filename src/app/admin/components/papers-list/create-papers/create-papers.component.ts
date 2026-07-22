@@ -327,7 +327,7 @@ export class CreatePapersComponent {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
-      data: { JournalId: journalId },
+      data: { JournalId: journalId, Source: 'Journal', fromCreatePapers: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -341,7 +341,7 @@ export class CreatePapersComponent {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
-      data: { PaperId: paperId },
+      data: { PaperId: paperId, Source: 'Paper', fromCreatePapers: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

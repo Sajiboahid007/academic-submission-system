@@ -7,8 +7,8 @@
     border: 1px solid #eaeaea;
   ">
   <h2 style="margin: 0; color: #2c3e50; font-weight: 600">Category List</h2>
-  <button pButton type="button" label="Add" icon="pi pi-plus" class="p-button-rounded p-button-success"
-    (click)="AddCategory()"></button>
+  <button *ngIf="onApprove()" pButton type="button" label="Add" icon="pi pi-plus"
+    class="p-button-rounded p-button-success" (click)="AddCategory()"></button>
 </div>
 
 <div class="card">
@@ -31,10 +31,10 @@
         <td>{{ category?.Name }}</td>
         <td>{{ category?.Code }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
+          <button *ngIf="onApprove()" pButton icon="pi pi-pencil" class="p-button-success btn-save m-1"
             (click)="onEditCategory(category.Id)"></button>
 
-          <button pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
+          <button *ngIf="onApprove()" pButton icon="pi pi-trash" class="p-button-danger btn-save m-1"
             (click)="onDeleteCategory(category.Id)"></button>
         </td>
       </tr>

@@ -149,6 +149,9 @@ export class InsertUpdatePaperComponent implements OnInit {
       this.papersForm.markAllAsTouched();
       return;
     }
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
     if (this.isEditMode) {
       this.updatePaper();
     } else {
@@ -169,6 +172,8 @@ export class InsertUpdatePaperComponent implements OnInit {
         error: (err) => {
           console.log(err);
           this.toastService.error('Error uploading file');
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
     } else {
@@ -179,11 +184,14 @@ export class InsertUpdatePaperComponent implements OnInit {
   private executePaperUpdate(paperData: Papers) {
     this.papersService.updatePaper(paperData).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
         console.log(err);
         this.toastService.error('Error updating paper');
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -201,6 +209,8 @@ export class InsertUpdatePaperComponent implements OnInit {
         error: (err) => {
           console.log(err);
           this.toastService.error('Error creating paper');
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
     } else {
@@ -212,11 +222,14 @@ export class InsertUpdatePaperComponent implements OnInit {
   private savePaper(paper: Papers) {
     this.papersService.createPaper(paper).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.dialogRef.close(res);
       },
       error: (err) => {
         console.log(err);
         this.toastService.error('Error creating paper');
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }

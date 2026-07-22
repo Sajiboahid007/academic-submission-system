@@ -16,6 +16,8 @@ import { CategoriesService } from '../../services/categories-service';
 import { CategoryInsertUpdateComponent } from './category-insert-update/category-insert-update.component';
 import { ConfirmationService } from 'primeng/api';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 @Component({
   selector: 'categories',
   standalone: false,
@@ -27,6 +29,7 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
 
   private dialogReF!: MatDialogRef<any>;
+  userTokenInfo: any;
 
   constructor(
     private readonly categoriesService: CategoriesService,
@@ -34,9 +37,11 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     private readonly cd: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService,
+    private readonly usersService: UserInfoService,
   ) { }
 
   ngOnInit(): void {
+    this.userTokenInfo = this.usersService.getUserInfo();
     this.getCategories();
   }
 
@@ -111,6 +116,19 @@ export class CategoriesComponent implements OnInit, OnDestroy {
       }
     })
   }
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
+  }
+
   ngOnDestroy(): void {
     this.destroy$.complete();
     this.destroy$.next();

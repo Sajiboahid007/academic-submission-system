@@ -73,9 +73,32 @@
                 </div>
               </td>
               <td>
-                <div *ngFor="let item of paper.PaperGroups">
-                  <div *ngIf="item?.UserType === 'Teacher'" [pTooltip]="item?.Users?.Name" tooltipPosition="right">
-                    {{ item?.Users?.Name | truncateText: 7 }}
+                <div class="authors-container">
+                  <div class="authors-list">
+                    <div class="author-badge-item" *ngFor="let teacher of getSupervisorsList(paper)">
+                      <i class="pi pi-user author-icon"></i>
+                      <span class="author-name-text">{{ teacher.name }}</span>
+
+                      <!-- Hover Tooltip Card -->
+                      <div class="teacher-tooltip-card">
+                        <div class="tooltip-avatar-wrapper">
+                          <img *ngIf="teacher.imageUrl; else defaultAvatar" [src]="teacher.imageUrl"
+                            (error)="teacher.imageUrl = ''" [alt]="teacher.name" class="tooltip-avatar" />
+                          <ng-template #defaultAvatar>
+                            <div class="tooltip-avatar-placeholder">
+                              <i class="pi pi-user"></i>
+                            </div>
+                          </ng-template>
+                        </div>
+                        <div class="tooltip-info">
+                          <div class="tooltip-name">{{ teacher.name }}</div>
+                          <div class="tooltip-dept" *ngIf="teacher.department">
+                            <i class="pi pi-building"></i>
+                            <span>{{ teacher.department }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -176,8 +199,33 @@
                 </div>
               </td>
               <td>
-                <div>
-                  {{journal.Authors}}
+                <div class="authors-container">
+                  <div class="authors-list">
+                    <div class="author-badge-item" *ngFor="let author of getAuthorsList(journal)">
+                      <i class="pi pi-user author-icon"></i>
+                      <span class="author-name-text">{{ author.name }}</span>
+
+                      <!-- Hover Tooltip Card -->
+                      <div class="teacher-tooltip-card">
+                        <div class="tooltip-avatar-wrapper">
+                          <img *ngIf="author.imageUrl; else defaultAvatar" [src]="author.imageUrl"
+                            (error)="author.imageUrl = ''" [alt]="author.name" class="tooltip-avatar" />
+                          <ng-template #defaultAvatar>
+                            <div class="tooltip-avatar-placeholder">
+                              <i class="pi pi-user"></i>
+                            </div>
+                          </ng-template>
+                        </div>
+                        <div class="tooltip-info">
+                          <div class="tooltip-name">{{ author.name }}</div>
+                          <div class="tooltip-dept" *ngIf="author.department">
+                            <i class="pi pi-building"></i>
+                            <span>{{ author.department }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div>
                     <small style="font-size: 10px; color: rgb(169, 169, 169)"> Up-By: {{ journal?.Users?.Name }}
                     </small>

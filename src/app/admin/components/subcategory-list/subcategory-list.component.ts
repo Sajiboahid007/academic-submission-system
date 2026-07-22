@@ -14,6 +14,8 @@ import { AppQuery } from '../../../shared/app-query';
 import { SubcategoryService } from '../../services/subcategory-service';
 import { ConfirmationService } from 'primeng/api';
 import { ToastService } from '../../../shared/services/toast.service';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-subcategory-list',
@@ -30,6 +32,7 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
   subcategories: SubCategory[] = [];
 
   subCategoryEditId: number = 0;
+  userTokenInfo: any;
 
   constructor(
     private readonly dialog: MatDialog,
@@ -37,9 +40,11 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
     private readonly cdr: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
     private readonly toastService: ToastService,
+    private readonly usersService: UserInfoService,
   ) { }
 
   ngOnInit(): void {
+    this.userTokenInfo = this.usersService.getUserInfo();
     this.getSubcategories();
   }
 
@@ -101,6 +106,18 @@ export class SubcategoryListComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
   }
 
   ngOnDestroy(): void {

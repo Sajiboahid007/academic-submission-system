@@ -180,8 +180,6 @@
 
   <!-- Actions -->
 
-  <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s"
-    [style]="{ width: '50px', height: '50px' }" *ngIf="isLoading" />
   <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="12px" class="modal-footer-section">
     <button pButton type="button" label="Cancel" icon="pi pi-times" class="p-button-danger btn-cancel"
       [disabled]="isLoading" (click)="onCancel()"></button>

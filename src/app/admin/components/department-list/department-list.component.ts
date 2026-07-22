@@ -16,6 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 @Component({
   selector: 'app-department-list',
   standalone: false,
@@ -27,6 +29,7 @@ export class DepartmentListComponent implements OnInit {
   department: Department[] = [];
   @Input() table!: Table;
   @Input() isCsvExportRequired = false;
+  userTokenInfo: any;
 
   constructor(
     private readonly departmentService: DepartmentService,
@@ -34,8 +37,10 @@ export class DepartmentListComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly cdr: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
-  ) {}
+    private readonly usersService: UserInfoService,
+  ) { }
   ngOnInit(): void {
+    this.userTokenInfo = this.usersService.getUserInfo();
     this.getDepartments();
   }
 
@@ -102,5 +107,17 @@ export class DepartmentListComponent implements OnInit {
         console.error('Error fetching department:', error);
       },
     });
+  }
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
   }
 }

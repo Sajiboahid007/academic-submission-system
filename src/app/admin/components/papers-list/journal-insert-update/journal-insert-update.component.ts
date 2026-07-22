@@ -54,16 +54,36 @@ export class JournalInsertUpdateComponent implements OnInit {
     this.getSubCategory();
     this.getUsers();
 
-
     if (this.data) {
       this.isEditMode = true;
       this.journalId = this.data.Id;
       this.journalForm.patchValue(this.data);
+      this.populateAuthorsIds();
       this.cdr.markForCheck();
     }
   }
 
+  private populateAuthorsIds(): void {
+    if (!this.data) return;
+    const d = this.data as any;
+    let teacherIds: number[] = [];
 
+    if (Array.isArray(d.authorsIds) && d.authorsIds.length > 0) {
+      teacherIds = d.authorsIds.map(Number);
+    } else if (Array.isArray(d.TeacherIds) && d.TeacherIds.length > 0) {
+      teacherIds = d.TeacherIds.map(Number);
+    } else if (Array.isArray(d.PaperGroups) && d.PaperGroups.length > 0) {
+      teacherIds = d.PaperGroups
+        .filter((g: any) => g.UserType !== 'Reviewer' && g.Users?.Roles?.Name !== 'Reviewer' && g.User?.Roles?.Name !== 'Reviewer')
+        .map((g: any) => g.UserId || g.UsersId || g.Users?.Id || g.User?.Id)
+        .filter(Boolean)
+        .map(Number);
+    }
+
+    if (teacherIds.length > 0) {
+      this.journalForm.patchValue({ authorsIds: teacherIds });
+    }
+  }
 
   getUsers() {
     this.userService.getUsers().subscribe((res) => {
@@ -74,6 +94,12 @@ export class JournalInsertUpdateComponent implements OnInit {
           user?.Roles?.Name === AcademicSubmissionConfig.UserRole.Admin ||
           user?.Roles?.Name === AcademicSubmissionConfig.UserRole.SuperAdmin,
       );
+
+      if (this.data) {
+        this.populateAuthorsIds();
+      }
+
+      this.cdr.markForCheck();
     });
   }
 
@@ -121,8 +147,11 @@ export class JournalInsertUpdateComponent implements OnInit {
       this.fileService.uploadFile(file).subscribe({
         next: (res) => {
           this.isSaving = false;
-          const journal = this.journalForm.getRawValue() as Journals;
+          const journal = this.journalForm.getRawValue() as any;
           journal.FileUrl = res?.data?.url;
+          if (journal.authorsIds && Array.isArray(journal.authorsIds)) {
+            journal.TeacherIds = journal.authorsIds;
+          }
           this.savePaper(journal);
         },
         error: (err) => {
@@ -133,7 +162,10 @@ export class JournalInsertUpdateComponent implements OnInit {
       });
     } else {
       this.isSaving = false;
-      const journal = this.journalForm.getRawValue() as Journals;
+      const journal = this.journalForm.getRawValue() as any;
+      if (journal.authorsIds && Array.isArray(journal.authorsIds)) {
+        journal.TeacherIds = journal.authorsIds;
+      }
       this.savePaper(journal);
     }
   }
@@ -155,8 +187,11 @@ export class JournalInsertUpdateComponent implements OnInit {
   updateJournal() {
     const file = this.journalForm.value.File;
     const resFile = this.journalForm.value.ResFile;
-    const journalData = this.journalForm.getRawValue() as Journals;
+    const journalData = this.journalForm.getRawValue() as any;
     journalData.Id = this.journalId;
+    if (journalData.authorsIds && Array.isArray(journalData.authorsIds)) {
+      journalData.TeacherIds = journalData.authorsIds;
+    }
 
     if (file || resFile) {
       this.fileService.uploadFiles2([file, resFile]).subscribe({

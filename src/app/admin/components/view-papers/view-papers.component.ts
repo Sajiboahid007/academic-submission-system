@@ -6,6 +6,10 @@ import { DepartmentService } from '../../services/department-service';
 import { UserInfoService } from '../../services/user-info-service';
 import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
 
+import { Location } from '@angular/common';
+
+import { PaperGroup } from '../../services/paper-group';
+
 @Component({
   selector: 'app-view-papers',
   standalone: false,
@@ -16,7 +20,9 @@ import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-
 export class ViewPapersComponent implements OnInit {
   id: number | null = null;
   type: 'journal' | 'paper' = 'journal';
+  from: string | null = null;
   item: any = null;
+  groupTeachers: any[] = [];
   loading: boolean = true;
   activeTab: string = 'details';
 
@@ -30,10 +36,12 @@ export class ViewPapersComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly location: Location,
     private readonly journalService: JournalService,
     private readonly papersService: PapersService,
     private readonly departmentService: DepartmentService,
     private readonly userInfoService: UserInfoService,
+    private readonly paperGroupService: PaperGroup,
     private readonly cdr: ChangeDetectorRef,
   ) { }
 
@@ -44,6 +52,7 @@ export class ViewPapersComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.id = Number(params['id']) || null;
       this.type = (params['type'] === 'paper' ? 'paper' : 'journal');
+      this.from = params['from'] || null;
 
       if (this.id) {
         this.loadDetails();
@@ -82,6 +91,8 @@ export class ViewPapersComponent implements OnInit {
     this.loading = true;
     this.cdr.markForCheck();
 
+    this.fetchGroupMembers();
+
     if (this.type === 'journal') {
       this.journalService.getById(this.id!).subscribe({
         next: (res) => {
@@ -109,6 +120,25 @@ export class ViewPapersComponent implements OnInit {
         },
       });
     }
+  }
+
+  fetchGroupMembers() {
+    if (!this.id) return;
+
+    const obs$ =
+      this.type === 'journal'
+        ? this.paperGroupService.getGroupPapersWithJournalId(this.id)
+        : this.paperGroupService.getGroupPapersWithPaperId(this.id);
+
+    obs$.subscribe({
+      next: (res: any) => {
+        this.groupTeachers = res?.data?.teachers || res?.data?.allMembers || [];
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error fetching paper group members:', err);
+      },
+    });
   }
 
   getAuthorsList(): any[] {
@@ -163,7 +193,25 @@ export class ViewPapersComponent implements OnInit {
       });
     };
 
-    // 1. From PaperGroups (filtering out Reviewers)
+    // 1. From groupTeachers (retrieved via PaperGroup service)
+    const teachersList = this.groupTeachers || [];
+    teachersList.forEach((t: any) => {
+      const userType = t?.UserType;
+      const roleName = t?.Roles?.Name || t?.Users?.Roles?.Name;
+      if (userType === 'Reviewer' || roleName === 'Reviewer') return;
+
+      const tUserId = t?.UserId || t?.UsersId || t?.Id;
+      const tName = t?.Name || t?.Users?.Name;
+      const tDept =
+        t?.Department?.Name ||
+        t?.Users?.Department?.Name ||
+        (typeof t?.Department === 'string' ? t.Department : null);
+      const tImg = t?.ImageUrl || t?.Image || t?.Users?.ImageUrl;
+
+      addAuthor(tUserId ? Number(tUserId) : null, tName, tDept, tImg);
+    });
+
+    // 2. From PaperGroups (filtering out Reviewers)
     const groups = this.item?.PaperGroups || [];
     groups.forEach((g: any) => {
       const userType = g?.UserType;
@@ -182,7 +230,7 @@ export class ViewPapersComponent implements OnInit {
       addAuthor(gUserId ? Number(gUserId) : null, gName, gDept, gImg);
     });
 
-    // 2. From item.UserId / item.Users
+    // 3. From item.UserId / item.Users
     if (this.item?.UserId || this.item?.Users) {
       const uId = this.item?.UserId || this.item?.Users?.Id;
       const uName = this.item?.Users?.Name;
@@ -191,7 +239,7 @@ export class ViewPapersComponent implements OnInit {
       addAuthor(uId ? Number(uId) : null, uName, uDept, uImg);
     }
 
-    // 3. From item.Authors string fallback
+    // 4. From item.Authors string fallback
     if (this.item?.Authors) {
       const names = this.item.Authors.split(',');
       names.forEach((n: string) => {
@@ -244,10 +292,7 @@ export class ViewPapersComponent implements OnInit {
   }
 
   goBack() {
-    if (this.type === 'journal') {
-      this.router.navigate(['/dashboard/journal']);
-    } else {
-      this.router.navigate(['/dashboard/paper-detail']);
-    }
+    this.location.back();
   }
 }
+

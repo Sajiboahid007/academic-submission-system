@@ -11,6 +11,8 @@ import { AppQuery } from '../../../shared/app-query';
 import { ConfirmationService } from 'primeng/api';
 import { ToastService } from '../../../shared/services/toast.service';
 import { takeUntil } from 'rxjs';
+import { AcademicSubmissionConfig } from '../../../fds-config/constant/academic-submission-config';
+import { UserInfoService } from '../../services/user-info-service';
 
 @Component({
   selector: 'app-batch-list',
@@ -23,16 +25,18 @@ export class BatchListComponent implements OnInit {
   cols: any[] = [];
 
   private dialogRef!: MatDialogRef<any>;
+  userTokenInfo: any;
 
   constructor(
     private readonly batchService: BatchService,
     private readonly dialog: MatDialog,
     private readonly cdr: ChangeDetectorRef,
     private readonly confirmationService: ConfirmationService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly usersService: UserInfoService,
   ) { }
   ngOnInit(): void {
-
+    this.userTokenInfo = this.usersService.getUserInfo();
     this.cols = [
       { field: 'Name', header: 'Name' },
       { field: 'Year', header: 'Year' },
@@ -111,5 +115,17 @@ export class BatchListComponent implements OnInit {
         console.error('Error fetching batch:', error);
       },
     });
+  }
+
+  onApprove() {
+    const role = AcademicSubmissionConfig.UserRole;
+    const userRole = this.userTokenInfo?.role;
+
+    // Only allow if the user has the SuperAdmin or Admin role
+    if (userRole === role.SuperAdmin || userRole === role.Admin) {
+      return true;
+    }
+
+    return false;
   }
 }

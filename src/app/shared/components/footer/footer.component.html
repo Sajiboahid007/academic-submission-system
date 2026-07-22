@@ -4,7 +4,7 @@
 
         <!-- Main grid: about, navigation, resources, dev team -->
         <div class="footer-grid">
-            
+
             <!-- Column 1: About the System -->
             <div class="footer-col about-col">
                 <div class="footer-card">
@@ -13,7 +13,9 @@
                         <span class="brand-text">Papers Hub</span>
                     </div>
                     <p class="footer-text">
-                        Academic Paper Submission & Approval System is a professional, secure repository and peer-review workflow platform. We streamline the lifecycle of academic papers and official research reviews with confidence.
+                        Academic Paper Submission & Approval System is a professional, secure repository and peer-review
+                        workflow platform. We streamline the lifecycle of academic papers and official research reviews
+                        with confidence.
                     </p>
                     <div class="footer-contact-info">
                         <a href="mailto:gono.no.response@gmail.com" class="contact-email-link">
@@ -35,19 +37,10 @@
                         <i class="pi pi-compass"></i> Navigation
                     </h4>
                     <ul class="footer-links-list">
-                        <li>
-                            <a routerLink="/" class="footer-nav-link">
-                                <i class="pi pi-home"></i> Home Portal
-                            </a>
-                        </li>
-                        <li>
-                            <a routerLink="/" class="footer-nav-link">
-                                <i class="pi pi-book"></i> Browse Journals
-                            </a>
-                        </li>
-                        <li>
-                            <a routerLink="/" class="footer-nav-link">
-                                <i class="pi pi-file"></i> Academic Papers
+                        <li *ngFor="let item of navigations">
+                            <a [routerLink]="(isFromHomePage || isHomePageRoute()) ? null : item.route"
+                               (click)="onNavClick($event, item)" class="footer-nav-link">
+                                <i [class]="item.icon"></i> {{ item.label }}
                             </a>
                         </li>
                     </ul>
@@ -62,17 +55,20 @@
                     </h4>
                     <ul class="footer-links-list">
                         <li>
-                            <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" class="footer-nav-link">
+                            <a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer"
+                                class="footer-nav-link">
                                 <i class="pi pi-external-link"></i> Google Scholar
                             </a>
                         </li>
                         <li>
-                            <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer" class="footer-nav-link">
+                            <a href="https://www.researchgate.net" target="_blank" rel="noopener noreferrer"
+                                class="footer-nav-link">
                                 <i class="pi pi-external-link"></i> ResearchGate
                             </a>
                         </li>
                         <li>
-                            <a href="https://gonouniversity.edu.bd" target="_blank" rel="noopener noreferrer" class="footer-nav-link">
+                            <a href="https://gonouniversity.edu.bd" target="_blank" rel="noopener noreferrer"
+                                class="footer-nav-link">
                                 <i class="pi pi-link"></i> Gono University
                             </a>
                         </li>
@@ -101,10 +97,12 @@
                         </div>
                     </div>
                     <div class="social-row">
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link"
+                            aria-label="GitHub">
                             <i class="pi pi-github"></i>
                         </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link"
+                            aria-label="LinkedIn">
                             <i class="pi pi-linkedin"></i>
                         </a>
                     </div>
@@ -122,7 +120,8 @@
                 <i class="pi pi-copyright"></i> 2026 Academic Paper System. All rights reserved.
             </span>
             <span class="credit">
-                <i class="pi pi-star-fill"></i> Designed & Developed with <i class="pi pi-heart-fill heart-pulse"></i> by <strong>Sajib &amp; team</strong>
+                <i class="pi pi-star-fill"></i> Designed & Developed with <i class="pi pi-heart-fill heart-pulse"></i>
+                by <strong>Sajib &amp; team</strong>
             </span>
         </div>
 

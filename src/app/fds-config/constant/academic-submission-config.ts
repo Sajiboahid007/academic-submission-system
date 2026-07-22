@@ -27,6 +27,7 @@ export class AcademicSubmissionConfig {
     Pending: 'Pending',
     ReviewRequested: 'Review Requested',
     EditorialApproved: 'Editorial Approved',
+    ReviewerReject: 'Reviewer Reject',
     Approved: 'Approved',
     Rejected: 'Rejected',
   } as const;

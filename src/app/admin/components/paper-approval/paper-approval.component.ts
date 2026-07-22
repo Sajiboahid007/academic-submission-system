@@ -51,8 +51,12 @@ export class PaperApprovalComponent implements OnInit {
   filterPaperId: number | null = null;
   filterJournalId: number | null = null;
 
+  usersMap = new Map<number, any>();
+  usersMapByName = new Map<string, any>();
+
   ngOnInit(): void {
     this.userTokenInfo = this.userInfoService.getUserInfo();
+    this.getUsers();
 
     const userRole = this.userTokenInfo?.role;
     const { Student: studentRole, Teacher: teacherRole, SuperAdmin: superAdmin, Admin: admin, Reviewer: Reviewer } = AcademicSubmissionConfig.UserRole;
@@ -460,6 +464,22 @@ export class PaperApprovalComponent implements OnInit {
     return false;
   }
 
+  getUsers() {
+    this.userInfoService.getUsers().subscribe({
+      next: (res: any) => {
+        const list = res?.data || [];
+        this.usersMap.clear();
+        this.usersMapByName.clear();
+        list.forEach((u: any) => {
+          if (u?.Id) this.usersMap.set(Number(u.Id), u);
+          if (u?.Name) this.usersMapByName.set(u.Name.trim().toLowerCase(), u);
+        });
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => console.error('Error fetching users:', err)
+    });
+  }
+
   getReviewerNames(journal: any): string {
     if (!journal?.PaperGroups) return '';
     return journal.PaperGroups
@@ -467,6 +487,171 @@ export class PaperApprovalComponent implements OnInit {
       .map((item: any) => item?.Users?.Name)
       .filter(Boolean)
       .join(', ');
+  }
+
+  getAuthorsList(item: any): any[] {
+    if (!item) return [];
+
+    const authors: any[] = [];
+    const addedUserIds = new Set<number>();
+    const addedNames = new Set<string>();
+
+    const addAuthor = (userId: number | null, rawName: string, deptName?: string, rawImg?: string) => {
+      if (!rawName) return;
+      const name = rawName.trim();
+      if (!name) return;
+
+      const cleanNameKey = name.toLowerCase();
+
+      let userFromMap = userId ? this.usersMap.get(Number(userId)) : null;
+      if (!userFromMap) {
+        userFromMap = this.usersMapByName.get(cleanNameKey);
+      }
+
+      const uId = userFromMap?.Id || userId;
+      if (uId && addedUserIds.has(Number(uId))) return;
+      if (!uId && addedNames.has(cleanNameKey)) return;
+
+      if (uId) addedUserIds.add(Number(uId));
+      addedNames.add(cleanNameKey);
+
+      let dept =
+        deptName ||
+        userFromMap?.Department?.Name ||
+        (typeof userFromMap?.Department === 'string' ? userFromMap.Department : null) ||
+        (userFromMap?.DepartmentId && userFromMap.DepartmentId) ||
+        '';
+
+      let img =
+        rawImg ||
+        userFromMap?.ImageUrl ||
+        userFromMap?.Image ||
+        userFromMap?.imageUrl;
+
+      if (img && !img.startsWith('http://') && !img.startsWith('https://') && !img.startsWith('data:')) {
+        const baseUrl = AcademicSubmissionConfig.BaseUrl;
+        img = img.startsWith('/') ? `${baseUrl}${img}` : `${baseUrl}/${img}`;
+      }
+
+      authors.push({
+        id: uId,
+        name: name,
+        department: dept,
+        imageUrl: img || '',
+      });
+    };
+
+    // 1. From PaperGroups (excluding Reviewers)
+    const groups = item?.PaperGroups || [];
+    groups.forEach((g: any) => {
+      const userType = g?.UserType;
+      const roleName = g?.Users?.Roles?.Name || g?.User?.Roles?.Name;
+      if (userType === 'Reviewer' || roleName === 'Reviewer') return;
+
+      const gUserId = g?.UserId || g?.UsersId || g?.Users?.Id || g?.User?.Id;
+      const gName = g?.Users?.Name || g?.User?.Name || g?.Name;
+      const gDept =
+        g?.Users?.Department?.Name ||
+        g?.User?.Department?.Name ||
+        g?.Department?.Name ||
+        (typeof g?.Users?.Department === 'string' ? g.Users.Department : null);
+      const gImg = g?.Users?.ImageUrl || g?.Users?.Image || g?.User?.ImageUrl || g?.ImageUrl;
+
+      addAuthor(gUserId ? Number(gUserId) : null, gName, gDept, gImg);
+    });
+
+    // 2. From item.Users / item.UserId
+    if (item?.Users?.Name || item?.UserId) {
+      const uId = item?.UserId || item?.Users?.Id;
+      const uName = item?.Users?.Name;
+      const uDept = item?.Users?.Department?.Name || item?.Department?.Name;
+      const uImg = item?.Users?.ImageUrl || item?.Users?.Image;
+      addAuthor(uId ? Number(uId) : null, uName, uDept, uImg);
+    }
+
+    // 3. From item.Authors string fallback
+    if (item?.Authors) {
+      const names = item.Authors.split(',');
+      names.forEach((n: string) => {
+        const trimmed = n.trim();
+        if (trimmed) {
+          addAuthor(null, trimmed);
+        }
+      });
+    }
+
+    return authors;
+  }
+
+  getAuthorNames(item: any): string {
+    const list = this.getAuthorsList(item);
+    if (list.length > 0) {
+      return list.map((a) => a.name).join(', ');
+    }
+    return item?.Authors || item?.Users?.Name || '-';
+  }
+
+  getSupervisorsList(paper: any): any[] {
+    if (!paper?.PaperGroups) return [];
+
+    const supervisors: any[] = [];
+    const addedUserIds = new Set<number>();
+    const addedNames = new Set<string>();
+
+    paper.PaperGroups.forEach((g: any) => {
+      const userType = g?.UserType;
+      const roleName = g?.Users?.Roles?.Name || g?.User?.Roles?.Name;
+      if (userType !== 'Teacher' && roleName !== 'Teacher') return;
+
+      const userId = g?.UserId || g?.UsersId || g?.Users?.Id || g?.User?.Id;
+      const rawName = g?.Users?.Name || g?.User?.Name || g?.Name;
+      if (!rawName) return;
+
+      const name = rawName.trim();
+      const cleanNameKey = name.toLowerCase();
+
+      let userFromMap = userId ? this.usersMap.get(Number(userId)) : null;
+      if (!userFromMap) {
+        userFromMap = this.usersMapByName.get(cleanNameKey);
+      }
+
+      const uId = userFromMap?.Id || userId;
+      if (uId && addedUserIds.has(Number(uId))) return;
+      if (!uId && addedNames.has(cleanNameKey)) return;
+
+      if (uId) addedUserIds.add(Number(uId));
+      addedNames.add(cleanNameKey);
+
+      let dept =
+        g?.Users?.Department?.Name ||
+        g?.User?.Department?.Name ||
+        g?.Department?.Name ||
+        userFromMap?.Department?.Name ||
+        paper?.Department?.Name ||
+        '';
+
+      let img =
+        g?.Users?.ImageUrl ||
+        g?.Users?.Image ||
+        g?.User?.ImageUrl ||
+        g?.ImageUrl ||
+        userFromMap?.ImageUrl ||
+        userFromMap?.Image;
+
+      if (img && !img.startsWith('http://') && !img.startsWith('https://') && !img.startsWith('data:')) {
+        const baseUrl = AcademicSubmissionConfig.BaseUrl;
+        img = img.startsWith('/') ? `${baseUrl}${img}` : `${baseUrl}/${img}`;
+      }
+
+      supervisors.push({
+        id: uId,
+        name: name,
+        department: dept,
+        imageUrl: img || '',
+      });
+    });
+
+    return supervisors;
   }
 
   viewResponseLater(id: number) {

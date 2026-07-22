@@ -14,6 +14,8 @@ import { JournalService } from '../../services/journal-service';
 import { AppQuery } from '../../../shared/app-query';
 import { Journals } from '../../../fds-config/entity-models/journals';
 
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-profile',
   standalone: false,
@@ -35,6 +37,8 @@ export class ProfileComponent implements OnInit {
   papersRows = 10;
   journalsFirst = 0;
   journalsRows = 10;
+  highlightedPaperId: number | null = null;
+  highlightedJournalId: number | null = null;
 
   @ViewChild('otpModal') otpModal!: TemplateRef<any>;
   private dialogRef!: MatDialogRef<any>;
@@ -53,9 +57,35 @@ export class ProfileComponent implements OnInit {
     private readonly toastService: ToastService,
     private readonly confirmationService: ConfirmationService,
     private readonly fileService: FileService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['first'] !== undefined) {
+        const firstVal = Number(params['first']) || 0;
+        if (params['type'] === 'journal' || params['tab'] === '1') {
+          this.journalsFirst = firstVal;
+          this.activeTab = '1';
+        } else {
+          this.papersFirst = firstVal;
+          this.activeTab = '0';
+        }
+      }
+      if (params['tab'] !== undefined) {
+        this.activeTab = params['tab'];
+      }
+      if (params['paperId'] || params['id']) {
+        const pid = Number(params['paperId'] || params['id']);
+        if (params['type'] === 'journal' || params['tab'] === '1') {
+          this.highlightedJournalId = pid;
+        } else {
+          this.highlightedPaperId = pid;
+        }
+      }
+    });
+
     const userInfo = this.userInfoService.getUserInfo();
     if (userInfo && userInfo.userId) {
       this.userId = userInfo.userId;
@@ -83,6 +113,9 @@ export class ProfileComponent implements OnInit {
       next: (res: any) => {
         this.papers = res?.data || [];
         this.cdr.markForCheck();
+        if (this.highlightedPaperId) {
+          this.scrollToCard('paper-card-' + this.highlightedPaperId);
+        }
       },
       error: (err) => {
         console.error('Error fetching papers:', err);
@@ -95,6 +128,9 @@ export class ProfileComponent implements OnInit {
       next: (res: AppQuery<Journals[]>) => {
         this.journal = res.data;
         this.cdr.markForCheck();
+        if (this.highlightedJournalId) {
+          this.scrollToCard('journal-card-' + this.highlightedJournalId);
+        }
       },
       error: (error: any) => {
         this.toastService.error('Failed to load journals.');
@@ -145,12 +181,14 @@ export class ProfileComponent implements OnInit {
   onPapersPageChange(event: any) {
     this.papersFirst = event.first;
     this.papersRows = event.rows;
+    this.router.navigate([], { relativeTo: this.route, queryParams: { first: this.papersFirst, tab: '0' }, queryParamsHandling: 'merge', replaceUrl: true });
     this.cdr.markForCheck();
   }
 
   onJournalsPageChange(event: any) {
     this.journalsFirst = event.first;
     this.journalsRows = event.rows;
+    this.router.navigate([], { relativeTo: this.route, queryParams: { first: this.journalsFirst, tab: '1' }, queryParamsHandling: 'merge', replaceUrl: true });
     this.cdr.markForCheck();
   }
 
@@ -158,6 +196,22 @@ export class ProfileComponent implements OnInit {
     this.papersFirst = 0;
     this.journalsFirst = 0;
     this.cdr.markForCheck();
+  }
+
+  scrollToCard(cardId: string) {
+    setTimeout(() => {
+      const element = document.getElementById(cardId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setTimeout(() => {
+          const el = document.getElementById(cardId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 350);
+      }
+    }, 150);
   }
 
   editProfile(): void {
@@ -206,37 +260,11 @@ export class ProfileComponent implements OnInit {
   }
 
   viewPaper(id: number): void {
-    const paper = this.papers.find((p) => p.Id === id);
-
-    if (paper?.FileUrl) {
-      const link = document.createElement('a');
-      link.href = paper.FileUrl;
-      link.download = paper.FileUrl.split('/').pop() || 'document.pdf';
-      link.target = '_blank';
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      console.warn('No PDF file URL found.');
-    }
+    this.router.navigate(['/dashboard/view-paper'], { queryParams: { id, type: 'paper', from: 'profile', first: this.papersFirst, tab: '0', paperId: id } });
   }
 
   viewJournal(id: number): void {
-    const item = this.journal.find((j) => j.Id === id);
-
-    if (item?.FileUrl) {
-      const link = document.createElement('a');
-      link.href = item.FileUrl;
-      link.download = item.FileUrl.split('/').pop() || 'document.pdf';
-      link.target = '_blank';
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      this.toastService.warn('No PDF file URL found.');
-    }
+    this.router.navigate(['/dashboard/view-paper'], { queryParams: { id, type: 'journal', from: 'profile', first: this.journalsFirst, tab: '1', paperId: id } });
   }
 
   public imageUpload(id: number, file: File): void {
@@ -292,23 +320,48 @@ export class ProfileComponent implements OnInit {
     dialogRef.afterClosed().subscribe((res: any) => {
       if (res) {
         this.fetchUserPapers();
+        this.toastService.success('Paper updated successfully');
       }
     });
   }
 
   editJournal(journal: any): void {
-    const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
-      width: '800px',
-      height: '700px',
-      maxWidth: 'none',
-      autoFocus: true,
-      data: journal,
-    });
+    if (!journal?.Id) return;
 
-    dialogRef.afterClosed().subscribe((res: any) => {
-      if (res) {
-        this.getJournalByUserId(this.userId);
-      }
+    this.journalService.getById(journal.Id).subscribe({
+      next: (res) => {
+        const fullJournal = res?.data || journal;
+        const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+          width: '800px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: fullJournal,
+        });
+
+        dialogRef.afterClosed().subscribe((res: any) => {
+          if (res) {
+            this.getJournalByUserId(this.userId);
+            this.toastService.success('Journal updated successfully');
+          }
+        });
+      },
+      error: () => {
+        const dialogRef = this.dialog.open(JournalInsertUpdateComponent, {
+          width: '800px',
+          height: '700px',
+          maxWidth: 'none',
+          autoFocus: true,
+          data: journal,
+        });
+
+        dialogRef.afterClosed().subscribe((res: any) => {
+          if (res) {
+            this.getJournalByUserId(this.userId);
+            this.toastService.success('Journal updated successfully');
+          }
+        });
+      },
     });
   }
 

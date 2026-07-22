@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Papers } from '../../../../fds-config/entity-models/papers';
 import { Category } from '../../../../fds-config/entity-models/categories';
 import { SubCategory } from '../../../../fds-config/entity-models/subcategory';
@@ -47,6 +48,7 @@ export class PaperDetailComponent implements OnInit {
   first: number = 0;
   rows: number = 10;
   totalRecords: number = 0;
+  highlightedId: number | null = null;
 
   constructor(
     private readonly papersService: PapersService,
@@ -57,9 +59,20 @@ export class PaperDetailComponent implements OnInit {
     private readonly departmentService: DepartmentService,
     private readonly batchService: BatchService,
     private readonly toastService: ToastService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['first'] !== undefined) {
+        this.first = Number(params['first']) || 0;
+      }
+      if (params['paperId'] || params['id']) {
+        this.highlightedId = Number(params['paperId'] || params['id']);
+      }
+    });
+
     this.getPapers();
     this.getCategory();
     this.getSubCategory();
@@ -79,9 +92,13 @@ export class PaperDetailComponent implements OnInit {
           new Set(this.papers.map((paper) => paper.Year).filter((year): year is string => !!year)),
         ).sort();
 
-        this.applyFilters();
+        this.applyFilters(false);
         this.loading = false;
         this.cdr.markForCheck();
+
+        if (this.highlightedId) {
+          this.scrollToCard('paper-card-' + this.highlightedId);
+        }
       },
       error: (err) => {
         console.error('Error fetching papers:', err);
@@ -119,7 +136,7 @@ export class PaperDetailComponent implements OnInit {
     });
   }
 
-  applyFilters() {
+  applyFilters(resetPage: boolean = true) {
     let temp = [...this.papers];
 
     // Global search logic (Title or Abstract)
@@ -165,7 +182,13 @@ export class PaperDetailComponent implements OnInit {
 
     this.filteredPapers = temp;
     this.totalRecords = temp.length;
-    this.first = 0; // Reset to first page
+
+    if (resetPage) {
+      this.first = 0;
+    } else if (this.first >= this.totalRecords) {
+      this.first = 0;
+    }
+
     this.updatePagedData();
   }
 
@@ -181,11 +204,34 @@ export class PaperDetailComponent implements OnInit {
     this.rows = event.rows;
     this.updatePagedData();
 
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { first: this.first },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const element = document.querySelector('.paper-detail-layout-wrapper');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  scrollToCard(cardId: string) {
+    setTimeout(() => {
+      const element = document.getElementById(cardId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setTimeout(() => {
+          const el = document.getElementById(cardId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 350);
+      }
+    }, 150);
   }
 
   clearFilters() {
