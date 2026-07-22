@@ -184,7 +184,9 @@
                   class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewPaper(paper.Id)"></button>
 
                 <button pButton type="button" label="Edit" icon="pi pi-pencil"
-                  class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editPaper(paper)"></button>
+                  class="p-button-outlined p-button-sm action-btn btn-edit" [disabled]="!isPaperEditable(paper)"
+                  [title]="!isPaperEditable(paper) ? 'Approved papers cannot be edited' : 'Edit paper'"
+                  (click)="editPaper(paper)"></button>
 
                 <button pButton type="button" label="Delete" icon="pi pi-trash"
                   class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deletePaper(paper.Id)"></button>
@@ -252,7 +254,9 @@
                   class="p-button-outlined p-button-sm action-btn btn-view" (click)="viewJournal(j.Id)"></button>
 
                 <button pButton type="button" label="Edit" icon="pi pi-pencil"
-                  class="p-button-outlined p-button-sm action-btn btn-edit" (click)="editJournal(j)"></button>
+                  class="p-button-outlined p-button-sm action-btn btn-edit" [disabled]="!isJournalEditable(j)"
+                  [title]="!isJournalEditable(j) ? 'Approved journals cannot be edited' : 'Edit journal'"
+                  (click)="editJournal(j)"></button>
 
                 <button pButton type="button" label="Delete" icon="pi pi-trash"
                   class="p-button-outlined p-button-sm action-btn btn-delete" (click)="deleteJournal(j.Id)"></button>

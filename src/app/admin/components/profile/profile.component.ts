@@ -307,7 +307,22 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  isPaperEditable(paper: any): boolean {
+    const status = (paper?.PaperApprovals?.[0]?.Status || paper?.Status || '').toLowerCase();
+    return status !== 'approved' && status !== 'editorial approved';
+  }
+
+  isJournalEditable(journal: any): boolean {
+    const status = (journal?.PaperApprovals?.[0]?.Status || journal?.Status || '').toLowerCase();
+    return status !== 'approved' && status !== 'editorial approved';
+  }
+
   editPaper(paper: any): void {
+    if (!this.isPaperEditable(paper)) {
+      this.toastService.error('Approved papers cannot be edited.');
+      return;
+    }
+
     // Open paper dialog pre-populated for edit mode
     const dialogRef = this.dialog.open(InsertUpdatePaperComponent, {
       width: '800px',
@@ -327,6 +342,11 @@ export class ProfileComponent implements OnInit {
 
   editJournal(journal: any): void {
     if (!journal?.Id) return;
+
+    if (!this.isJournalEditable(journal)) {
+      this.toastService.error('Approved journals cannot be edited.');
+      return;
+    }
 
     this.journalService.getById(journal.Id).subscribe({
       next: (res) => {
@@ -418,19 +438,18 @@ export class ProfileComponent implements OnInit {
   public getSeverity(
     status: string | undefined,
   ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (status) {
-      case 'Approved':
+    if (!status) return 'secondary';
+    switch (status.trim().toLowerCase()) {
+      case 'approved':
+      case 'editorial approved':
         return 'success';
-      case 'Rejected':
+      case 'rejected':
         return 'danger';
-      case 'Pending':
+      case 'pending':
+      case 'review requested':
         return 'warn';
-      case 'Draft':
+      case 'draft':
         return 'info';
-      case 'Review Requested':
-        return 'warn';
-      case 'Editorial Approved':
-        return 'success';
       default:
         return 'secondary';
     }

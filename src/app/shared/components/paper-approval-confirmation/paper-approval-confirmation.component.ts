@@ -65,7 +65,20 @@ export class PaperApprovalConfirmationComponent implements OnInit {
       RemarksFile: new FormControl(null),
     });
 
-    if (this.userInfo && (this.userInfo.role === AcademicSubmissionConfig.UserRole.Student
+    const isFromCreatePapers = this.data?.fromCreatePapers || !this.data?.fromPaperApproval;
+
+    if (isFromCreatePapers) {
+      this.statusOptions = [
+        {
+          label: AcademicSubmissionConfig.ApprovalStatus.Draft,
+          value: AcademicSubmissionConfig.ApprovalStatus.Draft,
+        },
+        {
+          label: AcademicSubmissionConfig.ApprovalStatus.Pending,
+          value: AcademicSubmissionConfig.ApprovalStatus.Pending,
+        },
+      ];
+    } else if (this.userInfo && (this.userInfo.role === AcademicSubmissionConfig.UserRole.Student
       || this.userInfo.role === AcademicSubmissionConfig.UserRole.Teacher)) {
       this.statusOptions = [
         {
@@ -104,28 +117,15 @@ export class PaperApprovalConfirmationComponent implements OnInit {
         value: status,
       }));
     } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Admin) {
-      if (this.data?.fromCreatePapers || !this.data?.fromPaperApproval) {
-        this.statusOptions = [
-          {
-            label: AcademicSubmissionConfig.ApprovalStatus.Draft,
-            value: AcademicSubmissionConfig.ApprovalStatus.Draft,
-          },
-          {
-            label: AcademicSubmissionConfig.ApprovalStatus.Pending,
-            value: AcademicSubmissionConfig.ApprovalStatus.Pending,
-          },
-        ];
-      } else {
-        this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
-          .filter(
-            (status) =>
-              status !== AcademicSubmissionConfig.ApprovalStatus.Pending
-          )
-          .map((status) => ({
-            label: status,
-            value: status,
-          }));
-      }
+      this.statusOptions = Object.values(AcademicSubmissionConfig.ApprovalStatus)
+        .filter(
+          (status) =>
+            status !== AcademicSubmissionConfig.ApprovalStatus.Pending
+        )
+        .map((status) => ({
+          label: status,
+          value: status,
+        }));
     } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
       this.statusOptions = [
         {
