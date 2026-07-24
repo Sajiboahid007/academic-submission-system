@@ -201,8 +201,8 @@
 
           <!-- PDF Preview Side Column (Left Side) -->
           <div class="paper-card-pdf-preview" [class.no-file]="!journalData?.FileUrl"
-            (click)="journalData?.FileUrl && viewJournal(journalData.Id)"
-            [title]="journalData?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+            (click)="viewJournal(journalData.Id)"
+            title="Click to view journal details">
 
             <pdf-viewer *ngIf="journalData?.FileUrl; else pdfPlaceholder" [src]="journalData?.FileUrl" [page]="1"
               [show-all]="false" [fit-to-page]="true">
@@ -215,18 +215,14 @@
               </div>
             </ng-template>
 
-            <div class="preview-label">
-              <i class="pi pi-eye" *ngIf="!journalData?.FileUrl"></i>
-              <i class="pi pi-search-plus" *ngIf="journalData?.FileUrl"></i>
-              <span>{{ journalData?.FileUrl ? 'Preview' : 'No PDF' }}</span>
-            </div>
+
           </div>
 
           <!-- Main Content Column (Right Side) -->
           <div class="paper-card-main-content">
             <!-- Header row (Title & Status) -->
             <div class="paper-card-header">
-              <h3 class="paper-card-title">{{ journalData?.Title }}</h3>
+              <h3 class="paper-card-title clickable-title" (click)="viewJournal(journalData.Id)">{{ journalData?.Title }}</h3>
               <p-badge *ngIf="journalData.PaperApprovals && journalData.PaperApprovals[0]?.Status"
                 [value]="journalData?.PaperApprovals[0]?.Status"
                 [severity]="getSeverity(journalData?.PaperApprovals[0]?.Status)">
@@ -251,15 +247,7 @@
 
             <!-- Metadata items with Icons -->
             <div class="paper-card-metadata">
-              <!-- <div class="meta-item author-meta" *ngFor="let teacher of journalData?.PaperGroups">
-                <i class="pi pi-user"></i>
-                <span> {{ teacher?.Users?.Name }}</span>
-              </div> -->
 
-              <div class="meta-item author-meta">
-                <i class="pi pi-user"></i>
-                <span *ngIf="journalData?.Authors"> {{ journalData?.Authors }}</span>
-              </div>
 
               <div class="meta-item date-meta" *ngIf="journalData?.CreatedDate">
                 <i class="pi pi-calendar"></i>
@@ -282,13 +270,7 @@
               </div>
             </div>
 
-            <!-- Action Control Buttons -->
-            <div class="paper-card-actions">
-              <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
-                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!journalData?.FileUrl"
-                (click)="viewJournal(journalData.Id)"
-                [title]="journalData?.FileUrl ? 'View journal' : 'No file available'"></button>
-            </div>
+
           </div>
         </article>
       </div>
@@ -300,8 +282,8 @@
 
           <!-- Left Preview Side Column (PDF Preview) -->
           <div class="paper-card-pdf-preview" [class.no-file]="!paper?.FileUrl"
-            (click)="paper?.FileUrl && viewPaper(paper.Id)"
-            [title]="paper?.FileUrl ? 'Click to view full PDF' : 'No file available'">
+            (click)="viewPaper(paper.Id)"
+            title="Click to view paper details">
 
             <pdf-viewer *ngIf="paper?.FileUrl; else pdfPlaceholder" [src]="paper?.FileUrl" [page]="1" [show-all]="false"
               [fit-to-page]="true">
@@ -314,18 +296,14 @@
               </div>
             </ng-template>
 
-            <div class="preview-label">
-              <i class="pi pi-eye" *ngIf="!paper?.FileUrl"></i>
-              <i class="pi pi-search-plus" *ngIf="paper?.FileUrl"></i>
-              <span>{{ paper?.FileUrl ? 'Preview' : 'No PDF' }}</span>
-            </div>
+
           </div>
 
           <!-- Right Content Column (Title, Abstract, Badge, Metadata) -->
           <div class="paper-card-main-content">
             <!-- Header row (Title & Status) -->
             <div class="paper-card-header">
-              <h3 class="paper-card-title">{{ paper?.Title }}</h3>
+              <h3 class="paper-card-title clickable-title" (click)="viewPaper(paper.Id)">{{ paper?.Title }}</h3>
               <p-badge *ngIf="paper.PaperApprovals && paper.PaperApprovals[0]?.Status"
                 [value]="paper.PaperApprovals[0]?.Status" [severity]="getSeverity(paper.PaperApprovals[0]?.Status)">
               </p-badge>
@@ -364,12 +342,7 @@
               </div>
             </div>
 
-            <!-- Action Control Buttons -->
-            <div class="paper-card-actions">
-              <button pButton type="button" label="View Full PDF" icon="pi pi-eye"
-                class="p-button-outlined p-button-sm action-btn btn-view" [disabled]="!paper?.FileUrl"
-                (click)="viewPaper(paper.Id)" [title]="paper?.FileUrl ? 'View paper' : 'No file available'"></button>
-            </div>
+
           </div>
         </article>
       </div>
@@ -393,4 +366,121 @@
     <app-footer [isFromHomePage]="true"></app-footer>
 
   </main>
+
+  <!-- Detailed Item Modal Overlay (Home Page View - No login required) -->
+  <div class="home-view-modal-backdrop" *ngIf="viewModalVisible && selectedItemForView" (click)="closeViewModal()">
+    <div class="home-view-modal-container animate-fade-in" (click)="$event.stopPropagation()">
+
+      <!-- Topbar Header -->
+      <div class="modal-topbar">
+        <div class="topbar-left">
+          <span class="type-badge" [class.journal]="selectedItemForView.itemType === 'JOURNAL'" [class.paper]="selectedItemForView.itemType === 'PAPER'">
+            {{ selectedItemForView.displayType }}
+          </span>
+        </div>
+        <button class="modal-close-btn" (click)="closeViewModal()" title="Close viewer">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Scrollable Modal Content -->
+      <div class="modal-body-scroll">
+        <div class="view-papers-container">
+
+          <!-- Left Column: Title, Abstract, Keywords, PDF Cover -->
+          <main class="article-main-content">
+            <h1 class="article-title">{{ selectedItemForView.title }}</h1>
+
+            <!-- Abstract -->
+            <section class="article-section">
+              <h2 class="section-heading">Abstract</h2>
+              <p class="article-abstract">
+                {{ selectedItemForView.abstract }}
+              </p>
+            </section>
+
+            <!-- Keywords -->
+            <section class="article-section" *ngIf="selectedItemForView.keywords && selectedItemForView.keywords.length > 0">
+              <h2 class="section-heading">Keywords</h2>
+              <div class="keywords-list">
+                <span class="keyword-chip" *ngFor="let keyword of selectedItemForView.keywords">
+                  {{ keyword }}
+                </span>
+              </div>
+            </section>
+
+            <!-- Document Preview -->
+            <section class="article-section pdf-section" *ngIf="selectedItemForView.fileUrl">
+              <h2 class="section-heading">Article Document Preview</h2>
+              <div class="pdf-cover-container">
+                <pdf-viewer [src]="selectedItemForView.fileUrl" [page]="1" [show-all]="false" [render-text]="false"
+                  [original-size]="false" [fit-to-page]="true" [autoresize]="true" class="pdf-cover-viewer">
+                </pdf-viewer>
+              </div>
+            </section>
+          </main>
+
+          <!-- Right Sidebar: Metadata Details Card -->
+          <aside class="article-sidebar">
+            <div class="details-card">
+
+              <div class="details-card-header">
+                <h3>Publication Details</h3>
+              </div>
+
+              <div class="tab-content">
+                <!-- Metadata Rows -->
+                <div class="meta-row" *ngIf="selectedItemForView.createdDate || selectedItemForView.year">
+                  <span class="meta-label">Publication date:</span>
+                  <span class="meta-val">{{ selectedItemForView.createdDate ? (selectedItemForView.createdDate | date: 'longDate') : ('Year ' + selectedItemForView.year) }}</span>
+                </div>
+
+                <div class="meta-row" *ngIf="selectedItemForView.volume || selectedItemForView.issueNumber">
+                  <span class="meta-label">Issue:</span>
+                  <span class="meta-val">
+                    <ng-container *ngIf="selectedItemForView.volume">Vol. {{ selectedItemForView.volume }}</ng-container>
+                    <ng-container *ngIf="selectedItemForView.issueNumber">, No. {{ selectedItemForView.issueNumber }}</ng-container>
+                  </span>
+                </div>
+
+                <div class="meta-row" *ngIf="selectedItemForView.categoryName">
+                  <span class="meta-label">Category:</span>
+                  <span class="meta-val">{{ selectedItemForView.categoryName }}</span>
+                </div>
+
+                <div class="meta-row" *ngIf="selectedItemForView.subCategoryName">
+                  <span class="meta-label">SubCategory:</span>
+                  <span class="meta-val">{{ selectedItemForView.subCategoryName }}</span>
+                </div>
+
+                <div class="meta-row" *ngIf="selectedItemForView.departmentName">
+                  <span class="meta-label">Department:</span>
+                  <span class="meta-val">{{ selectedItemForView.departmentName }}</span>
+                </div>
+
+                <div class="meta-row" *ngIf="selectedItemForView.batchName">
+                  <span class="meta-label">Batch:</span>
+                  <span class="meta-val">{{ selectedItemForView.batchName }}</span>
+                </div>
+
+                <div class="divider"></div>
+
+
+
+                <div class="divider"></div>
+
+                <!-- Full Text PDF Button -->
+                <div class="pdf-btn-wrapper">
+                  <button pButton type="button" icon="pi pi-file-pdf" label="Open Full PDF"
+                    class="p-button-outlined full-pdf-btn" [disabled]="!selectedItemForView.fileUrl"
+                    (click)="openPdfInNewTab(selectedItemForView.fileUrl)"></button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

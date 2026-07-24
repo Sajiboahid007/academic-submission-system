@@ -431,21 +431,90 @@ export class HomePageComponent implements OnInit {
     }
   }
 
+  // Selected item for viewing details overlay on Home page
+  selectedItemForView: any = null;
+  viewModalVisible: boolean = false;
+
   viewPaper(id: number) {
-    const paper = this.allPapers.find(p => p.Id === id);
-    if (paper?.FileUrl) {
-      window.open(paper.FileUrl, '_blank');
-    } else {
-      this.toastService.warn('No PDF file found for this paper.');
+    if (!id) return;
+    const paper = this.allPapers.find(p => p.Id === id) || this.allCombinedItems.find(i => i.Id === id && i.itemType === 'PAPER');
+    const categoryObj = this.category.find(c => c.Id === paper?.CategoryId) || paper?.Category;
+    const subCategoryObj = this.subCategory.find(s => s.Id === paper?.SubcategoryId) || paper?.SubCategory;
+    const deptObj = this.department.find(d => d.Id === paper?.DepartmentId) || paper?.Department;
+    const batchObj = this.batches.find(b => b.Id === paper?.BatchId) || paper?.Batches;
+
+    const authorsList: any[] = [];
+    if (paper?.CreatedBy) {
+      authorsList.push({ name: paper.CreatedBy, department: deptObj?.Name || '' });
+    } else if (paper?.Authors) {
+      paper.Authors.split(',').forEach((a: string) => {
+        if (a.trim()) authorsList.push({ name: a.trim(), department: deptObj?.Name || '' });
+      });
     }
+
+    this.selectedItemForView = {
+      ...paper,
+      itemType: 'PAPER',
+      displayType: 'Research Paper / Thesis',
+      title: paper?.Title || paper?.DisplayTitle || 'Untitled Paper',
+      abstract: paper?.Abstract || paper?.DisplayAbstract || 'No abstract/description available.',
+      categoryName: categoryObj?.Name || 'Academic Paper',
+      subCategoryName: subCategoryObj?.Name || '',
+      departmentName: deptObj?.Name || '',
+      batchName: batchObj?.Name || '',
+      year: paper?.Year || '',
+      fileUrl: paper?.FileUrl || '',
+      authors: authorsList,
+      keywords: paper?.Keywords ? paper.Keywords.split(',').map((k: string) => k.trim()).filter(Boolean) : []
+    };
+    this.viewModalVisible = true;
+    this.cdr.markForCheck();
   }
 
   viewJournal(id: number) {
-    const journal = this.journals.find(j => j.Id === id);
-    if (journal?.FileUrl) {
-      window.open(journal.FileUrl, '_blank');
+    if (!id) return;
+    const journal = this.journals.find(j => j.Id === id) || this.allCombinedItems.find(i => i.Id === id && i.itemType === 'JOURNAL');
+    const categoryObj = this.category.find(c => c.Id === journal?.CategoryId) || journal?.Category;
+    const subCategoryObj = this.subCategory.find(s => s.Id === journal?.SubcategoryId) || journal?.SubCategory;
+
+    const authorsList: any[] = [];
+    if (journal?.Authors) {
+      journal.Authors.split(',').forEach((a: string) => {
+        if (a.trim()) authorsList.push({ name: a.trim() });
+      });
+    }
+
+    this.selectedItemForView = {
+      ...journal,
+      itemType: 'JOURNAL',
+      displayType: 'Journal Article',
+      title: journal?.Title || journal?.DisplayTitle || 'Untitled Journal',
+      abstract: journal?.Abstract || journal?.DisplayAbstract || 'No abstract/description available.',
+      categoryName: categoryObj?.Name || 'Journal',
+      subCategoryName: subCategoryObj?.Name || '',
+      volume: journal?.Volume || '',
+      issueNumber: journal?.IssueNumber || '',
+      year: journal?.Year || '',
+      createdDate: journal?.CreatedDate || null,
+      fileUrl: journal?.FileUrl || '',
+      authors: authorsList,
+      keywords: journal?.Keywords ? journal.Keywords.split(',').map((k: string) => k.trim()).filter(Boolean) : []
+    };
+    this.viewModalVisible = true;
+    this.cdr.markForCheck();
+  }
+
+  closeViewModal() {
+    this.viewModalVisible = false;
+    this.selectedItemForView = null;
+    this.cdr.markForCheck();
+  }
+
+  openPdfInNewTab(url?: string) {
+    if (url) {
+      window.open(url, '_blank');
     } else {
-      this.toastService.warn('No PDF file found for this journal.');
+      this.toastService.warn('No PDF file found for this item.');
     }
   }
 
