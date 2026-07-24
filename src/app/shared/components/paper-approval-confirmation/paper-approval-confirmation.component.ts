@@ -38,7 +38,7 @@ export class PaperApprovalConfirmationComponent implements OnInit {
   constructor(
     private readonly userInfoService: UserInfoService,
     private readonly dialogRef: MatDialogRef<PaperApprovalConfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source?: 'Journal' | 'Paper'; fromPaperApproval?: boolean; fromCreatePapers?: boolean } | null,
+    @Inject(MAT_DIALOG_DATA) public data: { PaperId?: number; JournalId?: number; Source?: 'Journal' | 'Paper'; fromPaperApproval?: boolean; fromCreatePapers?: boolean; fromCreateJournal?: boolean } | null,
     private readonly cdr: ChangeDetectorRef,
     private readonly paperApprovalConfirmation: PaperApprovalConfirmation,
     private readonly toastService: ToastService,
@@ -93,19 +93,19 @@ export class PaperApprovalConfirmationComponent implements OnInit {
 
       if (this.data?.Source === 'Journal' || this.data?.Source === 'Paper') {
         this.statusOptions.push({
-          label: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
-          value: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
+          label: AcademicSubmissionConfig.ApprovalStatus.Draft,
+          value: AcademicSubmissionConfig.ApprovalStatus.Draft,
         });
         this.statusOptions.push({
-          label: AcademicSubmissionConfig.ApprovalStatus.Rejected,
-          value: AcademicSubmissionConfig.ApprovalStatus.Rejected,
+          label: AcademicSubmissionConfig.ApprovalStatus.Pending,
+          value: AcademicSubmissionConfig.ApprovalStatus.Pending,
         });
-        if (this.data?.Source === 'Paper') {
-          this.statusOptions.push({
-            label: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
-            value: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
-          });
-        }
+        // if (this.data?.Source === 'Paper') {
+        //   this.statusOptions.push({
+        //     label: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
+        //     value: AcademicSubmissionConfig.ApprovalStatus.ReviewRequested,
+        //   });
+        // }
         this.statusOptions = this.statusOptions.filter(item => {
           return item.label !== AcademicSubmissionConfig.ApprovalStatus.Pending
         })
@@ -129,8 +129,8 @@ export class PaperApprovalConfirmationComponent implements OnInit {
     } else if (this.userInfo && this.userInfo.role === AcademicSubmissionConfig.UserRole.Reviewer) {
       this.statusOptions = [
         {
-          label: AcademicSubmissionConfig.ApprovalStatus.Draft,
-          value: AcademicSubmissionConfig.ApprovalStatus.Draft,
+          label: AcademicSubmissionConfig.ApprovalStatus.ReviewerReject,
+          value: AcademicSubmissionConfig.ApprovalStatus.ReviewerReject,
         },
         {
           label: AcademicSubmissionConfig.ApprovalStatus.EditorialApproved,
