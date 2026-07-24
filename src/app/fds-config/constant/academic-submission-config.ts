@@ -1,4 +1,6 @@
 export class AcademicSubmissionConfig {
+
+  // static readonly url = 'https://gono-uv-research-project-repository.vercel.app/';
   public static readonly BaseUrl = 'http://localhost:3000' as const;
   public static readonly JwtTokenKey = 'TOKEN_KEY' as const;
   public static readonly RefreshTokenKey = 'REFRESH_TOKEN' as const;

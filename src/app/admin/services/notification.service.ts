@@ -72,4 +72,8 @@ export class NotificationService {
   getNotification(): Observable<AppQuery<any[]>> {
     return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/notifications`);
   }
+
+  getJournalUrl(id: number) {
+    return this.http.get<AppQuery<any[]>>(`${this.baseUrl}/api/get/journal/reamrksL/${id}`);
+  }
 }

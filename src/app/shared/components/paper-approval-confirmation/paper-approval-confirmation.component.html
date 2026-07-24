@@ -58,8 +58,8 @@
         </small>
       </div>
 
-      <div class="card" *ngIf="data?.fromPaperApproval">
-        <p-fileupload (onSelect)="onFileSelect($event)" (onClear)="onFileClear()" (onRemove)="onFileRemove($event)"
+      <div class="card" *ngIf="data?.fromPaperApproval ">
+        <p-fileupload (onSelect)=" onFileSelect($event)" (onClear)="onFileClear()" (onRemove)="onFileRemove($event)"
           [showUploadButton]="false" [multiple]="false" accept=".pdf,image/*" maxFileSize="10000000" mode="advanced">
           <ng-template #empty>
             <div>Drag and drop Remarks files to here to upload.</div>

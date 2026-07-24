@@ -25,6 +25,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InsertUpdatePaperComponent implements OnInit {
+  activeTab = '0';
   isEditMode = false;
   papers: Papers[] = [];
   category: Category[] = [];
