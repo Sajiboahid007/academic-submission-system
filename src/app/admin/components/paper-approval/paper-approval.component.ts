@@ -16,6 +16,7 @@ import { JournalService } from '../../services/journal-service';
 import { JournalInsertUpdateComponent } from '../papers-list/journal-insert-update/journal-insert-update.component';
 import { ConfirmationService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-paper-approval',
@@ -43,7 +44,8 @@ export class PaperApprovalComponent implements OnInit {
     private readonly journalService: JournalService,
     private readonly confirmationService: ConfirmationService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly notifyService: NotificationService
   ) { }
 
   unfilteredPapers: Papers[] = [];
@@ -173,19 +175,19 @@ export class PaperApprovalComponent implements OnInit {
   public getSeverity(
     status: string | undefined,
   ): 'info' | 'success' | 'warn' | 'danger' | 'secondary' {
-    switch (status) {
-      case 'Approved':
+    if (!status) return 'secondary';
+    switch (status.trim().toLowerCase()) {
+      case 'approved':
+      case 'editorial approved':
         return 'success';
-      case 'Rejected':
+      case 'rejected':
+      case 'reviewer reject':
         return 'danger';
-      case 'Pending':
+      case 'pending':
+      case 'review requested':
         return 'warn';
-      case 'Draft':
+      case 'draft':
         return 'info';
-      case 'Review Requested':
-        return 'warn'
-      case 'Editorial Approved':
-        return 'success'
       default:
         return 'secondary';
     }
@@ -208,12 +210,20 @@ export class PaperApprovalComponent implements OnInit {
   }
 
   isAllowedStatus(paperApproval: any) {
+    const status = paperApproval?.Status;
+    const role = this.userTokenInfo?.role;
+
     if (
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft ||
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.EditorialApproved ||
-      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.ReviewRequested
+      status === AcademicSubmissionConfig.ApprovalStatus.Pending ||
+      status === AcademicSubmissionConfig.ApprovalStatus.Draft ||
+      status === AcademicSubmissionConfig.ApprovalStatus.EditorialApproved ||
+      status === AcademicSubmissionConfig.ApprovalStatus.ReviewRequested ||
+      status === AcademicSubmissionConfig.ApprovalStatus.ReviewerReject ||
+      status === AcademicSubmissionConfig.ApprovalStatus.Rejected
     ) {
+      if (status === AcademicSubmissionConfig.ApprovalStatus.ReviewerReject || status === AcademicSubmissionConfig.ApprovalStatus.Rejected) {
+        return role === AcademicSubmissionConfig.UserRole.SuperAdmin || role === AcademicSubmissionConfig.UserRole.Admin;
+      }
       return true;
     }
 
@@ -663,8 +673,24 @@ export class PaperApprovalComponent implements OnInit {
           console.warn('No file URL found');
           return;
         }
-
         window.open(fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+  fileUrl: any;
+  viewReviewerLater(id: number) {
+    this.journalService.getById(id).subscribe({
+      next: (res: any) => {
+        this.fileUrl = res?.data?.PaperApprovals?.[0]?.RemarksFile;
+
+        if (!this.fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+        window.open(this.fileUrl, '_blank');
       },
       error: (err) => {
         console.error(err);

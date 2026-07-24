@@ -170,6 +170,7 @@
               <th style="width: 10%">Remarks</th>
               <th style="width: 10%">Category</th>
               <th style="width: 7%">Year</th>
+              <th style="width: 10%">Rev.Later</th>
               <th style="width: 10%">Res.Later</th>
               <th style="width: 17%">Action</th>
             </tr>
@@ -252,6 +253,11 @@
                 <div>
                   <div>{{ journal.Year | truncateText: 50 }}</div>
                 </div>
+              </td>
+              <td>
+                <p-button *ngIf="journal.PaperApprovals[0]?.RemarksFile" [outlined]="true" icon="pi pi-file-pdf"
+                  size="small" styleClass="p-button-sm p-button-outlined" (click)="viewReviewerLater(journal.Id)"
+                  pTooltip="Reviwer Remarks Later" tooltipPosition="top" />
               </td>
               <td>
                 <p-button *ngIf="journal.ResponseLater" [outlined]="true" icon="pi pi-file-pdf" size="small"

@@ -22,6 +22,7 @@ import { ConfirmationService } from 'primeng/api';
 import { JournalInsertUpdateComponent } from '../journal-insert-update/journal-insert-update.component';
 import { Journals } from '../../../../fds-config/entity-models/journals';
 import { JournalService } from '../../../services/journal-service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-create-papers',
@@ -57,6 +58,7 @@ export class CreatePapersComponent {
     private readonly confirmationService: ConfirmationService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly notifyService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -223,6 +225,25 @@ export class CreatePapersComponent {
     });
 
   }
+  fileUrl: any;
+  viewRevLater(id: number) {
+    if (!id) return;
+    this.journalService.getById(id).subscribe({
+      next: (res: any) => {
+        this.fileUrl = res?.data?.PaperApprovals?.[0]?.RemarksFile;
+
+        if (!this.fileUrl) {
+          console.warn('No file URL found');
+          return;
+        }
+
+        window.open(this.fileUrl, '_blank');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
 
   viewResponseLater(id: number) {
     if (!id) return;
@@ -327,7 +348,7 @@ export class CreatePapersComponent {
     const dialogRef = this.dialog.open(PaperApprovalConfirmationComponent, {
       width: '500px',
       autoFocus: true,
-      data: { JournalId: journalId, Source: 'Journal', fromCreatePapers: true },
+      data: { JournalId: journalId, Source: 'Journal', fromCreateJournal: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -352,7 +373,8 @@ export class CreatePapersComponent {
   }
 
   isAllowedStatus(paperApproval: any) {
-    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft) {
+    if (paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.Draft ||
+      paperApproval?.Status === AcademicSubmissionConfig.ApprovalStatus.ReviewerReject) {
       return true;
     }
 

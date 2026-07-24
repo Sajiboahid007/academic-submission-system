@@ -20,8 +20,8 @@
             <button pButton type="button" label="Show All" icon="pi pi-refresh" class="p-button-outlined p-button-sm"
                 (click)="clearFilter()"></button>
         </div>
-        <button pButton type="button" label="Add Paper" icon="pi pi-plus" class="p-button-rounded p-button-success m-1"
-            (click)="AddPapers()"></button>
+        <button pButton type="button" label="Published Papers" icon="pi pi-plus"
+            class="p-button-rounded p-button-success m-1" (click)="AddPapers()"></button>
         <button pButton type="button" label="Add Journal" icon="pi pi-file"
             class="p-button-rounded p-button-success m-1" (click)="AddJournal()"></button>
     </div>
@@ -164,12 +164,13 @@
                         <tr style="margin-top: 50px">
 
                             <th style="width: 22%">Title</th>
-                            <th style="width: 14%">Status</th>
+                            <th style="width: 10%">Status</th>
                             <th style="width: 10%">Remarks</th>
                             <th style="width: 10%">Category</th>
                             <th style="width: 10%">Volume</th>
                             <th style="width: 7%">Year</th>
-                            <th style="width: 10%">Res.Later</th>
+                            <th style="width: 5%">Rev.Later</th>
+                            <th style="width: 5%">Res.Later</th>
                             <th style="width: 17%">Action</th>
                         </tr>
                     </ng-template>
@@ -215,11 +216,18 @@
                                 </div>
                             </td>
                             <td>
-                                <p-button *ngIf="journal.ResponseLater" [outlined]="true" label="Res.Later"
+                                <p-button *ngIf="journal.PaperApprovals[0]?.RemarksFile" [outlined]="true"
                                     icon="pi pi-file-pdf" size="small" styleClass="p-button-sm p-button-outlined"
+                                    (click)="viewRevLater(journal.Id)" pTooltip="Reviewer Later"
+                                    tooltipPosition="top" />
+                            </td>
+                            <td>
+                                <p-button *ngIf="journal.ResponseLater" [outlined]="true" icon="pi pi-file-pdf"
+                                    size="small" styleClass="p-button-sm p-button-outlined"
                                     (click)="viewResponseLater(journal.Id)" pTooltip="Response Later"
                                     tooltipPosition="top" />
                             </td>
+
                             <td>
                                 <p-button [outlined]="true" icon="pi pi-eye" size="small"
                                     styleClass="p-button-sm p-button-outlined" (click)="viewJournal(journal.Id)"

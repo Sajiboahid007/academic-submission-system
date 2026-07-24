@@ -129,7 +129,7 @@ export class NotificationComponent implements OnInit {
     // Filter by search query
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
-      list = list.filter(n => 
+      list = list.filter(n =>
         (n.Title && n.Title.toLowerCase().includes(query)) ||
         (n.Message && n.Message.toLowerCase().includes(query)) ||
         (n.Status && n.Status.toLowerCase().includes(query))
@@ -150,7 +150,7 @@ export class NotificationComponent implements OnInit {
     this.rows = event.rows;
     this.updatePaginatedNotifications();
     this.cdr.markForCheck();
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const mainContent = document.querySelector('.main-content');
     if (mainContent) {
@@ -212,7 +212,7 @@ export class NotificationComponent implements OnInit {
 
   getFormattedMessage(message: string): string {
     if (!message) return '';
-    
+
     let formatted = message;
 
     // 1. Highlight Remarks: "Remarks: [Message]"
